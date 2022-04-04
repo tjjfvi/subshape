@@ -1,5 +1,5 @@
 [package]
-name = "mod"
+name = "scale_fixtures"
 version = "0.1.0"
 edition = "2021"
 

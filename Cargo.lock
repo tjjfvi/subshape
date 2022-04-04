@@ -114,20 +114,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8452105ba047068f40ff7093dd1d9da90898e63dd61736462e9cdda6a90ad3c3"
 
 [[package]]
-name = "mod"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "js-sys",
- "parity-scale-codec",
- "paste",
- "serde",
- "serde_json",
- "wasm-bindgen",
- "wee_alloc",
-]
-
-[[package]]
 name = "parity-scale-codec"
 version = "3.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -198,6 +184,20 @@ name = "ryu"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73b4b750c782965c211b42f022f59af1fbceabdd026623714f104152f1ec149f"
+
+[[package]]
+name = "scale_fixtures"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "js-sys",
+ "parity-scale-codec",
+ "paste",
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "wee_alloc",
+]
 
 [[package]]
 name = "serde"

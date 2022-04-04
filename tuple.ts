@@ -1,14 +1,14 @@
 import { Decoder, Encoder, Transcoder } from "/common.ts";
 
-export type TupleT<Els extends Transcoder[]> = {
-  [I in keyof Els]: TupleT._0<Els[I]>;
+export type NativeTuple<Els extends Transcoder[]> = {
+  [I in keyof Els]: NativeTuple._0<Els[I]>;
 };
-namespace TupleT {
+namespace NativeTuple {
   export type _0<I> = I extends Transcoder<infer T> ? T : I;
 }
 
 /** Decode a tuple */
-export class TupleDecoder<ElementDecoders extends Decoder[]> extends Decoder<TupleT<ElementDecoders>> {
+export class TupleDecoder<ElementDecoders extends Decoder[]> extends Decoder<NativeTuple<ElementDecoders>> {
   /**
    * @param elDecoders The ordered tuple element decoders
    */
@@ -16,13 +16,13 @@ export class TupleDecoder<ElementDecoders extends Decoder[]> extends Decoder<Tup
     super((state) => {
       return elDecoders.map((elDecoder) => {
         return elDecoder._d(state);
-      }) as TupleT<ElementDecoders>;
+      }) as NativeTuple<ElementDecoders>;
     });
   }
 }
 
 /** Encode a tuple */
-export class TupleEncoder<ElEncoders extends Encoder[]> extends Encoder<TupleT<ElEncoders>> {
+export class TupleEncoder<ElEncoders extends Encoder[]> extends Encoder<NativeTuple<ElEncoders>> {
   /**
    * @param elEncoders The ordered tuple element encoders
    */
