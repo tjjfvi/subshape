@@ -42,6 +42,7 @@ Deno.test("Results", () => {
       case 1:
       case 2: {
         asserts.assertEquals(new s.ResultDecoder(s.strDecoder, undefined as any).decode(bytes), normalized);
+        asserts.assertEquals(new s.ResultEncoder(s.strEncoder, undefined as any).encode(normalized as any), bytes);
         break;
       }
       case 3:
@@ -51,12 +52,27 @@ Deno.test("Results", () => {
           new s.ResultDecoder(undefined as any, SingleValueErr, s.strDecoder).decode(bytes),
           normalized,
         );
+        asserts.assertEquals(
+          new s.ResultEncoder(undefined as any, new s.ErrorEncoder(new s.RecordFieldEncoder("a", s.strEncoder)))
+            .encode(normalized as any),
+          bytes,
+        );
         break;
       }
       case 6: {
         asserts.assertEquals(
           new s.ResultDecoder(undefined as any, TwoElTupleErr, s.strDecoder, s.strDecoder).decode(bytes),
           normalized,
+        );
+        asserts.assertEquals(
+          new s.ResultEncoder(
+            undefined as any,
+            new s.ErrorEncoder(
+              new s.RecordFieldEncoder("a", s.strEncoder),
+              new s.RecordFieldEncoder("b", s.strEncoder),
+            ),
+          ).encode(normalized as any),
+          bytes,
         );
         break;
       }
@@ -66,9 +82,17 @@ Deno.test("Results", () => {
             undefined as any,
             RecErr,
             new s.RecordDecoder(new s.RecordFieldDecoder("x", s.strDecoder)),
-          )
-            .decode(bytes),
+          ).decode(bytes),
           normalized,
+        );
+        asserts.assertEquals(
+          new s.ResultEncoder(
+            undefined as any,
+            new s.ErrorEncoder(
+              new s.RecordFieldEncoder("a", new s.RecordEncoder(new s.RecordFieldEncoder("x", s.strEncoder))),
+            ),
+          ).encode(normalized as any),
+          bytes,
         );
         break;
       }
