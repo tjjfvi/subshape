@@ -2,9 +2,6 @@ import { Decoder, Encoder, Native, Transcoder } from "/common.ts";
 import { u8Decoder, u8Encoder } from "/int.ts";
 import { RecordDecoder } from "/record.ts";
 
-export const Tag = Symbol.for("scale.Tag");
-export type Tag = typeof Tag;
-
 export type NativeUnion<Members extends Transcoder[] = Transcoder[]> = Native<Members[number]>;
 
 /** Decode a union */
