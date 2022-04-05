@@ -18,18 +18,12 @@ const normalize = (raw: string): Record<PropertyKey, any> => {
 };
 
 Deno.test("Unions", () => {
-  const D0 = new s.UnionDecoder(
-    new s.RecordDecoder(new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("A"))),
-    new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("B")),
-      new s.RecordFieldDecoder("B", s.strDecoder),
-    ),
-    new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("C")),
-      new s.RecordFieldDecoder("C", new s.TupleDecoder(s.u32Decoder, s.u64Decoder)),
-    ),
-    new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("D")),
+  const D0 = new s.TaggedUnionDecoder(
+    new s.TaggedUnionMemberDecoder("A"),
+    new s.TaggedUnionMemberDecoder("B", new s.RecordFieldDecoder("B", s.strDecoder)),
+    new s.TaggedUnionMemberDecoder("C", new s.RecordFieldDecoder("C", new s.TupleDecoder(s.u32Decoder, s.u64Decoder))),
+    new s.TaggedUnionMemberDecoder(
+      "D",
       new s.RecordFieldDecoder(
         "D",
         new s.RecordDecoder(
@@ -40,28 +34,12 @@ Deno.test("Unions", () => {
     ),
   );
 
-  const E0 = new s.UnionEncoder(
-    (value) => {
-      return ({
-        A: 0,
-        B: 1,
-        C: 2,
-        D: 3,
-      })[value[s.Tag]];
-    },
-    new s.RecordEncoder(
-      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"A">>>(),
-    ),
-    new s.RecordEncoder(
-      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"B">>>(),
-      new s.RecordFieldEncoder("B", s.strEncoder),
-    ),
-    new s.RecordEncoder(
-      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"C">>>(),
-      new s.RecordFieldEncoder("C", new s.TupleEncoder(s.u32Encoder, s.u64Encoder)),
-    ),
-    new s.RecordEncoder(
-      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"D">>>(),
+  const E0 = new s.TaggedUnionEncoder(
+    new s.TaggedUnionMemberEncoder("A"),
+    new s.TaggedUnionMemberEncoder("B", new s.RecordFieldEncoder("B", s.strEncoder)),
+    new s.TaggedUnionMemberEncoder("C", new s.RecordFieldEncoder("C", new s.TupleEncoder(s.u32Encoder, s.u64Encoder))),
+    new s.TaggedUnionMemberEncoder(
+      "D",
       new s.RecordFieldEncoder(
         "D",
         new s.RecordEncoder(
@@ -71,6 +49,7 @@ Deno.test("Unions", () => {
       ),
     ),
   );
+
   visitFixtures<string>(tagged_union_, (bytes, decoded) => {
     const normalized = normalize(decoded);
     asserts.assertEquals(D0.decode(bytes), normalized);

@@ -7,6 +7,5 @@ export * from "/literal.ts";
 export * from "/option.ts";
 export * from "/record.ts";
 export * from "/str.ts";
-export * from "/tagged_union.ts";
 export * from "/tuple.ts";
 export * from "/union.ts";
