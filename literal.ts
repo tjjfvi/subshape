@@ -1,4 +1,4 @@
-import { Decoder, Encoder, Native } from "/common.ts";
+import { Cursor, Decoder, Encoder, Native } from "/common.ts";
 
 export const LiteralEncoder = <E extends Encoder>(bytes?: Uint8Array): E => {
   return new Encoder(
@@ -16,8 +16,14 @@ export const LiteralEncoder = <E extends Encoder>(bytes?: Uint8Array): E => {
   ) as any;
 };
 
-export const LiteralDecoder = <D extends Decoder>(value: Native<D>): Native<D> => {
-  return new Decoder(() => {
+export const LiteralDecoder = <D extends Decoder>(
+  value: Native<D>,
+  consume?: (cursor: Cursor) => void,
+): Native<D> => {
+  return new Decoder((cursor) => {
+    if (consume) {
+      consume(cursor);
+    }
     return value;
   }) as any;
 };

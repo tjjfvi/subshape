@@ -1,48 +1,55 @@
-import { Encoder, Native, Transcoder } from "/common.ts";
-import { LiteralDecoder } from "/literal.ts";
-import {
-  NativeRecord,
-  NativeRecordField,
-  RecordDecoder,
-  RecordEncoder,
-  RecordFieldDecoder,
-  RecordFieldEncoder,
-} from "/record.ts";
-import { NativeUnion, UnionDecoder, UnionEncoder } from "/union.ts";
+import { Decoder, Encoder } from "/common.ts";
+import { LiteralDecoder, LiteralEncoder } from "/literal.ts";
+import { RecordDecoder, RecordEncoder, RecordFieldDecoder, RecordFieldEncoder } from "/record.ts";
+import { UnionDecoder, UnionEncoder } from "/union.ts";
 
 export const Tag = Symbol.for("scale.Tag");
 export type Tag = typeof Tag;
 
-export type NativeTaggedUnionMember<
+export class TaggedUnionMemberDecoder<
   MemberTag extends PropertyKey = PropertyKey,
-  MemberFields extends Transcoder<NativeRecordField>[] = Transcoder<NativeRecordField>[],
-> = { [Tag]: MemberTag } & NativeRecord<MemberFields>;
+  FieldDecoders extends RecordFieldDecoder[] = RecordFieldDecoder[],
+> extends RecordDecoder<[RecordFieldDecoder<Tag, Decoder<MemberTag>>, ...FieldDecoders]> {
+  constructor(
+    memberTag: MemberTag,
+    ...fieldDecoders: FieldDecoders
+  ) {
+    super(
+      new RecordFieldDecoder(Tag, LiteralDecoder(memberTag)),
+      ...fieldDecoders,
+    );
+  }
+}
 
-// type NativeTaggedUnion
+export class TaggedUnionDecoder<MemberDecoders extends TaggedUnionMemberDecoder[]>
+  extends UnionDecoder<MemberDecoders>
+{
+  constructor(...memberDecoders: MemberDecoders) {
+    super(...memberDecoders);
+  }
+}
 
-// export class TaggedUnionDecoder<
-//   MemberTag extends PropertyKey,
-//   MemberDecoders extends RecordDecoder[],
-// > extends UnionDecoder<[RecordFieldDecoder<Tag, LiteralDecoder<MemberTag>>, ...MemberDecoders]> {
-//   constructor(
-//     memberTag: MemberTag,
-//     ...memberDecoders: MemberDecoders
-//   ) {
-//     super(
-//       new RecordFieldDecoder(Tag, new LiteralDecoder(memberTag)),
-//       ...memberDecoders,
-//     );
-//   }
-// }
+export class TaggedUnionMemberEncoder<
+  MemberTag extends PropertyKey = PropertyKey,
+  FieldEncoders extends RecordFieldEncoder[] = RecordFieldEncoder[],
+> extends RecordEncoder<[RecordFieldEncoder<Tag, Encoder<MemberTag>>, ...FieldEncoders]> {
+  constructor(
+    readonly memberTag: MemberTag,
+    ...fieldEncoders: FieldEncoders
+  ) {
+    super(LiteralEncoder(), ...fieldEncoders);
+  }
+}
 
-// export class TaggedUnionEncoder<
-//   MemberTag extends PropertyKey,
-//   MemberEncoders extends Encoder[],
-// > extends UnionEncoder<Native<Encoder<[RecordFieldEncoder<Tag, Encoder<"A">>, ...MemberEncoders]>>> {
-//   constructor(...memberEncoders: MemberEncoders) {
-//     super(
-//       (value) => {},
-//       ...memberEncoders,
-//     );
-//   }
-// }
+export class TaggedUnionEncoder<MemberEncoders extends TaggedUnionMemberEncoder[] = TaggedUnionMemberEncoder[]>
+  extends UnionEncoder<MemberEncoders>
+{
+  constructor(...memberEncoders: MemberEncoders) {
+    super(
+      (value) => {
+        return memberEncoders.findIndex((memberEncoder) => memberEncoder.memberTag === value[Tag]);
+      },
+      ...memberEncoders,
+    );
+  }
+}
