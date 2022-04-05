@@ -13,9 +13,9 @@ export class TupleDecoder<ElementDecoders extends Decoder[]> extends Decoder<Nat
    * @param elDecoders The ordered tuple element decoders
    */
   constructor(...elDecoders: ElementDecoders) {
-    super((state) => {
+    super((cursor) => {
       return elDecoders.map((elDecoder) => {
-        return elDecoder._d(state);
+        return elDecoder._d(cursor);
       }) as NativeTuple<ElementDecoders>;
     });
   }
@@ -28,9 +28,9 @@ export class TupleEncoder<ElEncoders extends Encoder[]> extends Encoder<NativeTu
    */
   constructor(...elEncoders: ElEncoders) {
     super(
-      (state, value) => {
+      (cursor, value) => {
         for (let i = 0; i < value.length; i++) {
-          elEncoders[i]!._e(state, value[i]);
+          elEncoders[i]!._e(cursor, value[i]);
         }
       },
       (value) => {

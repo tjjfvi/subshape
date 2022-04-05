@@ -14,8 +14,8 @@ export class LiteralEncoder<T> extends Encoder<T> {
     readonly value: T,
   ) {
     super(
-      (state, _value) => {
-        encoder._e(state, value);
+      (cursor, _value) => {
+        encoder._e(cursor, value);
       },
       () => {
         return encoder._s(value);

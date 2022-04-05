@@ -26,8 +26,8 @@ export class RecordFieldDecoder<
     readonly key: Key,
     readonly valueDecoder: ValueDecoder,
   ) {
-    super((state) => {
-      return { [key]: valueDecoder._d(state) } as NativeRecordField<Key, ValueDecoder>;
+    super((cursor) => {
+      return { [key]: valueDecoder._d(cursor) } as NativeRecordField<Key, ValueDecoder>;
     });
   }
 }
@@ -46,8 +46,8 @@ export class RecordFieldEncoder<
     readonly valueEncoder: ValueEncoder,
   ) {
     super(
-      (state, value) => {
-        return valueEncoder._e(state, value[key]);
+      (cursor, value) => {
+        return valueEncoder._e(cursor, value[key]);
       },
       (value) => {
         return valueEncoder._s(value[key]);
@@ -64,11 +64,11 @@ export class RecordDecoder<FieldDecoders extends RecordFieldDecoder[] = RecordFi
    * @param fieldDecoders The ordered list of record field decoders
    */
   constructor(...fieldDecoders: FieldDecoders) {
-    super((state) => {
+    super((cursor) => {
       return fieldDecoders.reduce<Partial<NativeRecord<FieldDecoders>>>((acc, fieldDecoder) => {
         return {
           ...acc,
-          ...fieldDecoder._d(state),
+          ...fieldDecoder._d(cursor),
         };
       }, {}) as NativeRecord<FieldDecoders>;
     });
@@ -85,9 +85,9 @@ export class RecordEncoder<FieldEncoders extends RecordFieldEncoder[] = RecordFi
    */
   constructor(...fieldsEncoders: FieldEncoders) {
     super(
-      (state, value) => {
+      (cursor, value) => {
         fieldsEncoders.forEach((fieldEncoder) => {
-          fieldEncoder._e(state, value);
+          fieldEncoder._e(cursor, value);
         });
       },
       (value) => {

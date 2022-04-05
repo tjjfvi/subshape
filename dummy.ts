@@ -3,7 +3,7 @@ import { Encoder } from "/common.ts";
 class DummyEncoderCtor extends Encoder<any> {
   constructor() {
     super(
-      (_state, _value) => {},
+      (_cursor, _value) => {},
       (_value) => {
         return 0;
       },

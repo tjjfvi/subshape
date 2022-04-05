@@ -13,10 +13,10 @@ export class UnionDecoder<MemberDecoders extends RecordDecoder[]> extends Decode
    * @param memberDecoders The ordered member decoders
    */
   constructor(...memberDecoders: MemberDecoders) {
-    super((state) => {
-      const discriminant = u8Decoder._d(state);
+    super((cursor) => {
+      const discriminant = u8Decoder._d(cursor);
       // TODO: ensure this is the correct type-level behavior
-      return memberDecoders[discriminant]!._d(state) as NativeUnion<MemberDecoders>;
+      return memberDecoders[discriminant]!._d(cursor) as NativeUnion<MemberDecoders>;
     });
   }
 }
@@ -31,11 +31,11 @@ export class UnionEncoder<MemberEncoders extends Encoder[]> extends Encoder<Nati
     ...memberEncoders: MemberEncoders
   ) {
     super(
-      (state, value) => {
+      (cursor, value) => {
         const discriminant = discriminate(value);
-        u8Encoder._e(state, discriminant);
+        u8Encoder._e(cursor, discriminant);
         const memberEncoder = memberEncoders[discriminant]!;
-        memberEncoder._e(state, value);
+        memberEncoder._e(cursor, value);
       },
       (value) => {
         return 1 + memberEncoders[discriminate(value)]!._s(value);

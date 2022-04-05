@@ -3,36 +3,36 @@ import { encodePositiveBigIntInto } from "/int.ts";
 import { u16Encoder, u32Decoder, u32Encoder, u8Decoder } from "/int.ts";
 
 /** Decode a compact integer */
-export const compactDecoder = new Decoder<number | bigint>((state) => {
-  const b = u8Decoder._d(state);
+export const compactDecoder = new Decoder<number | bigint>((cursor) => {
+  const b = u8Decoder._d(cursor);
   switch ((b & 3) as 0 | 1 | 2 | 3) {
     case 0: {
       return b >> 2;
     }
     case 1: {
-      return (b >> 2) + u8Decoder._d(state) * 2 ** 6;
+      return (b >> 2) + u8Decoder._d(cursor) * 2 ** 6;
     }
     case 2: {
-      return (b >> 2) + u8Decoder._d(state) * 2 ** 6 + u8Decoder._d(state) * 2 ** 14 + u8Decoder._d(state) * 2 ** 22;
+      return (b >> 2) + u8Decoder._d(cursor) * 2 ** 6 + u8Decoder._d(cursor) * 2 ** 14 + u8Decoder._d(cursor) * 2 ** 22;
     }
     case 3: {
-      const decodedU32 = u32Decoder._d(state);
+      const decodedU32 = u32Decoder._d(cursor);
       let len = b >> 2;
       switch (len) {
         case 0: {
           return decodedU32;
         }
         case 1: {
-          return decodedU32 + u8Decoder._d(state) * 2 ** 32;
+          return decodedU32 + u8Decoder._d(cursor) * 2 ** 32;
         }
         case 2: {
-          return decodedU32 + u8Decoder._d(state) * 2 ** 32 + u8Decoder._d(state) * 2 ** 40;
+          return decodedU32 + u8Decoder._d(cursor) * 2 ** 32 + u8Decoder._d(cursor) * 2 ** 40;
         }
       }
       let decodedU32AsBigint = BigInt(decodedU32);
       let base = 32n;
       while (len--) {
-        decodedU32AsBigint += BigInt(u8Decoder._d(state)) << base;
+        decodedU32AsBigint += BigInt(u8Decoder._d(cursor)) << base;
         base += 8n;
       }
       return decodedU32AsBigint;
@@ -46,22 +46,22 @@ const MAX_U32 = 2 ** (32 - 2) - 1;
 
 /** Encode a compact integer */
 export const compactEncoder = new Encoder<bigint | number>(
-  (state, value) => {
+  (cursor, value) => {
     if (value <= MAX_U8) {
-      state.u8a[state.i++] = Number(value) << 2;
+      cursor.u8a[cursor.i++] = Number(value) << 2;
       return;
     }
     if (value <= MAX_U16) {
-      u16Encoder._e(state, Number((BigInt(value) << 2n) + 0b01n));
+      u16Encoder._e(cursor, Number((BigInt(value) << 2n) + 0b01n));
       return;
     }
     if (value <= MAX_U32) {
-      u32Encoder._e(state, Number((BigInt(value) << 2n) + 0b10n));
+      u32Encoder._e(cursor, Number((BigInt(value) << 2n) + 0b10n));
       return;
     }
-    const bytesLength = encodePositiveBigIntInto(BigInt(value), state.u8a, state.i + 1, Infinity);
-    state.u8a[state.i] = ((bytesLength - 4) << 2) + 0b11;
-    state.i += ByteLen._1 + bytesLength;
+    const bytesLength = encodePositiveBigIntInto(BigInt(value), cursor.u8a, cursor.i + 1, Infinity);
+    cursor.u8a[cursor.i] = ((bytesLength - 4) << 2) + 0b11;
+    cursor.i += ByteLen._1 + bytesLength;
   },
   (value) => {
     if (value <= MAX_U8) {

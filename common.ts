@@ -1,4 +1,4 @@
-export class State {
+export class Cursor {
   view;
   i = 0;
 
@@ -11,26 +11,26 @@ export type Transcoder<Native = any> = Encoder<Native> | Decoder<Native>;
 export type Native<Transcoder_ extends Transcoder> = Transcoder_ extends Transcoder<infer Native> ? Native : never;
 
 export class Decoder<T = any> {
-  constructor(readonly _d: (state: State) => T) {}
+  constructor(readonly _d: (cursor: Cursor) => T) {}
 
   decode = (u8a: Uint8Array): T => {
-    return this._d(new State(u8a));
+    return this._d(new Cursor(u8a));
   };
 }
 
 export class Encoder<T = any> {
   constructor(
     readonly _e: (
-      state: State,
+      cursor: Cursor,
       value: T,
     ) => void,
     readonly _s: (value: T) => number,
   ) {}
 
   encode = (decoded: T): Uint8Array => {
-    const state = new State(new Uint8Array(this._s(decoded)));
-    this._e(state, decoded);
-    return state.u8a;
+    const cursor = new Cursor(new Uint8Array(this._s(decoded)));
+    this._e(cursor, decoded);
+    return cursor.u8a;
   };
 }
 

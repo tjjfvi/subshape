@@ -10,13 +10,13 @@ export class OptionDecoder<SomeDecoder extends Decoder> extends Decoder<OptionT<
    * @param someDecoder The decoder of the `Some` variant's value
    */
   constructor(readonly someDecoder: SomeDecoder) {
-    super((state) => {
-      switch (u8Decoder._d(state)) {
+    super((cursor) => {
+      switch (u8Decoder._d(cursor)) {
         case 0: {
           return undefined;
         }
         case 1: {
-          return someDecoder._d(state);
+          return someDecoder._d(cursor);
         }
         default: {
           asserts.unreachable();
@@ -33,11 +33,11 @@ export class OptionEncoder<SomeEncoder extends Encoder> extends Encoder<OptionT<
    */
   constructor(readonly someEncoder: SomeEncoder) {
     super(
-      (state, value) => {
-        state.view.setUint8(state.i, Number(!!value));
-        state.i++;
+      (cursor, value) => {
+        cursor.view.setUint8(cursor.i, Number(!!value));
+        cursor.i++;
         if (value) {
-          someEncoder._e(state, value);
+          someEncoder._e(cursor, value);
         }
       },
       (value) => {

@@ -20,10 +20,10 @@ export class SizedArrayDecoder<
     elDecoder: ElDecoder,
     len: Len,
   ) {
-    super((state) => {
+    super((cursor) => {
       const result: Native<ElDecoder>[] = [];
       for (let i = 0; i < len; i++) {
-        result.push(elDecoder._d(state));
+        result.push(elDecoder._d(cursor));
       }
       return result as NativeArray<ElDecoder, Len>;
     });
@@ -44,9 +44,9 @@ export class SizedArrayEncoder<
     len: Len,
   ) {
     super(
-      (state, value) => {
+      (cursor, value) => {
         for (let i = 0; i < len; i++) {
-          elEncoder._e(state, value[i]);
+          elEncoder._e(cursor, value[i]);
         }
       },
       (value) => {
@@ -66,8 +66,8 @@ export class ArrayDecoder<ElDecoder extends Decoder> extends Decoder<NativeArray
    * @param elDecoder The element decoder
    */
   constructor(elDecoder: ElDecoder) {
-    super((state) => {
-      return new SizedArrayDecoder(elDecoder, Number(compactDecoder._d(state)))._d(state);
+    super((cursor) => {
+      return new SizedArrayDecoder(elDecoder, Number(compactDecoder._d(cursor)))._d(cursor);
     });
   }
 }
@@ -79,9 +79,9 @@ export class ArrayEncoder<ElEncoder extends Encoder> extends Encoder<NativeArray
    */
   constructor(elEncoder: ElEncoder) {
     super(
-      (state, value) => {
-        compactEncoder._e(state, value.length);
-        new SizedArrayEncoder(elEncoder, value.length)._e(state, value);
+      (cursor, value) => {
+        compactEncoder._e(cursor, value.length);
+        new SizedArrayEncoder(elEncoder, value.length)._e(cursor, value);
       },
       (value) => {
         return compactEncoder._s(value.length) + new SizedArrayEncoder(elEncoder, value.length)._s(value);
