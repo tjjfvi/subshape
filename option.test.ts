@@ -1,10 +1,9 @@
 import * as s from "/mod.ts";
-import { option_ } from "/target/fixtures/mod.js";
-import { visitFixtures } from "/test-util.ts";
+import { fixtures, visitFixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Options", () => {
-  visitFixtures<string>(option_, (bytes, decoded, i) => {
+  visitFixtures<string>(fixtures.option_, (bytes, decoded, i) => {
     const parsed = JSON.parse(decoded) || undefined;
     asserts.assertEquals(
       new s.OptionDecoder(

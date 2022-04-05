@@ -26,7 +26,7 @@
   "include": ["."],
   "tasks": {
     "build_wasm": "cargo build --release --target wasm32-unknown-unknown",
-    "build_wasm_bindings": "wasm-bindgen target/wasm32-unknown-unknown/release/mod.wasm --target deno --weak-refs --out-dir target/fixtures",
+    "build_wasm_bindings": "wasm-bindgen target/wasm32-unknown-unknown/release/scale_fixtures.wasm --target deno --weak-refs --out-dir target/fixtures",
     "build_fixtures": "deno task build_wasm && deno task build_wasm_bindings",
     "build_npm": "deno run -A --no-check=remote tasks/npm.ts",
     "test": "deno test -A --no-check=remote -L=info"

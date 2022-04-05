@@ -1,3 +1,5 @@
+export * as fixtures from "/target/fixtures/scale_fixtures.js";
+
 export const visitFixtures = <D>(
   getFixtures: () => Map<Uint8Array, D>,
   visit: (

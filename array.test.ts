@@ -1,5 +1,5 @@
 import * as s from "/mod.ts";
-import * as fixtures from "/target/fixtures/mod.js";
+import { fixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Arrays", () => {

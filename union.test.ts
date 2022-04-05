@@ -1,6 +1,5 @@
 import * as s from "/mod.ts";
-import { tagged_union_ } from "/target/fixtures/mod.js";
-import { visitFixtures } from "/test-util.ts";
+import { fixtures, visitFixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 // TODO: clean up this normalization
@@ -18,18 +17,12 @@ const normalize = (raw: string): Record<PropertyKey, any> => {
 };
 
 Deno.test("Unions", () => {
-  const D0 = new s.UnionDecoder(
-    new s.RecordDecoder(new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("A"))),
-    new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("B")),
-      new s.RecordFieldDecoder("B", s.strDecoder),
-    ),
-    new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("C")),
-      new s.RecordFieldDecoder("C", new s.TupleDecoder(s.u32Decoder, s.u64Decoder)),
-    ),
-    new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("D")),
+  const D0 = new s.TaggedUnionDecoder(
+    new s.TaggedUnionMemberDecoder("A"),
+    new s.TaggedUnionMemberDecoder("B", new s.RecordFieldDecoder("B", s.strDecoder)),
+    new s.TaggedUnionMemberDecoder("C", new s.RecordFieldDecoder("C", new s.TupleDecoder(s.u32Decoder, s.u64Decoder))),
+    new s.TaggedUnionMemberDecoder(
+      "D",
       new s.RecordFieldDecoder(
         "D",
         new s.RecordDecoder(
@@ -40,28 +33,12 @@ Deno.test("Unions", () => {
     ),
   );
 
-  const E0 = new s.UnionEncoder(
-    (value) => {
-      return ({
-        A: 0,
-        B: 1,
-        C: 2,
-        D: 3,
-      })[value[s.Tag]];
-    },
-    new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"A">>>(),
-    ),
-    new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"B">>>(),
-      new s.RecordFieldEncoder("B", s.strEncoder),
-    ),
-    new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"C">>>(),
-      new s.RecordFieldEncoder("C", new s.TupleEncoder(s.u32Encoder, s.u64Encoder)),
-    ),
-    new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"D">>>(),
+  const E0 = new s.TaggedUnionEncoder(
+    new s.TaggedUnionMemberEncoder("A"),
+    new s.TaggedUnionMemberEncoder("B", new s.RecordFieldEncoder("B", s.strEncoder)),
+    new s.TaggedUnionMemberEncoder("C", new s.RecordFieldEncoder("C", new s.TupleEncoder(s.u32Encoder, s.u64Encoder))),
+    new s.TaggedUnionMemberEncoder(
+      "D",
       new s.RecordFieldEncoder(
         "D",
         new s.RecordEncoder(
@@ -71,7 +48,8 @@ Deno.test("Unions", () => {
       ),
     ),
   );
-  visitFixtures<string>(tagged_union_, (bytes, decoded) => {
+
+  visitFixtures<string>(fixtures.tagged_union_, (bytes, decoded) => {
     const normalized = normalize(decoded);
     asserts.assertEquals(D0.decode(bytes), normalized);
     asserts.assertEquals(E0.encode(normalized as any), bytes);
