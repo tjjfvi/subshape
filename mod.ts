@@ -6,6 +6,7 @@ export * from "/int.ts";
 export * from "/literal.ts";
 export * from "/option.ts";
 export * from "/record.ts";
+export * from "/result.ts";
 export * from "/str.ts";
 export * from "/tuple.ts";
 export * from "/union.ts";
