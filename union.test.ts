@@ -19,17 +19,17 @@ const normalize = (raw: string): Record<PropertyKey, any> => {
 
 Deno.test("Unions", () => {
   const D0 = new s.UnionDecoder(
-    new s.RecordDecoder(new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("A"))),
+    new s.RecordDecoder(new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("A"))),
     new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("B")),
+      new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("B")),
       new s.RecordFieldDecoder("B", s.strDecoder),
     ),
     new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("C")),
+      new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("C")),
       new s.RecordFieldDecoder("C", new s.TupleDecoder(s.u32Decoder, s.u64Decoder)),
     ),
     new s.RecordDecoder(
-      new s.RecordFieldDecoder(s.Tag, new s.LiteralDecoder("D")),
+      new s.RecordFieldDecoder(s.Tag, s.LiteralDecoder("D")),
       new s.RecordFieldDecoder(
         "D",
         new s.RecordDecoder(
@@ -50,18 +50,18 @@ Deno.test("Unions", () => {
       })[value[s.Tag]];
     },
     new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"A">>>(),
+      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"A">>>(),
     ),
     new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"B">>>(),
+      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"B">>>(),
       new s.RecordFieldEncoder("B", s.strEncoder),
     ),
     new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"C">>>(),
+      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"C">>>(),
       new s.RecordFieldEncoder("C", new s.TupleEncoder(s.u32Encoder, s.u64Encoder)),
     ),
     new s.RecordEncoder(
-      s.DummyEncoder<s.RecordFieldEncoder<s.Tag, s.LiteralEncoder<"D">>>(),
+      s.LiteralEncoder<s.RecordFieldEncoder<s.Tag, s.Encoder<"D">>>(),
       new s.RecordFieldEncoder(
         "D",
         new s.RecordEncoder(
