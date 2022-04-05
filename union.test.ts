@@ -1,6 +1,5 @@
 import * as s from "/mod.ts";
-import { tagged_union_ } from "/target/fixtures/mod.js";
-import { visitFixtures } from "/test-util.ts";
+import { fixtures, visitFixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 // TODO: clean up this normalization
@@ -50,7 +49,7 @@ Deno.test("Unions", () => {
     ),
   );
 
-  visitFixtures<string>(tagged_union_, (bytes, decoded) => {
+  visitFixtures<string>(fixtures.tagged_union_, (bytes, decoded) => {
     const normalized = normalize(decoded);
     asserts.assertEquals(D0.decode(bytes), normalized);
     asserts.assertEquals(E0.encode(normalized as any), bytes);

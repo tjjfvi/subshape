@@ -1,10 +1,9 @@
 import * as s from "/mod.ts";
-import { tuple_ } from "/target/fixtures/mod.js";
-import { visitFixtures } from "/test-util.ts";
+import { fixtures, visitFixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Tuples", () => {
-  visitFixtures<string>(tuple_, (bytes, decoded, i) => {
+  visitFixtures<string>(fixtures.tuple_, (bytes, decoded, i) => {
     const parsed = JSON.parse(decoded);
     asserts.assertEquals(
       new s.TupleDecoder(

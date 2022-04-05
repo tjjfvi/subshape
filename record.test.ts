@@ -1,6 +1,5 @@
 import * as s from "/mod.ts";
-import { record_ } from "/target/fixtures/mod.js";
-import { visitFixtures } from "/test-util.ts";
+import { fixtures, visitFixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 const normalize = (raw: string): Record<PropertyKey, any> => {
@@ -25,7 +24,7 @@ Deno.test("Records", () => {
     new s.RecordFieldEncoder("superPower", new s.OptionEncoder(s.strEncoder)),
     new s.RecordFieldEncoder("luckyNumber", s.u8Encoder),
   );
-  visitFixtures<string>(record_, (bytes, decoded) => {
+  visitFixtures<string>(fixtures.record_, (bytes, decoded) => {
     const normalized = normalize(decoded);
     asserts.assertEquals(_0D.decode(bytes), normalized);
     asserts.assertEquals(_0E.encode(normalized as any), bytes);

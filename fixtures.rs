@@ -37,18 +37,7 @@ pub mod compact_fixtures;
 pub mod int_fixtures;
 pub mod option_fixtures;
 pub mod record_fixtures;
+pub mod result_fixtures;
 pub mod str_fixtures;
 pub mod tuple_fixtures;
 pub mod union_fixtures;
-
-// // TODO: Results!
-// make_fixture_getter!(
-//   result,
-//   stringify,
-//   <Result<String, String>>::Ok(String::from("A")),
-//   <Result<String, String>>::Ok(String::from("B")),
-//   <Result<String, String>>::Ok(String::from("C")),
-//   <Result<String, String>>::Err(String::from("A")),
-//   <Result<String, String>>::Err(String::from("B")),
-//   <Result<String, String>>::Err(String::from("C")),
-// );
