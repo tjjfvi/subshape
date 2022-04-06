@@ -31,6 +31,7 @@ export class Ok<T> {
   constructor(readonly value: T) {}
 }
 
+// Make union
 export class Result<
   ErrCodec extends Err,
   OkCodec extends Codec,
