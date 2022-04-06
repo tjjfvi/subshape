@@ -1,7 +1,15 @@
-import { Cursor, Decoder, Encoder, Native } from "/common.ts";
+import { Codec, Cursor, Native } from "/common.ts";
 
-export const LiteralEncoder = <E extends Encoder>(bytes?: Uint8Array): E => {
-  return new Encoder(
+// TODO: clean this up! Consistency
+export const Literal = <E extends Codec>(
+  value: Native<E>,
+  consume?: (cursor: Cursor) => void,
+  bytes?: Uint8Array,
+): E => {
+  return new Codec(
+    (_value) => {
+      return bytes?.length || 0;
+    },
     (cursor) => {
       if (bytes) {
         for (let i = 0; i < bytes.length; i++) {
@@ -10,20 +18,11 @@ export const LiteralEncoder = <E extends Encoder>(bytes?: Uint8Array): E => {
         }
       }
     },
-    (_value) => {
-      return bytes?.length || 0;
+    (cursor) => {
+      if (consume) {
+        consume(cursor);
+      }
+      return value;
     },
   ) as any;
-};
-
-export const LiteralDecoder = <D extends Decoder>(
-  value: Native<D>,
-  consume?: (cursor: Cursor) => void,
-): Native<D> => {
-  return new Decoder((cursor) => {
-    if (consume) {
-      consume(cursor);
-    }
-    return value;
-  }) as any;
 };

@@ -4,7 +4,7 @@ import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Booleans", () => {
   visitFixtures<boolean>(fixtures.bool_, (bytes, decoded) => {
-    asserts.assertEquals(s.boolDecoder.decode(bytes), decoded);
-    asserts.assertEquals(s.boolEncoder.encode(decoded), bytes);
+    asserts.assertEquals(s.bool.decode(bytes), decoded);
+    asserts.assertEquals(s.bool.encode(decoded), bytes);
   });
 });
