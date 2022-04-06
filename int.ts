@@ -105,6 +105,7 @@ class X128 extends Codec<bigint> {
 export const u128 = new X128(false);
 export const i128 = new X128(true);
 
+// https://github.com/soramitsu/scale-codec-js-library/blob/master/packages/core/src/codecs/int.ts
 export const encodePositiveBigIntInto = (
   value: bigint,
   u8a: Uint8Array,

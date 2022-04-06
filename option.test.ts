@@ -1,9 +1,9 @@
 import * as s from "/mod.ts";
-import { fixtures, visitFixtures } from "/test-util.ts";
+import * as f from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Options", () => {
-  visitFixtures<string>(fixtures.option_, (bytes, decoded, i) => {
+  f.visitFixtures(f.fixtures.option_, (bytes, decoded, i) => {
     const o = new s.Option(
       {
         0: s.str,
@@ -13,8 +13,9 @@ Deno.test("Options", () => {
         4: undefined,
       }[i]!,
     );
-    const parsed = JSON.parse(decoded) || undefined;
-    asserts.assertEquals(o.decode(bytes), parsed);
-    asserts.assertEquals(o.encode(parsed), bytes);
+    asserts.assertEquals(o.decode(bytes), decoded);
+    asserts.assertEquals(o.encode(decoded), bytes);
+  }, (raw: string) => {
+    return JSON.parse(raw) || undefined;
   });
 });

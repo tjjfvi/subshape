@@ -6,6 +6,8 @@ const MAX_U8 = 2 ** (8 - 2) - 1;
 const MAX_U16 = 2 ** (16 - 2) - 1;
 const MAX_U32 = 2 ** (32 - 2) - 1;
 
+// https://github.com/soramitsu/scale-codec-js-library/blob/master/packages/core/src/codecs/compact.ts
+// TODO: clean this up a bit / simplify
 export const compact = new Codec<number | bigint>(
   (value) => {
     if (value <= MAX_U8) {

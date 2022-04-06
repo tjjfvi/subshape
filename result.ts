@@ -1,72 +1,78 @@
 import { Codec, Native } from "/common.ts";
-import { NativeRecord, Record, RecordField } from "/record.ts";
+import { Union } from "/union.ts";
+
+export interface DataBearer<D> {
+  data: D;
+}
 
 export class Err<
-  Ctor extends new(props: NativeRecord<FieldCodecs>) => Error = new() => Error,
-  FieldCodecs extends RecordField[] = RecordField[],
+  ErrDataCodec extends Codec = Codec,
+  Ctor extends new(errData: Native<ErrDataCodec>) => Error & DataBearer<Native<ErrDataCodec>> = new(
+    err: Native<ErrDataCodec>,
+  ) => Error & Native<ErrDataCodec>,
 > extends Codec<InstanceType<Ctor>> {
   constructor(
     ctor: Ctor,
-    ...fieldCodecs: FieldCodecs
+    errDataCodec: ErrDataCodec,
   ) {
     super(
       (value) => {
-        return fieldCodecs.reduce((acc, fieldEncoder) => {
-          return acc + fieldEncoder._s(value);
-        }, 0);
+        // TODO: confirm the `as` doesn't cause problems elsewhere
+        return errDataCodec._s(value.data);
       },
       (cursor, value) => {
-        fieldCodecs.forEach((fieldEncoder) => {
-          fieldEncoder._e(cursor, value);
-        });
+        // TODO: confirm the `as` doesn't cause problems elsewhere
+        return errDataCodec._e(cursor, value.data);
       },
       (cursor) => {
-        return new ctor(new Record(...fieldCodecs)._d(cursor)) as InstanceType<Ctor>;
+        return new ctor(errDataCodec._d(cursor) as Native<ErrDataCodec>) as InstanceType<Ctor>;
       },
     );
   }
 }
 
-export class Ok<T> {
-  constructor(readonly value: T) {}
+export interface OkBearer<T = any> {
+  ok: T;
 }
 
-// Make union
-export class Result<
-  ErrCodec extends Err,
-  OkCodec extends Codec,
-> extends Codec<Native<ErrCodec> | Ok<Native<OkCodec>>> {
+export class Ok<
+  ValueCodec extends Codec = Codec,
+  Ctor extends new(ok: Native<ValueCodec>) => OkBearer<Native<ValueCodec>> = new(
+    ok: Native<ValueCodec>,
+  ) => OkBearer<Native<ValueCodec>>,
+> extends Codec<InstanceType<Ctor>> {
   constructor(
-    errCodec: ErrCodec,
-    okCodec: OkCodec,
+    ctor: Ctor,
+    valueCodec: ValueCodec,
   ) {
     super(
       (value) => {
-        return 1 + (value instanceof Error ? errCodec._s(value) : okCodec._s(value.value));
+        return valueCodec._s(value.ok);
       },
       (cursor, value) => {
-        if (value instanceof Error) {
-          cursor.view.setUint8(cursor.i, 1);
-          cursor.i += 1;
-          errCodec._e(cursor, value);
-        } else {
-          cursor.view.setUint8(cursor.i, 0);
-          cursor.i += 1;
-          okCodec._e(cursor, value.value);
-        }
+        valueCodec._e(cursor, value.ok);
       },
       (cursor) => {
-        const succeeded = cursor.view.getUint8(cursor.i);
-        cursor.i += 1;
-        switch (succeeded as 0 | 1) {
-          case 0: {
-            return new Ok(okCodec._d(cursor));
-          }
-          case 1: {
-            return errCodec._d(cursor) as Native<ErrCodec>;
-          }
-        }
+        return new ctor(valueCodec._d(cursor)) as InstanceType<Ctor>;
       },
+    );
+  }
+}
+
+export class Result<
+  OkCodec extends Ok,
+  ErrCodec extends Err,
+> extends Union<[OkCodec, ErrCodec]> {
+  constructor(
+    okCodec: OkCodec,
+    errCodec: ErrCodec,
+  ) {
+    super(
+      (value) => {
+        return value instanceof Error ? 1 : 0;
+      },
+      okCodec,
+      errCodec,
     );
   }
 }

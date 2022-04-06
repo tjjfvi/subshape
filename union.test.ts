@@ -1,20 +1,6 @@
 import * as s from "/mod.ts";
-import { fixtures, visitFixtures } from "/test-util.ts";
+import * as f from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
-
-// TODO: clean up this normalization
-const normalize = (raw: string): Record<PropertyKey, any> => {
-  const parsed = JSON.parse(raw);
-  if (typeof parsed === "string") {
-    return { _tag: parsed };
-  }
-  const tag = Object.keys(parsed)[0]!;
-  const { [tag]: value } = parsed;
-  return {
-    _tag: tag,
-    [tag]: tag === "C" ? [value[0], BigInt(value[1])] : tag === "D" ? { a: value.a, b: BigInt(value.b) } : value,
-  };
-};
 
 Deno.test("Unions", () => {
   const c = new s.TaggedUnion(
@@ -33,9 +19,20 @@ Deno.test("Unions", () => {
     ),
   );
 
-  visitFixtures<string>(fixtures.tagged_union_, (bytes, decoded) => {
-    const normalized = normalize(decoded);
-    asserts.assertEquals(c.decode(bytes), normalized);
-    asserts.assertEquals(c.encode(normalized as any), bytes);
+  f.visitFixtures(f.fixtures.tagged_union_, (bytes, decoded) => {
+    asserts.assertEquals(c.decode(bytes), decoded);
+    asserts.assertEquals(c.encode(decoded as any), bytes);
+  }, (raw: string) => {
+    // TODO: clean up this normalization
+    const parsed = JSON.parse(raw);
+    if (typeof parsed === "string") {
+      return { _tag: parsed };
+    }
+    const tag = Object.keys(parsed)[0]!;
+    const { [tag]: value } = parsed;
+    return {
+      _tag: tag,
+      [tag]: tag === "C" ? [value[0], BigInt(value[1])] : tag === "D" ? { a: value.a, b: BigInt(value.b) } : value,
+    };
   });
 });

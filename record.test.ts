@@ -1,15 +1,6 @@
 import * as s from "/mod.ts";
-import { fixtures, visitFixtures } from "/test-util.ts";
+import * as f from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
-
-const normalize = (raw: string): Record<PropertyKey, any> => {
-  return Object.entries(JSON.parse(raw)).reduce<Record<PropertyKey, any>>((acc, [key, value]) => {
-    return {
-      ...acc,
-      [key]: value === null ? undefined : value,
-    };
-  }, {});
-};
 
 Deno.test("Records", () => {
   const c = new s.Record(
@@ -18,9 +9,15 @@ Deno.test("Records", () => {
     new s.RecordField("superPower", new s.Option(s.str)),
     new s.RecordField("luckyNumber", s.u8),
   );
-  visitFixtures<string>(fixtures.record_, (bytes, decoded) => {
-    const normalized = normalize(decoded);
-    asserts.assertEquals(c.decode(bytes), normalized);
-    asserts.assertEquals(c.encode(normalized as any), bytes);
+  f.visitFixtures(f.fixtures.record_, (bytes, decoded) => {
+    asserts.assertEquals(c.decode(bytes), decoded);
+    asserts.assertEquals(c.encode(decoded as any), bytes);
+  }, (raw: string) => {
+    return Object.entries(JSON.parse(raw)).reduce<Record<PropertyKey, any>>((acc, [key, value]) => {
+      return {
+        ...acc,
+        [key]: value === null ? undefined : value,
+      };
+    }, {});
   });
 });

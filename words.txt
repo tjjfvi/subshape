@@ -4,5 +4,6 @@ cummon
 bitvec
 xffn
 dprint
+soramitsu
 hydrokinesis
 magz
