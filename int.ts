@@ -1,8 +1,8 @@
-import { ByteLen, Codec } from "/common.ts";
+import { Codec } from "/common.ts";
 
 class NumCodec<T extends number | bigint> extends Codec<T> {
   constructor(
-    readonly len: ByteLen,
+    readonly len: number,
     readonly setter: (dv: DataView, i: number, value: T) => void,
     readonly getter: (dv: DataView, i: number) => T,
   ) {
@@ -24,49 +24,49 @@ class NumCodec<T extends number | bigint> extends Codec<T> {
 }
 
 export const u8 = new NumCodec<number>(
-  ByteLen._1,
+  1,
   (dv, i, value) => dv.setUint8(i, value),
   (dv, i) => dv.getUint8(i),
 );
 
 export const i8 = new NumCodec<number>(
-  ByteLen._1,
+  1,
   (dv, i, value) => dv.setInt8(i, value),
   (dv, i) => dv.getInt8(i),
 );
 
 export const u16 = new NumCodec<number>(
-  ByteLen._2,
+  2,
   (dv, i, value) => dv.setUint16(i, value, true),
   (dv, i) => dv.getUint16(i, true),
 );
 
 export const i16 = new NumCodec<number>(
-  ByteLen._2,
+  2,
   (dv, i, value) => dv.setInt16(i, value, true),
   (dv, i) => dv.getInt16(i, true),
 );
 
 export const u32 = new NumCodec<number>(
-  ByteLen._4,
+  4,
   (dv, i, value) => dv.setUint32(i, value, true),
   (dv, i) => dv.getUint32(i, true),
 );
 
 export const i32 = new NumCodec<number>(
-  ByteLen._4,
+  4,
   (dv, i, value) => dv.setInt32(i, value, true),
   (dv, i) => dv.getInt32(i, true),
 );
 
 export const u64 = new NumCodec<bigint>(
-  ByteLen._8,
+  8,
   (dv, i, value) => dv.setBigUint64(i, value, true),
   (dv, i) => dv.getBigUint64(i, true),
 );
 
 export const i64 = new NumCodec<bigint>(
-  ByteLen._8,
+  8,
   (dv, i, value) => dv.setBigInt64(i, value, true),
   (dv, i) => dv.getBigInt64(i, true),
 );
@@ -75,27 +75,27 @@ class X128 extends Codec<bigint> {
   constructor(signed: boolean) {
     super(
       () => {
-        return ByteLen._16;
+        return 16;
       },
       (cursor, value) => {
         if (value < 0) {
-          value = BigInt.asUintN(ByteLen._16 * 8, value);
+          value = BigInt.asUintN(16 * 8, value);
         }
         encodePositiveBigIntInto(value, cursor.u8a, cursor.i, 16);
-        cursor.i += ByteLen._16;
+        cursor.i += 16;
       },
       (cursor) => {
         let value = 0n;
-        for (let i = 0, shift = 0n; i < ByteLen._16; i++, shift += 8n) {
+        for (let i = 0, shift = 0n; i < 16; i++, shift += 8n) {
           value += BigInt(cursor.u8a[cursor.i + i]!) << shift;
         }
         if (signed) {
-          const isNegative = (cursor.u8a[cursor.i + ByteLen._16 - 1]! & 0b1000_0000) >> 7 === 1;
+          const isNegative = (cursor.u8a[cursor.i + 16 - 1]! & 0b1000_0000) >> 7 === 1;
           if (isNegative) {
-            value = BigInt.asIntN(ByteLen._16 * 8, value);
+            value = BigInt.asIntN(16 * 8, value);
           }
         }
-        cursor.i += ByteLen._16;
+        cursor.i += 16;
         return value;
       },
     );

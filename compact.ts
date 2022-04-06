@@ -1,4 +1,4 @@
-import { ByteLen, Codec } from "/common.ts";
+import { Codec } from "/common.ts";
 import { encodePositiveBigIntInto } from "/int.ts";
 import { u16, u32, u8 } from "/int.ts";
 
@@ -9,13 +9,13 @@ const MAX_U32 = 2 ** (32 - 2) - 1;
 export const compact = new Codec<number | bigint>(
   (value) => {
     if (value <= MAX_U8) {
-      return ByteLen._1;
+      return 1;
     }
     if (value <= MAX_U16) {
-      return ByteLen._2;
+      return 2;
     }
     if (value <= MAX_U32) {
-      return ByteLen._4;
+      return 4;
     }
     let count = 0;
     let asBigInt = BigInt(value);
@@ -23,7 +23,7 @@ export const compact = new Codec<number | bigint>(
       count++;
       asBigInt >>= 8n;
     }
-    return ByteLen._1 + count;
+    return 1 + count;
   },
   (cursor, value) => {
     if (value <= MAX_U8) {
@@ -40,7 +40,7 @@ export const compact = new Codec<number | bigint>(
     }
     const bytesLength = encodePositiveBigIntInto(BigInt(value), cursor.u8a, cursor.i + 1, Infinity);
     cursor.u8a[cursor.i] = ((bytesLength - 4) << 2) + 0b11;
-    cursor.i += ByteLen._1 + bytesLength;
+    cursor.i += 1 + bytesLength;
   },
   (cursor) => {
     const b = u8._d(cursor);

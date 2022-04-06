@@ -43,11 +43,3 @@ export class Codec<T = any> {
     return this._d(new Cursor(u8a));
   };
 }
-
-export const enum ByteLen {
-  _1 = 1,
-  _2 = 1 << 1,
-  _4 = 1 << 2,
-  _8 = 1 << 3,
-  _16 = 1 << 4,
-}
