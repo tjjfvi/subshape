@@ -11,7 +11,9 @@ npm install scale
 ```
 
 > NOTE: This is not yet published (while WIP, clone and use a local copy)
+
 > NOTE: The published package name is subject to change, as we may not be able to get `scale`
+
 > Deno users can reference the library root from `https://deno.land/x/scale/mod.ts`.
 
 ## Usage
