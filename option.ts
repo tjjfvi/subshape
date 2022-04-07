@@ -1,4 +1,3 @@
-import { Bool } from "/bool.ts";
 import { Codec, Native } from "/common.ts";
 import { u8 } from "/int.ts";
 
