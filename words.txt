@@ -7,3 +7,6 @@ dprint
 soramitsu
 hydrokinesis
 magz
+deno
+combinators
+typeof
