@@ -3,17 +3,17 @@ import * as f from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Unions", () => {
-  const c = new s.TaggedUnion(
-    new s.TaggedUnionMember("A"),
-    new s.TaggedUnionMember("B", new s.RecordField("B", s.str)),
-    new s.TaggedUnionMember("C", new s.RecordField("C", new s.Tuple(s.u32, s.u64))),
-    new s.TaggedUnionMember(
+  const c = s.taggedUnion(
+    s.taggedUnionMember("A"),
+    s.taggedUnionMember("B", s.recordField("B", s.str)),
+    s.taggedUnionMember("C", s.recordField("C", s.tuple(s.u32, s.u64))),
+    s.taggedUnionMember(
       "D",
-      new s.RecordField(
+      s.recordField(
         "D",
-        new s.Record(
-          new s.RecordField("a", s.u32),
-          new s.RecordField("b", s.u64),
+        s.record(
+          s.recordField("a", s.u32),
+          s.recordField("b", s.u64),
         ),
       ),
     ),

@@ -1,5 +1,5 @@
 import { Codec, Native } from "/common.ts";
-import { Dummy } from "/dummy.ts";
+import { dummy } from "/dummy.ts";
 import { u8 } from "/int.ts";
 import { Record, RecordField } from "/record.ts";
 
@@ -28,6 +28,12 @@ export class Union<MemberCodecs extends Codec[]> extends Codec<NativeUnion<Membe
     );
   }
 }
+export const union = <MemberCodecs extends Codec[]>(
+  discriminate: (value: NativeUnion<MemberCodecs>) => number,
+  ...memberCodecs: MemberCodecs
+): Union<MemberCodecs> => {
+  return new Union(discriminate, ...memberCodecs);
+};
 
 export class TaggedUnionMember<
   MemberTag extends PropertyKey = PropertyKey,
@@ -38,11 +44,21 @@ export class TaggedUnionMember<
     ...fieldCodec: FieldCodecs
   ) {
     super(
-      new RecordField("_tag", Dummy(memberTag)),
+      new RecordField("_tag", dummy(memberTag)),
       ...fieldCodec,
     );
   }
 }
+
+export const taggedUnionMember = <
+  MemberTag extends PropertyKey = PropertyKey,
+  FieldCodecs extends RecordField[] = RecordField[],
+>(
+  memberTag: MemberTag,
+  ...fieldCodecs: FieldCodecs
+): TaggedUnionMember<MemberTag, FieldCodecs> => {
+  return new TaggedUnionMember(memberTag, ...fieldCodecs);
+};
 
 // TODO: get rid of contravariant incompatibility without typing member constraint tags as `any`
 export class TaggedUnion<MemberCodecs extends TaggedUnionMember<any>[] = TaggedUnionMember<any>[]>
@@ -57,3 +73,9 @@ export class TaggedUnion<MemberCodecs extends TaggedUnionMember<any>[] = TaggedU
     );
   }
 }
+// TODO: same thing here
+export const taggedUnion = <MemberCodecs extends TaggedUnionMember<any>[]>(
+  ...memberCodecs: MemberCodecs
+): TaggedUnion<MemberCodecs> => {
+  return new TaggedUnion(...memberCodecs);
+};

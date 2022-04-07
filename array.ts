@@ -37,6 +37,15 @@ export class SizedArray<
     );
   }
 }
+export const sizedArray = <
+  ElCodec extends Codec,
+  Len extends number,
+>(
+  elCodec: ElCodec,
+  len: Len,
+): SizedArray<ElCodec, Len> => {
+  return new SizedArray(elCodec, len);
+};
 
 export class Array<ElCodec extends Codec> extends Codec<NativeArray<ElCodec>> {
   constructor(elCodec: ElCodec) {
@@ -54,3 +63,6 @@ export class Array<ElCodec extends Codec> extends Codec<NativeArray<ElCodec>> {
     );
   }
 }
+export const array = <ElCodec extends Codec>(elCodec: ElCodec): Array<ElCodec> => {
+  return new Array(elCodec);
+};

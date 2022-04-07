@@ -1,17 +1,17 @@
 import { Codec, Native } from "/common.ts";
 import { u8 } from "/int.ts";
 
-export class Option<Some extends Codec> extends Codec<Native<Some> | undefined> {
-  constructor(readonly some: Some) {
+export class Option<SomeCodec extends Codec> extends Codec<Native<SomeCodec> | undefined> {
+  constructor(readonly someCodec: SomeCodec) {
     super(
       (value) => {
-        return value ? some._s(value) + 1 : 1;
+        return value ? someCodec._s(value) + 1 : 1;
       },
       (cursor, value) => {
         cursor.view.setUint8(cursor.i, Number(!!value));
         cursor.i++;
         if (value) {
-          some._e(cursor, value);
+          someCodec._e(cursor, value);
         }
       },
       (cursor) => {
@@ -20,10 +20,13 @@ export class Option<Some extends Codec> extends Codec<Native<Some> | undefined> 
             return undefined;
           }
           case 1: {
-            return some._d(cursor);
+            return someCodec._d(cursor);
           }
         }
       },
     );
   }
 }
+export const option = <SomeCodec extends Codec>(someCodec: SomeCodec): Option<SomeCodec> => {
+  return new Option(someCodec);
+};

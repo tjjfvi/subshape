@@ -34,6 +34,15 @@ export class RecordField<
     );
   }
 }
+export const recordField = <
+  Key extends PropertyKey = PropertyKey,
+  ValueCodec extends Codec = Codec,
+>(
+  key: Key,
+  valueCodec: ValueCodec,
+): RecordField<Key, ValueCodec> => {
+  return new RecordField(key, valueCodec);
+};
 
 export class Record<FieldCodecs extends RecordField[] = RecordField[]> extends Codec<NativeRecord<FieldCodecs>> {
   constructor(...fieldCodecs: FieldCodecs) {
@@ -59,3 +68,6 @@ export class Record<FieldCodecs extends RecordField[] = RecordField[]> extends C
     );
   }
 }
+export const record = <FieldCodecs extends RecordField[]>(...fieldCodecs: FieldCodecs): Record<FieldCodecs> => {
+  return new Record(...fieldCodecs);
+};
