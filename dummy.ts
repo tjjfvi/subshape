@@ -5,7 +5,7 @@ import { Codec, Native } from "/common.ts";
  * @param value The native value corresponding to the generically-supplied codec
  * @returns A dummy codec with the patched signature of `E`
  */
-export const Dummy = <E extends Codec>(value: Native<E>): E => {
+export const dummy = <E extends Codec>(value: Native<E>): E => {
   return new Codec(
     (_value) => {
       return 0;

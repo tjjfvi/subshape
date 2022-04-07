@@ -4,7 +4,7 @@ import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Tuples", () => {
   f.visitFixtures(f.fixtures.tuple_, (bytes, decoded, i) => {
-    const t = new s.Tuple(
+    const t = s.tuple(
       ...{
         0: [s.str, s.u8, s.str, s.u32],
         1: [s.str, s.i16, new s.Option(s.u16)],

@@ -4,7 +4,7 @@ import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Options", () => {
   f.visitFixtures(f.fixtures.option_, (bytes, decoded, i) => {
-    const o = new s.Option(
+    const o = s.option(
       {
         0: s.str,
         1: s.u8,

@@ -3,11 +3,11 @@ import * as f from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Records", () => {
-  const c = new s.Record(
-    new s.RecordField("name", s.str),
-    new s.RecordField("nickName", s.str),
-    new s.RecordField("superPower", new s.Option(s.str)),
-    new s.RecordField("luckyNumber", s.u8),
+  const c = s.record(
+    s.recordField("name", s.str),
+    s.recordField("nickName", s.str),
+    s.recordField("superPower", s.option(s.str)),
+    s.recordField("luckyNumber", s.u8),
   );
   f.visitFixtures(f.fixtures.record_, (bytes, decoded) => {
     asserts.assertEquals(c.decode(bytes), decoded);

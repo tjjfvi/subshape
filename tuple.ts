@@ -1,14 +1,14 @@
 import { Codec } from "/common.ts";
 
-export type NativeTuple<Els extends Codec[]> = {
-  [I in keyof Els]: NativeTuple._0<Els[I]>;
+export type NativeTuple<ElCodecs extends Codec[]> = {
+  [I in keyof ElCodecs]: NativeTuple._0<ElCodecs[I]>;
 };
 namespace NativeTuple {
   export type _0<I> = I extends Codec<infer T> ? T : I;
 }
 
-export class Tuple<ElementCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple<ElementCodecs>> {
-  constructor(...elCodecs: ElementCodecs) {
+export class Tuple<ElCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple<ElCodecs>> {
+  constructor(...elCodecs: ElCodecs) {
     super(
       (value) => {
         let size = 0;
@@ -26,8 +26,12 @@ export class Tuple<ElementCodecs extends Codec[] = Codec[]> extends Codec<Native
       (cursor) => {
         return elCodecs.map((elCodec) => {
           return elCodec._d(cursor);
-        }) as NativeTuple<ElementCodecs>;
+        }) as NativeTuple<ElCodecs>;
       },
     );
   }
 }
+
+export const tuple = <ElCodecs extends Codec[]>(...elCodecs: ElCodecs): Tuple<ElCodecs> => {
+  return new Tuple(...elCodecs);
+};
