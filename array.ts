@@ -17,19 +17,19 @@ export class SizedArray<
     super(
       (value) => {
         let sum = 0;
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < len; i += 1) {
           sum += elCodec._s(value[i]);
         }
         return sum;
       },
       (cursor, value) => {
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < len; i += 1) {
           elCodec._e(cursor, value[i]);
         }
       },
       (cursor) => {
         const result: Native<ElCodec>[] = [];
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < len; i += 1) {
           result.push(elCodec._d(cursor));
         }
         return result as NativeArray<ElCodec, Len>;

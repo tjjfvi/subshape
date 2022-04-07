@@ -86,7 +86,7 @@ class X128 extends Codec<bigint> {
       },
       (cursor) => {
         let value = 0n;
-        for (let i = 0, shift = 0n; i < 16; i++, shift += 8n) {
+        for (let i = 0, shift = 0n; i < 16; i += 1, shift += 8n) {
           value += BigInt(cursor.u8a[cursor.i + i]!) << shift;
         }
         if (signed) {

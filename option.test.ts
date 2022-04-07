@@ -19,3 +19,10 @@ Deno.test("Options", () => {
     return JSON.parse(raw) || undefined;
   });
 });
+
+Deno.test("Boolean Options", () => {
+  f.visitFixtures(f.fixtures.bool_option_, (bytes, decoded, i) => {
+    asserts.assertEquals(s.option(s.bool).decode(bytes), decoded);
+    asserts.assertEquals(s.option(s.bool).encode(decoded), bytes);
+  }, f.constrainedIdentity<boolean | undefined>());
+});
