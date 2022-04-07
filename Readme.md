@@ -14,8 +14,6 @@ npm install scale
 
 ## Usage
 
-The DX of defining shapes is similar to that of using parser combinators.
-
 1. Import the library
 2. Define a codec via the library's functions, whose names correspond to types
 3. Utilize the codec you've defined
@@ -62,7 +60,7 @@ interface NativeType {
 }
 ```
 
-In some cases (with exceptionally-large codecs, we may want to spare the checker of extra work).
+In cases where codecs are exceptionally large, we may want to spare the TS checker of extra work.
 
 ```diff
 - const codec = s.record(
