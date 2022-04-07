@@ -19,7 +19,7 @@ export class Tuple<ElCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple
         return size;
       },
       (cursor, value) => {
-        for (let i = 0; i < value.length; i++) {
+        for (let i = 0; i < value.length; i += 1) {
           elCodecs[i]!._e(cursor, value[i]);
         }
       },

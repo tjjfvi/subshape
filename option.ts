@@ -5,11 +5,11 @@ export class Option<SomeCodec extends Codec> extends Codec<Native<SomeCodec> | u
   constructor(readonly someCodec: SomeCodec) {
     super(
       (value) => {
-        return value ? someCodec._s(value) + 1 : 1;
+        return 1 + (value === undefined ? 0 : someCodec._s(value));
       },
       (cursor, value) => {
-        cursor.view.setUint8(cursor.i, Number(!!value));
-        cursor.i++;
+        cursor.view.setUint8(cursor.i, value === undefined ? 0 : 1);
+        cursor.i += 1;
         if (value) {
           someCodec._e(cursor, value);
         }

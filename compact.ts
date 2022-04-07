@@ -22,7 +22,7 @@ export const compact = new Codec<number | bigint>(
     let count = 0;
     let asBigInt = BigInt(value);
     while (asBigInt > 0) {
-      count++;
+      count += 1;
       asBigInt >>= 8n;
     }
     return 1 + count;
