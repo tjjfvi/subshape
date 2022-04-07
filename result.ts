@@ -1,92 +1,78 @@
-import { Decoder, Encoder, Native } from "/common.ts";
-import { RecordFieldEncoder } from "/record.ts";
-import { NativeTuple, TupleDecoder, TupleEncoder } from "/tuple.ts";
+import { Codec, Native } from "/common.ts";
+import { Union } from "/union.ts";
 
-export class ErrorDecoder<
-  ErrArgDecoders extends Decoder[],
-  ErrCtor extends new(...params: NativeTuple<ErrArgDecoders>) => Error,
-> extends Decoder<InstanceType<ErrCtor>> {
-  constructor(
-    errCtor: ErrCtor,
-    ...errArgDecoders: ErrArgDecoders
-  ) {
-    super((cursor) => {
-      const tuple = new TupleDecoder(...errArgDecoders);
-      return new errCtor(...tuple._d(cursor)) as InstanceType<ErrCtor>;
-    });
-  }
+export interface DataBearer<D> {
+  data: D;
 }
 
-export class ErrorEncoder<Err extends Error = Error> extends Encoder<Err> {
-  // TODO: narrow!
-  constructor(...fieldEncoders: RecordFieldEncoder[]) {
+export class Err<
+  ErrDataCodec extends Codec = Codec,
+  Ctor extends new(errData: Native<ErrDataCodec>) => Error & DataBearer<Native<ErrDataCodec>> = new(
+    err: Native<ErrDataCodec>,
+  ) => Error & Native<ErrDataCodec>,
+> extends Codec<InstanceType<Ctor>> {
+  constructor(
+    ctor: Ctor,
+    errDataCodec: ErrDataCodec,
+  ) {
     super(
-      (cursor, value) => {
-        fieldEncoders.forEach((fieldEncoder) => {
-          fieldEncoder._e(cursor, value);
-        });
-      },
       (value) => {
-        return fieldEncoders.reduce((acc, fieldEncoder) => {
-          return acc + fieldEncoder._s(value);
-        }, 0);
+        // TODO: confirm the `as` doesn't cause problems elsewhere
+        return errDataCodec._s(value.data);
+      },
+      (cursor, value) => {
+        // TODO: confirm the `as` doesn't cause problems elsewhere
+        return errDataCodec._e(cursor, value.data);
+      },
+      (cursor) => {
+        return new ctor(errDataCodec._d(cursor) as Native<ErrDataCodec>) as InstanceType<Ctor>;
       },
     );
   }
 }
 
-export class Ok<T> {
-  constructor(readonly value: T) {}
+export interface OkBearer<T = any> {
+  ok: T;
 }
 
-export class ResultDecoder<
-  OkDecoder extends Decoder,
-  ErrCtor extends new(...params: NativeTuple<ErrArgDecoders>) => Error,
-  ErrArgDecoders extends Decoder[],
-> extends Decoder<InstanceType<ErrCtor> | Ok<Native<OkDecoder>>> {
+export class Ok<
+  ValueCodec extends Codec = Codec,
+  Ctor extends new(ok: Native<ValueCodec>) => OkBearer<Native<ValueCodec>> = new(
+    ok: Native<ValueCodec>,
+  ) => OkBearer<Native<ValueCodec>>,
+> extends Codec<InstanceType<Ctor>> {
   constructor(
-    okDecoder: OkDecoder,
-    errCtor: ErrCtor,
-    ...errArgDecoders: ErrArgDecoders
+    ctor: Ctor,
+    valueCodec: ValueCodec,
   ) {
-    super((cursor) => {
-      const succeeded = cursor.view.getUint8(cursor.i);
-      cursor.i += 1;
-      switch (succeeded as 0 | 1) {
-        case 0: {
-          return new Ok(okDecoder._d(cursor));
-        }
-        case 1: {
-          return new errCtor(...new TupleDecoder(...errArgDecoders)._d(cursor)) as InstanceType<ErrCtor>;
-        }
-      }
-    });
+    super(
+      (value) => {
+        return valueCodec._s(value.ok);
+      },
+      (cursor, value) => {
+        valueCodec._e(cursor, value.ok);
+      },
+      (cursor) => {
+        return new ctor(valueCodec._d(cursor)) as InstanceType<Ctor>;
+      },
+    );
   }
 }
 
-export class ResultEncoder<
-  OkValueEncoder extends Encoder,
-  ErrEncoder extends ErrorEncoder,
-> extends Encoder<Ok<Native<OkValueEncoder>> | Native<ErrEncoder>> {
+export class Result<
+  OkCodec extends Ok,
+  ErrCodec extends Err,
+> extends Union<[OkCodec, ErrCodec]> {
   constructor(
-    okValueEncoder: OkValueEncoder,
-    errEncoder: ErrEncoder,
+    okCodec: OkCodec,
+    errCodec: ErrCodec,
   ) {
     super(
-      (cursor, value) => {
-        if (value instanceof Error) {
-          cursor.view.setUint8(cursor.i, 1);
-          cursor.i += 1;
-          errEncoder._e(cursor, value);
-        } else {
-          cursor.view.setUint8(cursor.i, 0);
-          cursor.i += 1;
-          okValueEncoder._e(cursor, value.value);
-        }
-      },
       (value) => {
-        return 1 + (value instanceof Error ? errEncoder._s(value) : okValueEncoder._s(value.value));
+        return value instanceof Error ? 1 : 0;
       },
+      okCodec,
+      errCodec,
     );
   }
 }

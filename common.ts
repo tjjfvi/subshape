@@ -7,37 +7,39 @@ export class Cursor {
   }
 }
 
-export type Transcoder<Native = any> = Encoder<Native> | Decoder<Native>;
-export type Native<Transcoder_ extends Transcoder> = Transcoder_ extends Transcoder<infer Native> ? Native : never;
+export type Native<C extends Codec> = C extends Codec<infer N> ? N : never;
 
-export class Decoder<T = any> {
-  constructor(readonly _d: (cursor: Cursor) => T) {}
-
-  decode = (u8a: Uint8Array): T => {
-    return this._d(new Cursor(u8a));
-  };
-}
-
-export class Encoder<T = any> {
+/** A means of encoding and decoding a type `T` to and from its SCALE byte representation */
+export class Codec<T = any> {
+  /**
+   * @param _s Accepts the decoded value and returns its to-be-encoded size
+   * @param _e Accepts the cursor and value and writes its bytes into the cursor's byte array
+   * @param _d Decodes the currently-focused bytes into `T` and moves the cursor as is appropriate
+   */
   constructor(
+    readonly _s: (value: T) => number,
     readonly _e: (
       cursor: Cursor,
       value: T,
     ) => void,
-    readonly _s: (value: T) => number,
+    readonly _d: (cursor: Cursor) => T,
   ) {}
 
+  /**
+   * @param decoded the JS-native representation, `T`
+   * @returns the SCALE byte representation of `T`
+   */
   encode = (decoded: T): Uint8Array => {
     const cursor = new Cursor(new Uint8Array(this._s(decoded)));
     this._e(cursor, decoded);
     return cursor.u8a;
   };
-}
 
-export const enum ByteLen {
-  _1 = 1,
-  _2 = 1 << 1,
-  _4 = 1 << 2,
-  _8 = 1 << 3,
-  _16 = 1 << 4,
+  /**
+   * @param u8a the SCALE byte representation of `T`
+   * @returns the JS-native representation, `T`
+   */
+  decode = (u8a: Uint8Array): T => {
+    return this._d(new Cursor(u8a));
+  };
 }

@@ -1,18 +1,15 @@
-import { ByteLen, Decoder, Encoder } from "/common.ts";
-import { u8Decoder } from "/int.ts";
+import { Codec } from "/common.ts";
+import { u8 } from "/int.ts";
 
-/** Decode a boolean */
-export const boolDecoder = new Decoder<boolean>((cursor) => {
-  return !!u8Decoder._d(cursor);
-});
-
-/** Encode a boolean */
-export const boolEncoder = new Encoder<boolean>(
+export const bool = new Codec<boolean>(
+  () => {
+    return 1;
+  },
   (cursor, value) => {
     cursor.view.setUint8(cursor.i, Number(value));
-    cursor.i += ByteLen._1;
+    cursor.i += 1;
   },
-  () => {
-    return ByteLen._1;
+  (cursor) => {
+    return !!u8._d(cursor);
   },
 );

@@ -1,27 +1,18 @@
 import * as s from "/mod.ts";
-import { fixtures, visitFixtures } from "/test-util.ts";
+import * as f from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Tuples", () => {
-  visitFixtures<string>(fixtures.tuple_, (bytes, decoded, i) => {
-    const parsed = JSON.parse(decoded);
-    asserts.assertEquals(
-      new s.TupleDecoder(
-        ...{
-          0: [s.strDecoder, s.u8Decoder, s.strDecoder, s.u32Decoder],
-          1: [s.strDecoder, s.i16Decoder, new s.OptionDecoder(s.u16Decoder)],
-        }[i]!,
-      ).decode(bytes),
-      parsed,
+  f.visitFixtures(f.fixtures.tuple_, (bytes, decoded, i) => {
+    const t = new s.Tuple(
+      ...{
+        0: [s.str, s.u8, s.str, s.u32],
+        1: [s.str, s.i16, new s.Option(s.u16)],
+      }[i]!,
     );
-    asserts.assertEquals(
-      new s.TupleEncoder(
-        ...{
-          0: [s.strEncoder, s.u8Encoder, s.strEncoder, s.u32Encoder],
-          1: [s.strEncoder, s.i16Encoder, new s.OptionEncoder(s.u16Encoder)],
-        }[i]!,
-      ).encode(parsed),
-      bytes,
-    );
+    asserts.assertEquals(t.decode(bytes), decoded);
+    asserts.assertEquals(t.encode(decoded), bytes);
+  }, (raw: string) => {
+    return JSON.parse(raw);
   });
 });

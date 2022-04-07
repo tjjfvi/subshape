@@ -1,94 +1,59 @@
-import { Decoder, Encoder, Native, Transcoder } from "/common.ts";
-import { u8Decoder, u8Encoder } from "/int.ts";
-import { LiteralDecoder, LiteralEncoder } from "/literal.ts";
-import { RecordDecoder, RecordEncoder, RecordFieldDecoder, RecordFieldEncoder } from "/record.ts";
+import { Codec, Native } from "/common.ts";
+import { Dummy } from "/dummy.ts";
+import { u8 } from "/int.ts";
+import { Record, RecordField } from "/record.ts";
 
-export type NativeUnion<Members extends Transcoder[] = Transcoder[]> = Native<Members[number]>;
+export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
 
-/** Decode a union */
-export class UnionDecoder<MemberDecoders extends RecordDecoder[]> extends Decoder<NativeUnion<MemberDecoders>> {
-  /**
-   * @param memberDecoders The ordered member decoders
-   */
-  constructor(...memberDecoders: MemberDecoders) {
-    super((cursor) => {
-      const discriminant = u8Decoder._d(cursor);
-      // TODO: ensure this is the correct type-level behavior
-      return memberDecoders[discriminant]!._d(cursor) as NativeUnion<MemberDecoders>;
-    });
-  }
-}
-
-/** Encode a union */
-export class UnionEncoder<MemberEncoders extends Encoder[]> extends Encoder<NativeUnion<MemberEncoders>> {
-  /**
-   * @param discriminate A function which accepts the decoded value and returns the encoder with which to encode the value
-   */
+export class Union<MemberCodecs extends Codec[]> extends Codec<NativeUnion<MemberCodecs>> {
   constructor(
-    readonly discriminate: (value: NativeUnion<MemberEncoders>) => number,
-    ...memberEncoders: MemberEncoders
+    readonly discriminate: (value: NativeUnion<MemberCodecs>) => number,
+    ...memberCodecs: MemberCodecs
   ) {
     super(
+      (value) => {
+        return 1 + memberCodecs[discriminate(value)]!._s(value);
+      },
       (cursor, value) => {
         const discriminant = discriminate(value);
-        u8Encoder._e(cursor, discriminant);
-        const memberEncoder = memberEncoders[discriminant]!;
+        u8._e(cursor, discriminant);
+        const memberEncoder = memberCodecs[discriminant]!;
         memberEncoder._e(cursor, value);
       },
-      (value) => {
-        return 1 + memberEncoders[discriminate(value)]!._s(value);
+      (cursor) => {
+        const discriminant = u8._d(cursor);
+        // TODO: ensure this is the correct type-level behavior
+        return memberCodecs[discriminant]!._d(cursor) as NativeUnion<MemberCodecs>;
       },
     );
   }
 }
 
-export const Tag = Symbol.for("scale.Tag");
-export type Tag = typeof Tag;
-
-export class TaggedUnionMemberDecoder<
+export class TaggedUnionMember<
   MemberTag extends PropertyKey = PropertyKey,
-  FieldDecoders extends RecordFieldDecoder[] = RecordFieldDecoder[],
-> extends RecordDecoder<[RecordFieldDecoder<Tag, Decoder<MemberTag>>, ...FieldDecoders]> {
-  constructor(
-    memberTag: MemberTag,
-    ...fieldDecoders: FieldDecoders
-  ) {
-    super(
-      new RecordFieldDecoder(Tag, LiteralDecoder(memberTag)),
-      ...fieldDecoders,
-    );
-  }
-}
-
-export class TaggedUnionDecoder<MemberDecoders extends TaggedUnionMemberDecoder[]>
-  extends UnionDecoder<MemberDecoders>
-{
-  constructor(...memberDecoders: MemberDecoders) {
-    super(...memberDecoders);
-  }
-}
-
-export class TaggedUnionMemberEncoder<
-  MemberTag extends PropertyKey = PropertyKey,
-  FieldEncoders extends RecordFieldEncoder[] = RecordFieldEncoder[],
-> extends RecordEncoder<[RecordFieldEncoder<Tag, Encoder<MemberTag>>, ...FieldEncoders]> {
+  FieldCodecs extends RecordField[] = RecordField[],
+> extends Record<[RecordField<"_tag", Codec<MemberTag>>, ...FieldCodecs]> {
   constructor(
     readonly memberTag: MemberTag,
-    ...fieldEncoders: FieldEncoders
+    ...fieldCodec: FieldCodecs
   ) {
-    super(LiteralEncoder(), ...fieldEncoders);
+    super(
+      new RecordField("_tag", Dummy(memberTag)),
+      ...fieldCodec,
+    );
   }
 }
 
-export class TaggedUnionEncoder<MemberEncoders extends TaggedUnionMemberEncoder[] = TaggedUnionMemberEncoder[]>
-  extends UnionEncoder<MemberEncoders>
+// TODO: get rid of contravariant incompatibility without typing member constraint tags as `any`
+export class TaggedUnion<MemberCodecs extends TaggedUnionMember<any>[] = TaggedUnionMember<any>[]>
+  extends Union<MemberCodecs>
 {
-  constructor(...memberEncoders: MemberEncoders) {
+  constructor(...memberCodecs: MemberCodecs) {
     super(
       (value) => {
-        return memberEncoders.findIndex((memberEncoder) => memberEncoder.memberTag === value[Tag]);
+        return memberCodecs.findIndex((memberEncoder) => memberEncoder.memberTag === value._tag);
       },
-      ...memberEncoders,
+      ...memberCodecs,
     );
   }
 }

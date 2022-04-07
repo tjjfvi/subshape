@@ -1,99 +1,60 @@
-import { Decoder, Encoder, Native, Transcoder } from "/common.ts";
+import { Codec, Native } from "/common.ts";
 
 /** Native representation of a record field */
 export type NativeRecordField<
   Key extends PropertyKey = PropertyKey,
-  ValueTranscoder extends Transcoder = Transcoder,
-> = { [_ in Key]: Native<ValueTranscoder> };
+  ValueCodec extends Codec = Codec,
+> = { [_ in Key]: Native<ValueCodec> };
 
 /** Native representation of a record */
-export type NativeRecord<FieldTranscoders extends Transcoder<NativeRecordField>[] = Transcoder<NativeRecordField>[]> =
-  FieldTranscoders extends [] ? {}
-    : FieldTranscoders extends [Transcoder<infer FieldT>, ...infer ERest]
-      ? FieldT & (ERest extends Transcoder<NativeRecordField>[] ? NativeRecord<ERest> : never)
+export type NativeRecord<FieldCodec extends Codec<NativeRecordField>[] = Codec<NativeRecordField>[]> =
+  FieldCodec extends [] ? {}
+    : FieldCodec extends [Codec<infer FieldT>, ...infer ERest]
+      ? FieldT & (ERest extends Codec<NativeRecordField>[] ? NativeRecord<ERest> : never)
     : {};
 
-/** Decode a record field */
-export class RecordFieldDecoder<
+export class RecordField<
   Key extends PropertyKey = PropertyKey,
-  ValueDecoder extends Decoder = Decoder,
-> extends Decoder<NativeRecordField<Key, ValueDecoder>> {
-  /**
-   * @param key The key aside which the value should be decoded
-   * @param valueDecoder The field value decoder
-   */
+  ValueCodec extends Codec = Codec,
+> extends Codec<NativeRecordField<Key, ValueCodec>> {
   constructor(
     readonly key: Key,
-    readonly valueDecoder: ValueDecoder,
-  ) {
-    super((cursor) => {
-      return { [key]: valueDecoder._d(cursor) } as NativeRecordField<Key, ValueDecoder>;
-    });
-  }
-}
-
-/** Encode a record field */
-export class RecordFieldEncoder<
-  Key extends PropertyKey = PropertyKey,
-  ValueEncoder extends Encoder = Encoder,
-> extends Encoder<NativeRecordField<Key, ValueEncoder>> {
-  /**
-   * @param key The key with which the to-be-decoded value can be accessed
-   * @param valueEncoder The encoder to use on the `key`-accessed value
-   */
-  constructor(
-    readonly key: Key,
-    readonly valueEncoder: ValueEncoder,
+    readonly valueCodec: ValueCodec,
   ) {
     super(
-      (cursor, value) => {
-        return valueEncoder._e(cursor, value[key]);
-      },
       (value) => {
-        return valueEncoder._s(value[key]);
+        return valueCodec._s(value[key]);
+      },
+      (cursor, value) => {
+        return valueCodec._e(cursor, value[key]);
+      },
+      (cursor) => {
+        return { [key]: valueCodec._d(cursor) } as NativeRecordField<Key, ValueCodec>;
       },
     );
   }
 }
 
-/** Decode a record */
-export class RecordDecoder<FieldDecoders extends RecordFieldDecoder[] = RecordFieldDecoder[]>
-  extends Decoder<NativeRecord<FieldDecoders>>
-{
-  /**
-   * @param fieldDecoders The ordered list of record field decoders
-   */
-  constructor(...fieldDecoders: FieldDecoders) {
-    super((cursor) => {
-      return fieldDecoders.reduce<Partial<NativeRecord<FieldDecoders>>>((acc, fieldDecoder) => {
-        return {
-          ...acc,
-          ...fieldDecoder._d(cursor),
-        };
-      }, {}) as NativeRecord<FieldDecoders>;
-    });
-  }
-}
-
-// TODO: the `typeof fieldEncoder["T"]` assertion needs to go!
-/** Encode a record */
-export class RecordEncoder<FieldEncoders extends RecordFieldEncoder[] = RecordFieldEncoder[]>
-  extends Encoder<NativeRecord<FieldEncoders>>
-{
-  /**
-   * @param fieldsEncoders The ordered list of record field encoders
-   */
-  constructor(...fieldsEncoders: FieldEncoders) {
+export class Record<FieldCodecs extends RecordField[] = RecordField[]> extends Codec<NativeRecord<FieldCodecs>> {
+  constructor(...fieldCodecs: FieldCodecs) {
     super(
+      (value) => {
+        return fieldCodecs.reduce<number>((len, fieldEncoder) => {
+          return len + fieldEncoder._s(value);
+        }, 0);
+      },
       (cursor, value) => {
-        fieldsEncoders.forEach((fieldEncoder) => {
+        fieldCodecs.forEach((fieldEncoder) => {
           fieldEncoder._e(cursor, value);
         });
       },
-      (value) => {
-        return fieldsEncoders.reduce<number>((len, fieldEncoder) => {
-          return len + fieldEncoder._s(value);
-        }, 0);
+      (cursor) => {
+        return fieldCodecs.reduce<Partial<NativeRecord<FieldCodecs>>>((acc, fieldCodec) => {
+          return {
+            ...acc,
+            ...fieldCodec._d(cursor),
+          };
+        }, {}) as NativeRecord<FieldCodecs>;
       },
     );
   }
