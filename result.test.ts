@@ -28,7 +28,7 @@ Deno.test("Results", () => {
       case 5: {
         const c = new s.Result(
           undefined as any,
-          new s.Err(Err, new s.Record(new s.RecordField("a", s.str))),
+          new s.Err(Err, new s.Record(s.field("a", s.str))),
         );
         const d = c.decode(bytes);
         asserts.assert(d instanceof Err);
@@ -42,8 +42,8 @@ Deno.test("Results", () => {
           new s.Err(
             Err,
             new s.Record(
-              new s.RecordField(0, s.str),
-              new s.RecordField(1, s.str),
+              s.field(0, s.str),
+              s.field(1, s.str),
             ),
           ),
         );
@@ -56,7 +56,7 @@ Deno.test("Results", () => {
       case 7: {
         const c = new s.Result(
           undefined as any,
-          new s.Err(Err, new s.Record(new s.RecordField("x", s.str))),
+          new s.Err(Err, new s.Record(s.field("x", s.str))),
         );
         const d = c.decode(bytes);
         asserts.assert(d instanceof Err);

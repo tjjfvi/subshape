@@ -30,9 +30,9 @@ import * as s from "scale";
 
 // 2
 const codec = new s.record(
-  new s.recordField("name", s.str),
-  new s.recordField("nickName", s.str),
-  new s.recordField("superPower", s.option(s.str)),
+  new s.field("name", s.str),
+  new s.field("nickName", s.str),
+  new s.field("superPower", s.option(s.str)),
 );
 
 // 3
@@ -69,9 +69,9 @@ In cases where codecs are exceptionally large, we may want to spare the TS check
 ```diff
 - const codec = s.record(
 + const codec: Codec<NativeType> = s.record(
-    new s.recordField("name", s.str),
-    new s.recordField("nickName", s.str),
-    new s.recordField("superPower", s.option(s.str)),
+    new s.field("name", s.str),
+    new s.field("nickName", s.str),
+    new s.field("superPower", s.option(s.str)),
   );
 ```
 
@@ -79,8 +79,8 @@ This has the added benefit of producing type errors if the codec does not direct
 
 ```ts
 const codec: Codec<NativeType> = s.record(
-  s.recordField("nickName", s.str),
-  s.recordField("superPower", s.option(s.str)),
+  s.field("nickName", s.str),
+  s.field("superPower", s.option(s.str)),
 );
 
 // ^ type error: field `name` is missing from `codec`
@@ -147,9 +147,9 @@ const value = codec.decode(bytes);
 
 ```ts
 const codec = s.record(
-  s.recordField("name", s.str),
-  s.recordField("nickName", s.str),
-  s.recordField("superPower", s.option(s.str)),
+  s.field("name", s.str),
+  s.field("nickName", s.str),
+  s.field("superPower", s.option(s.str)),
 );
 
 const bytes = codec.encode({
@@ -190,8 +190,8 @@ const value2 = codec.decode(bytes2);
 
 ```ts
 const codec = s.taggedUnion(
-  s.taggedUnionMember("dog", s.recordField("bark", s.str)),
-  s.taggedUnionMember("cat", s.recordField("pur", s.str)),
+  s.taggedUnionMember("dog", s.field("bark", s.str)),
+  s.taggedUnionMember("cat", s.field("pur", s.str)),
 );
 
 const bytes1 = codec.encode({
@@ -214,7 +214,7 @@ interface MyErrData {
   message: string;
 }
 const myErrData = s.record(
-  s.recordField("message", s.str),
+  s.field("message", s.str),
 );
 class MyErr {
   constructor(readonly data: MyErrorData) {}

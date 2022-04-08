@@ -5,15 +5,15 @@ import * as asserts from "std/testing/asserts.ts";
 Deno.test("Unions", () => {
   const c = s.taggedUnion(
     s.taggedUnionMember("A"),
-    s.taggedUnionMember("B", s.recordField("B", s.str)),
-    s.taggedUnionMember("C", s.recordField("C", s.tuple(s.u32, s.u64))),
+    s.taggedUnionMember("B", s.field("B", s.str)),
+    s.taggedUnionMember("C", s.field("C", s.tuple(s.u32, s.u64))),
     s.taggedUnionMember(
       "D",
-      s.recordField(
+      s.field(
         "D",
         s.record(
-          s.recordField("a", s.u32),
-          s.recordField("b", s.u64),
+          s.field("a", s.u32),
+          s.field("b", s.u64),
         ),
       ),
     ),

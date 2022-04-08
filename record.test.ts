@@ -4,10 +4,10 @@ import * as asserts from "std/testing/asserts.ts";
 
 Deno.test("Records", () => {
   const c = s.record(
-    s.recordField("name", s.str),
-    s.recordField("nickName", s.str),
-    s.recordField("superPower", s.option(s.str)),
-    s.recordField("luckyNumber", s.u8),
+    s.field("name", s.str),
+    s.field("nickName", s.str),
+    s.field("superPower", s.option(s.str)),
+    s.field("luckyNumber", s.u8),
   );
   f.visitFixtures(f.fixtures.record_, (bytes, decoded) => {
     asserts.assertEquals(c.decode(bytes), decoded);
