@@ -1,7 +1,7 @@
 import { Codec, Native } from "/common.ts";
 import { dummy } from "/dummy.ts";
 import { u8 } from "/int.ts";
-import { Record, RecordField } from "/record.ts";
+import { Field, Record } from "/record.ts";
 
 export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
 
@@ -37,14 +37,14 @@ export const union = <MemberCodecs extends Codec[]>(
 
 export class TaggedUnionMember<
   MemberTag extends PropertyKey = PropertyKey,
-  FieldCodecs extends RecordField[] = RecordField[],
-> extends Record<[RecordField<"_tag", Codec<MemberTag>>, ...FieldCodecs]> {
+  FieldCodecs extends Field[] = Field[],
+> extends Record<[Field<"_tag", Codec<MemberTag>>, ...FieldCodecs]> {
   constructor(
     readonly memberTag: MemberTag,
     ...fieldCodec: FieldCodecs
   ) {
     super(
-      new RecordField("_tag", dummy(memberTag)),
+      new Field("_tag", dummy(memberTag)),
       ...fieldCodec,
     );
   }
@@ -52,7 +52,7 @@ export class TaggedUnionMember<
 
 export const taggedUnionMember = <
   MemberTag extends PropertyKey = PropertyKey,
-  FieldCodecs extends RecordField[] = RecordField[],
+  FieldCodecs extends Field[] = Field[],
 >(
   memberTag: MemberTag,
   ...fieldCodecs: FieldCodecs

@@ -1,22 +1,21 @@
 import { Codec, Native } from "/common.ts";
 
 /** Native representation of a record field */
-export type NativeRecordField<
+export type NativeField<
   Key extends PropertyKey = PropertyKey,
   ValueCodec extends Codec = Codec,
 > = { [_ in Key]: Native<ValueCodec> };
 
 /** Native representation of a record */
-export type NativeRecord<FieldCodec extends Codec<NativeRecordField>[] = Codec<NativeRecordField>[]> =
-  FieldCodec extends [] ? {}
-    : FieldCodec extends [Codec<infer FieldT>, ...infer ERest]
-      ? FieldT & (ERest extends Codec<NativeRecordField>[] ? NativeRecord<ERest> : never)
-    : {};
+export type NativeRecord<FieldCodec extends Codec<NativeField>[] = Codec<NativeField>[]> = FieldCodec extends [] ? {}
+  : FieldCodec extends [Codec<infer FieldT>, ...infer ERest]
+    ? FieldT & (ERest extends Codec<NativeField>[] ? NativeRecord<ERest> : never)
+  : {};
 
-export class RecordField<
+export class Field<
   Key extends PropertyKey = PropertyKey,
   ValueCodec extends Codec = Codec,
-> extends Codec<NativeRecordField<Key, ValueCodec>> {
+> extends Codec<NativeField<Key, ValueCodec>> {
   constructor(
     readonly key: Key,
     readonly valueCodec: ValueCodec,
@@ -29,22 +28,22 @@ export class RecordField<
         return valueCodec._e(cursor, value[key]);
       },
       (cursor) => {
-        return { [key]: valueCodec._d(cursor) } as NativeRecordField<Key, ValueCodec>;
+        return { [key]: valueCodec._d(cursor) } as NativeField<Key, ValueCodec>;
       },
     );
   }
 }
-export const recordField = <
+export const field = <
   Key extends PropertyKey = PropertyKey,
   ValueCodec extends Codec = Codec,
 >(
   key: Key,
   valueCodec: ValueCodec,
-): RecordField<Key, ValueCodec> => {
-  return new RecordField(key, valueCodec);
+): Field<Key, ValueCodec> => {
+  return new Field(key, valueCodec);
 };
 
-export class Record<FieldCodecs extends RecordField[] = RecordField[]> extends Codec<NativeRecord<FieldCodecs>> {
+export class Record<FieldCodecs extends Field[] = Field[]> extends Codec<NativeRecord<FieldCodecs>> {
   constructor(...fieldCodecs: FieldCodecs) {
     super(
       (value) => {
@@ -68,6 +67,6 @@ export class Record<FieldCodecs extends RecordField[] = RecordField[]> extends C
     );
   }
 }
-export const record = <FieldCodecs extends RecordField[]>(...fieldCodecs: FieldCodecs): Record<FieldCodecs> => {
+export const record = <FieldCodecs extends Field[]>(...fieldCodecs: FieldCodecs): Record<FieldCodecs> => {
   return new Record(...fieldCodecs);
 };
