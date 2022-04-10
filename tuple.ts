@@ -1,4 +1,4 @@
-import { Codec } from "/common.ts";
+import { Codec } from "./common.ts";
 
 export type NativeTuple<ElCodecs extends Codec[]> = {
   [I in keyof ElCodecs]: NativeTuple._0<ElCodecs[I]>;

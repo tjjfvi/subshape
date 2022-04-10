@@ -1,5 +1,5 @@
-import { Codec } from "/common.ts";
-import { u8 } from "/int.ts";
+import { Codec } from "./common.ts";
+import { u8 } from "./int.ts";
 
 export const bool = new Codec<boolean>(
   () => {

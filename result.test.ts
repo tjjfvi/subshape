@@ -1,6 +1,6 @@
-import * as s from "/mod.ts";
-import { fixtures, visitFixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
+import * as s from "./mod.ts";
+import { fixtures, visitFixtures } from "./test-util.ts";
 
 class Ok<T> implements s.OkBearer<T> {
   constructor(readonly ok: T) {}

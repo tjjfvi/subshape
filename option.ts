@@ -1,5 +1,5 @@
-import { Codec, Native } from "/common.ts";
-import { u8 } from "/int.ts";
+import { Codec, Native } from "./common.ts";
+import { u8 } from "./int.ts";
 
 export class Option<SomeCodec extends Codec> extends Codec<Native<SomeCodec> | undefined> {
   constructor(readonly someCodec: SomeCodec) {

@@ -1,5 +1,5 @@
-import { Codec, Native } from "/common.ts";
-import { compact } from "/compact.ts";
+import { Codec, Native } from "./common.ts";
+import { compact } from "./compact.ts";
 
 export type NativeArray<
   ElCodec extends Codec,

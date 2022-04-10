@@ -1,4 +1,4 @@
-import { Codec, Native } from "/common.ts";
+import { Codec, Native } from "./common.ts";
 
 /**
  * `Dummy`'s decoder returns a hard-coded JS value and DOES NOT encode any bytes.

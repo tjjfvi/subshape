@@ -1,5 +1,5 @@
-import { Codec, Native } from "/common.ts";
-import { Union } from "/union.ts";
+import { Codec, Native } from "./common.ts";
+import { Union } from "./union.ts";
 
 // TODO: extract `Instance` codec that allows instantiation of a supplied ctor
 

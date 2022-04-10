@@ -1,6 +1,5 @@
-import { Codec } from "/common.ts";
-import { encodePositiveBigIntInto } from "/int.ts";
-import { u16, u32, u8 } from "/int.ts";
+import { Codec } from "./common.ts";
+import { encodePositiveBigIntInto, u16, u32, u8 } from "./int.ts";
 
 const MAX_U8 = 2 ** (8 - 2) - 1;
 const MAX_U16 = 2 ** (16 - 2) - 1;

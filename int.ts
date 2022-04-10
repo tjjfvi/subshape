@@ -1,4 +1,4 @@
-import { Codec } from "/common.ts";
+import { Codec } from "./common.ts";
 
 class NumCodec<T extends number | bigint> extends Codec<T> {
   constructor(

@@ -1,7 +1,7 @@
-import { Codec, Native } from "/common.ts";
-import { dummy } from "/dummy.ts";
-import { u8 } from "/int.ts";
-import { Field, Record } from "/record.ts";
+import { Codec, Native } from "./common.ts";
+import { dummy } from "./dummy.ts";
+import { u8 } from "./int.ts";
+import { Field, Record } from "./record.ts";
 
 export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
 
