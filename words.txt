@@ -10,3 +10,4 @@ magz
 deno
 combinators
 typeof
+denoland

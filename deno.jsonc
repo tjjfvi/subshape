@@ -8,7 +8,7 @@
   },
   "lint": {
     "files": {
-      "exclude": ["npm"],
+      "exclude": ["target"],
       "include": ["."]
     },
     "rules": {
@@ -28,7 +28,7 @@
     "build_wasm": "cargo build --release --target wasm32-unknown-unknown",
     "build_wasm_bindings": "wasm-bindgen target/wasm32-unknown-unknown/release/scale_fixtures.wasm --target deno --weak-refs --out-dir target/fixtures",
     "build_fixtures": "deno task build_wasm && deno task build_wasm_bindings",
-    "build_npm": "deno run -A --no-check=remote tasks/npm.ts",
+    "build_npm_pkg": "deno run -A --no-check=remote _tasks/build_npm_pkg.ts",
     "test": "deno test -A --no-check=remote -L=info"
   }
 }
