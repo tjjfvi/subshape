@@ -1,13 +1,17 @@
+import { emptyDir } from "std/fs/mod.ts";
 import { build } from "x/dnt/mod.ts";
+
+await emptyDir("target/npm_pkg");
 
 const DESCRIPTION = "SCALE Transcoding in TypeScript";
 
 await build({
   entryPoints: ["mod.ts"],
-  outDir: "target/npm",
+  outDir: "target/npm_pkg",
   package: {
-    name: "scale",
-    version: "0.1.0-beta.1",
+    // TODO: rename if/when we get access to `scale` package name
+    name: "scale-ts",
+    version: Deno.args[0]!,
     description: DESCRIPTION,
   },
   shims: {},
