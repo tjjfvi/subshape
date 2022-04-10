@@ -1,6 +1,6 @@
-import * as s from "/mod.ts";
-import * as f from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
+import * as s from "./mod.ts";
+import * as f from "./test-util.ts";
 
 Deno.test("Number Compacts", () => {
   f.visitFixtures(f.fixtures.number_compact_, (bytes, decoded) => {

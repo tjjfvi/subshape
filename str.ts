@@ -1,5 +1,5 @@
-import { Codec } from "/common.ts";
-import { compact } from "/compact.ts";
+import { Codec } from "./common.ts";
+import { compact } from "./compact.ts";
 
 export const str = new Codec<string>(
   (value) => {

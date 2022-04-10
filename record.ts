@@ -1,4 +1,4 @@
-import { Codec, Native } from "/common.ts";
+import { Codec, Native } from "./common.ts";
 
 export type NativeField<
   Key extends PropertyKey = PropertyKey,

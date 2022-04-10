@@ -1,6 +1,6 @@
-import * as s from "/mod.ts";
-import { fixtures } from "/test-util.ts";
 import * as asserts from "std/testing/asserts.ts";
+import * as s from "./mod.ts";
+import { fixtures } from "./test-util.ts";
 
 Deno.test("Arrays", () => {
   fixtures.array_().forEach(([decoded, encoded, sizedEncoded]: [any[], Uint8Array, Uint8Array]) => {
