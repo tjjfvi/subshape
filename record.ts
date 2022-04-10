@@ -1,12 +1,10 @@
 import { Codec, Native } from "/common.ts";
 
-/** Native representation of a record field */
 export type NativeField<
   Key extends PropertyKey = PropertyKey,
   ValueCodec extends Codec = Codec,
 > = { [_ in Key]: Native<ValueCodec> };
 
-/** Native representation of a record */
 export type NativeRecord<FieldCodec extends Codec<NativeField>[] = Codec<NativeField>[]> = FieldCodec extends [] ? {}
   : FieldCodec extends [Codec<infer FieldT>, ...infer ERest]
     ? FieldT & (ERest extends Codec<NativeField>[] ? NativeRecord<ERest> : never)
@@ -17,8 +15,8 @@ export class Field<
   ValueCodec extends Codec = Codec,
 > extends Codec<NativeField<Key, ValueCodec>> {
   constructor(
-    readonly key: Key,
-    readonly valueCodec: ValueCodec,
+    key: Key,
+    valueCodec: ValueCodec,
   ) {
     super(
       (value) => {

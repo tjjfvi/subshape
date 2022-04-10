@@ -2,9 +2,9 @@ import { Codec, Native } from "/common.ts";
 import { compact } from "/compact.ts";
 
 export type NativeArray<
-  El extends Codec,
+  ElCodec extends Codec,
   Len extends number = number,
-> = Native<El>[] & { length: Len };
+> = Native<ElCodec>[] & { length: Len };
 
 export class SizedArray<
   ElCodec extends Codec,
