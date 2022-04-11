@@ -3,7 +3,7 @@ export * from "./bool.ts";
 export * from "./common.ts";
 export * from "./compact.ts";
 export * from "./dummy.ts";
-export * from "./enum.ts";
+export * from "./implicit_init_num_enum.ts";
 export * from "./int.ts";
 export * from "./option.ts";
 export * from "./record.ts";
