@@ -1,15 +1,12 @@
 import { Codec, Native } from "./common.ts";
 import { compact } from "./compact.ts";
 
-export type NativeArray<
-  ElCodec extends Codec,
-  Len extends number = number,
-> = Native<ElCodec>[] & { length: Len };
+export type NativeArray<ElCodec extends Codec> = Native<ElCodec>[];
 
 export class SizedArray<
   ElCodec extends Codec,
   Len extends number,
-> extends Codec<NativeArray<ElCodec, Len>> {
+> extends Codec<NativeArray<ElCodec> & { length: Len }> {
   constructor(
     elCodec: ElCodec,
     len: Len,
@@ -32,7 +29,7 @@ export class SizedArray<
         for (let i = 0; i < len; i += 1) {
           result.push(elCodec._d(cursor));
         }
-        return result as NativeArray<ElCodec, Len>;
+        return result as NativeArray<ElCodec> & { length: Len };
       },
     );
   }
