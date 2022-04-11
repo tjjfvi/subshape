@@ -79,3 +79,46 @@ export const taggedUnion = <MemberCodecs extends TaggedUnionMember<any>[]>(
 ): TaggedUnion<MemberCodecs> => {
   return new TaggedUnion(...memberCodecs);
 };
+
+export class ReferenceUnion<
+  MemberCodec extends Codec,
+  Member extends Native<MemberCodec>,
+> extends Union<Codec<Member>[]> {
+  constructor(
+    memberCodec: MemberCodec,
+    ...members: Member[]
+  ) {
+    super(
+      (value) => {
+        return members.findIndex((member) => member === value);
+      },
+      ...new Array(members.length).fill(memberCodec),
+    );
+  }
+}
+export const referenceUnion = <
+  MemberCodec extends Codec,
+  Member extends Native<MemberCodec>,
+>(
+  memberCodec: MemberCodec,
+  ...members: Member[]
+): ReferenceUnion<MemberCodec, Member> => {
+  return new ReferenceUnion(memberCodec, ...members);
+};
+
+// TODO: would we rather not extend union? Performance could be improved.
+export class LiteralUnion<Member> extends Union<Codec<Member>[]> {
+  constructor(...members: Member[]) {
+    super(
+      (value) => {
+        return members.findIndex((member) => member === value);
+      },
+      ...members.map((member) => {
+        return dummy(member);
+      }),
+    );
+  }
+}
+export const literalUnion = <Member>(...members: Member[]): LiteralUnion<Member> => {
+  return new LiteralUnion(...members);
+};

@@ -81,3 +81,6 @@ export const compact = new Codec<number | bigint>(
     }
   },
 );
+
+// TODO: finesse
+export const nCompact = compact as any as Codec<number>;
