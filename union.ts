@@ -1,7 +1,7 @@
 import { Codec, Native } from "./common.ts";
 import { dummy } from "./dummy.ts";
 import { u8 } from "./int.ts";
-import { Field, Record } from "./record.ts";
+import { Field, NativeRecord, record } from "./record.ts";
 
 export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
 
@@ -35,52 +35,44 @@ export const union = <MemberCodecs extends Codec[]>(
   return new Union(discriminate, ...memberCodecs);
 };
 
-export class TaggedUnionMember<
+export type TaggedUnionMember<
   MemberTag extends PropertyKey = PropertyKey,
-  FieldCodecs extends Field[] = Field[],
-> extends Record<[Field<"_tag", Codec<MemberTag>>, ...FieldCodecs]> {
-  constructor(
-    readonly memberTag: MemberTag,
-    ...fieldCodec: FieldCodecs
-  ) {
-    super(
-      new Field("_tag", dummy(memberTag)),
-      ...fieldCodec,
-    );
-  }
-}
+  MemberEntryKey extends PropertyKey = PropertyKey,
+  MemberEntryValueCodec extends Codec = Codec,
+> = [memberTag: MemberTag, fields?: Field<MemberEntryKey, MemberEntryValueCodec>[]];
+export type NativeTaggedUnionMember<M extends TaggedUnionMember> =
+  & { _tag: M[0] }
+  & (M[1] extends Field[] ? NativeRecord<M[1]> : {});
 
-export const taggedUnionMember = <
-  MemberTag extends PropertyKey = PropertyKey,
-  FieldCodecs extends Field[] = Field[],
->(
-  memberTag: MemberTag,
-  ...fieldCodecs: FieldCodecs
-): TaggedUnionMember<MemberTag, FieldCodecs> => {
-  return new TaggedUnionMember(memberTag, ...fieldCodecs);
-};
-
-// TODO: get rid of contravariant incompatibility without typing member constraint tags as `any`
-export class TaggedUnion<MemberCodecs extends TaggedUnionMember<any>[] = TaggedUnionMember<any>[]>
-  extends Union<MemberCodecs>
-{
-  constructor(...memberCodecs: MemberCodecs) {
+export class TaggedUnion<
+  Members extends TaggedUnionMember<MemberTag, MemberEntryKey, MemberEntryValueCodec>[],
+  MemberTag extends PropertyKey,
+  MemberEntryKey extends PropertyKey,
+  MemberEntryValueCodec extends Codec,
+> extends Union<Codec<NativeTaggedUnionMember<Members[number]>>[]> {
+  constructor(...members: Members) {
     super(
       (value) => {
-        return memberCodecs.findIndex((memberEncoder) => memberEncoder.memberTag === value._tag);
+        return members.findIndex((member) => {
+          return member[0] === value._tag;
+        });
       },
-      ...memberCodecs,
+      ...members.map(([memberTag, fields]) => {
+        return record(["_tag", dummy(memberTag)], ...fields || []);
+      }) as any[],
     );
   }
 }
-// TODO: same thing here
-export const taggedUnion = <MemberCodecs extends TaggedUnionMember<any>[]>(
-  ...memberCodecs: MemberCodecs
-): TaggedUnion<MemberCodecs> => {
-  return new TaggedUnion(...memberCodecs);
+export const taggedUnion = <
+  Members extends TaggedUnionMember<MemberTag, MemberEntryKey, MemberEntryValueCodec>[],
+  MemberTag extends PropertyKey,
+  MemberEntryKey extends PropertyKey,
+  MemberEntryValueCodec extends Codec,
+>(...members: Members): TaggedUnion<Members, MemberTag, MemberEntryKey, MemberEntryValueCodec> => {
+  return new TaggedUnion(...members);
 };
 
-export class ReferenceUnion<
+export class ComparableValueUnion<
   MemberCodec extends Codec,
   Member extends Native<MemberCodec>,
 > extends Union<Codec<Member>[]> {
@@ -96,29 +88,12 @@ export class ReferenceUnion<
     );
   }
 }
-export const referenceUnion = <
+export const comparableValueUnion = <
   MemberCodec extends Codec,
   Member extends Native<MemberCodec>,
 >(
   memberCodec: MemberCodec,
   ...members: Member[]
-): ReferenceUnion<MemberCodec, Member> => {
-  return new ReferenceUnion(memberCodec, ...members);
-};
-
-// TODO: would we rather not extend union? Performance could be improved.
-export class LiteralUnion<Member> extends Union<Codec<Member>[]> {
-  constructor(...members: Member[]) {
-    super(
-      (value) => {
-        return members.findIndex((member) => member === value);
-      },
-      ...members.map((member) => {
-        return dummy(member);
-      }),
-    );
-  }
-}
-export const literalUnion = <Member>(...members: Member[]): LiteralUnion<Member> => {
-  return new LiteralUnion(...members);
+): ComparableValueUnion<MemberCodec, Member> => {
+  return new ComparableValueUnion(memberCodec, ...members);
 };

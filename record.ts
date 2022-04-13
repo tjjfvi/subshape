@@ -1,70 +1,48 @@
 import { Codec, Native } from "./common.ts";
 
-export type NativeField<
+export type Field<
   Key extends PropertyKey = PropertyKey,
   ValueCodec extends Codec = Codec,
-> = { [_ in Key]: Native<ValueCodec> };
+> = [Key, ValueCodec];
 
-export type NativeRecord<FieldCodec extends Codec<NativeField>[] = Codec<NativeField>[]> = FieldCodec extends [] ? {}
-  : FieldCodec extends [Codec<infer FieldT>, ...infer ERest]
-    ? FieldT & (ERest extends Codec<NativeField>[] ? NativeRecord<ERest> : never)
-  : {};
+export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
+  : Fields extends [Field<infer K, infer V>, ...infer Rest]
+    ? { [_ in K]: Native<V> } & (Rest extends Field[] ? NativeRecord<Rest> : {})
+  : never;
 
-export class Field<
-  Key extends PropertyKey = PropertyKey,
-  ValueCodec extends Codec = Codec,
-> extends Codec<NativeField<Key, ValueCodec>> {
-  constructor(
-    key: Key,
-    valueCodec: ValueCodec,
-  ) {
+class Record_<
+  Fields extends Field<EntryKey, EntryValueCodec>[],
+  EntryKey extends PropertyKey = Fields[number][0],
+  EntryValueCodec extends Codec = Fields[number][1],
+> extends Codec<NativeRecord<Fields>> {
+  constructor(...fields: Fields) {
     super(
       (value) => {
-        return valueCodec._s(value[key]);
-      },
-      (cursor, value) => {
-        return valueCodec._e(cursor, value[key]);
-      },
-      (cursor) => {
-        return { [key]: valueCodec._d(cursor) } as NativeField<Key, ValueCodec>;
-      },
-    );
-  }
-}
-export const field = <
-  Key extends PropertyKey = PropertyKey,
-  ValueCodec extends Codec = Codec,
->(
-  key: Key,
-  valueCodec: ValueCodec,
-): Field<Key, ValueCodec> => {
-  return new Field(key, valueCodec);
-};
-
-export class Record<FieldCodecs extends Field[] = Field[]> extends Codec<NativeRecord<FieldCodecs>> {
-  constructor(...fieldCodecs: FieldCodecs) {
-    super(
-      (value) => {
-        return fieldCodecs.reduce<number>((len, fieldEncoder) => {
-          return len + fieldEncoder._s(value);
+        return fields.reduce<number>((len, [key, fieldEncoder]) => {
+          return len + fieldEncoder._s((value as any)[key]);
         }, 0);
       },
       (cursor, value) => {
-        fieldCodecs.forEach((fieldEncoder) => {
-          fieldEncoder._e(cursor, value);
+        fields.forEach(([key, fieldEncoder]) => {
+          fieldEncoder._e(cursor, (value as any)[key]);
         });
       },
       (cursor) => {
-        return fieldCodecs.reduce<Partial<NativeRecord<FieldCodecs>>>((acc, fieldCodec) => {
+        return fields.reduce<Partial<NativeRecord<Fields>>>((acc, [key, fieldCodec]) => {
           return {
             ...acc,
-            ...fieldCodec._d(cursor),
+            [key]: fieldCodec._d(cursor),
           };
-        }, {}) as NativeRecord<FieldCodecs>;
+        }, {}) as NativeRecord<Fields>;
       },
     );
   }
 }
-export const record = <FieldCodecs extends Field[]>(...fieldCodecs: FieldCodecs): Record<FieldCodecs> => {
-  return new Record(...fieldCodecs);
+export { Record_ as Record };
+export const record = <
+  Fields extends Field<EntryKey, EntryValueCodec>[],
+  EntryKey extends PropertyKey,
+  EntryValueCodec extends Codec,
+>(...fields: Fields): Record_<Fields> => {
+  return new Record_(...fields);
 };

@@ -4,21 +4,17 @@ import * as f from "./test-util.ts";
 
 Deno.test("Unions", () => {
   const c = s.taggedUnion(
-    s.taggedUnionMember("A"),
-    s.taggedUnionMember("B", s.field("B", s.str)),
-    s.taggedUnionMember("C", s.field("C", s.tuple(s.u32, s.u64))),
-    s.taggedUnionMember(
+    ["A"],
+    ["B", [["B", s.str]]],
+    ["C", [["C", s.tuple(s.u32, s.u64)]]],
+    ["D", [[
       "D",
-      s.field(
-        "D",
-        s.record(
-          s.field("a", s.u32),
-          s.field("b", s.u64),
-        ),
+      s.record(
+        ["a", s.u32],
+        ["b", s.u64],
       ),
-    ),
+    ]]],
   );
-
   f.visitFixtures(f.fixtures.tagged_union_, (bytes, decoded) => {
     asserts.assertEquals(c.decode(bytes), decoded);
     asserts.assertEquals(c.encode(decoded as any), bytes);
@@ -43,7 +39,7 @@ Deno.test("KeyUnion", () => {
     B = "B",
     C = "C",
   }
-  const c = s.referenceUnion(s.str, X.A, X.B, X.C);
+  const c = s.comparableValueUnion(s.str, X.A, X.B, X.C);
 
   const aBytes = c.encode(X.A);
   const aDecoded = c.decode(aBytes);
