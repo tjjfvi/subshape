@@ -5,6 +5,10 @@ export type Field<
   ValueCodec extends Codec = Codec,
 > = [Key, ValueCodec];
 
+export type Fields<T extends any[]> = T extends [] ? []
+  : T extends [infer E, ...infer Rest] ? [[PropertyKey, Codec<E>], ...Fields<Rest>]
+  : never;
+
 export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
   : Fields extends [Field<infer K, infer V>, ...infer Rest]
     ? { [_ in K]: Native<V> } & (Rest extends Field[] ? NativeRecord<Rest> : {})

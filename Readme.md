@@ -239,14 +239,16 @@ A common use case for `Instance` codecs is `Error` subtypes. Let's say we want t
 ```ts
 class MyError extends Error {
   constructor(
-    code: string,
-    message: string,
-    payload: {
+    readonly code: number,
+    readonly message: string,
+    readonly payload: {
       a: string;
       b: number;
       c: boolean;
     },
-  ) {}
+  ) {
+    super();
+  }
 }
 ```
 
@@ -255,7 +257,7 @@ We can do so as follows.
 ```ts
 const codec = s.instance(
   MyError,
-  ["code", s.str],
+  ["code", s.u8],
   ["message", s.str],
   [
     "payload",
