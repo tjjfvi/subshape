@@ -4,13 +4,13 @@ A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endi
 
 ## Setup
 
-If you're using Deno, simply import via the `denoland/x` specifier.
+If you're using [Deno](https://deno.land/), simply import via the `denoland/x` specifier.
 
 ```ts
 import * as s from "https://deno.land/x/scale/mod.ts";
 ```
 
-If you're using Node, install as follows.
+If you're using [Node](https://nodejs.org/), install as follows.
 
 ```
 npm install scale-ts
@@ -33,10 +33,8 @@ import * as s from "scale";
 ## Example
 
 ```ts
-// 1
 import * as s from "https://deno.land/x/scale/mod.ts";
 
-// 2
 const codec = new s.record(
   ["name", s.str],
   ["nickName", s.str],
@@ -232,31 +230,78 @@ const value2 = codec.decode(bytes2);
 
 <!-- TODO: narrowing gif -->
 
-### Results
+### Instance
+
+Sometimes, you may want to instantiate a class with the decoded data / encode data from a class instance. In these situations, we can leverage the `instance` codec factory.
+
+A common use case for `Instance` codecs is `Error` subtypes. Let's say we want to decode some data into the following `Error` subtype.
 
 ```ts
-interface MyErrData {
-  message: string;
+class MyError extends Error {
+  constructor(
+    code: string,
+    message: string,
+    payload: {
+      a: string;
+      b: number;
+      c: boolean;
+    },
+  ) {}
 }
-const myErrData = s.record(
-  s.field("message", s.str),
+```
+
+We can do so as follows.
+
+```ts
+const codec = s.instance(
+  MyError,
+  ["code", s.str],
+  ["message", s.str],
+  [
+    "payload",
+    s.record(
+      ["a", s.str],
+      ["b", s.u8],
+      ["c", s.bool],
+    ),
+  ],
 );
-class MyErr {
-  constructor(readonly data: MyErrorData) {}
-}
+```
 
-class MyOk {
-  constructor(readonly ok: string) {}
-}
+We can now use this codec to encode and decode `MyError`.
 
-const codec = s.Result(
-  s.ok(MyOk, s.str),
-  s.err(MyErr, myErrData),
+```ts
+const myError = new MyError(
+  1,
+  "At war with my Arch system config",
+  {
+    a: "a",
+    b: 2,
+    c: true,
+  },
 );
 
-const bytes1 = codec.encode(new MyErr({ message: "Uh oh!" }));
-const value1 = codec.decode(bytes1);
+const encodedBytes = codec.encode(myError);
+const decoded = codec.decode(encodedBytes);
+```
 
-const bytes2 = codec.encode(new Ok("YES!"));
-const value2 = codec.decode(bytes2);
+> Note: executing an equality assertion between `myError` and `decoded` will fail, as they contain different stack traces.
+
+### Results
+
+`Result`s are initialized with an `Ok` codec and an `Error` instance codec.
+
+```ts
+class MyError {
+  constructor(readonly message: string) {}
+}
+const errorCodec = s.instance(MyError, ["message", s.str]);
+
+const resultCodec = s.Result(errorCodec, s.str);
+
+const errorBytes = resultCodec.resultCodec(new MyError("Uh oh!"));
+const errorDecoded = resultCodec.decode(errorBytes);
+
+const okBytes = resultCodec.encode("YES!");
+const okDecoded = resultCodec.decode(okBytes);
 ```
