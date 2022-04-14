@@ -1,14 +1,12 @@
-import { Codec, Native } from "./common.ts";
-import { dummy } from "./dummy.ts";
+import { Codec, CodecList, Native } from "./common.ts";
 import { u8 } from "./int.ts";
-import { Field, Record } from "./record.ts";
 
 export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
 
-export class Union<MemberCodecs extends Codec[]> extends Codec<NativeUnion<MemberCodecs>> {
+export class Union<Members extends any[]> extends Codec<Members[number]> {
   constructor(
-    readonly discriminate: (value: NativeUnion<MemberCodecs>) => number,
-    ...memberCodecs: MemberCodecs
+    readonly discriminate: (value: Members[number]) => number,
+    ...memberCodecs: CodecList<Members>
   ) {
     super(
       (value) => {
@@ -22,103 +20,14 @@ export class Union<MemberCodecs extends Codec[]> extends Codec<NativeUnion<Membe
       },
       (cursor) => {
         const discriminant = u8._d(cursor);
-        // TODO: ensure this is the correct type-level behavior
-        return memberCodecs[discriminant]!._d(cursor) as NativeUnion<MemberCodecs>;
+        return memberCodecs[discriminant]!._d(cursor);
       },
     );
   }
 }
-export const union = <MemberCodecs extends Codec[]>(
-  discriminate: (value: NativeUnion<MemberCodecs>) => number,
-  ...memberCodecs: MemberCodecs
-): Union<MemberCodecs> => {
+export const union = <Members extends any[]>(
+  discriminate: (value: Members[number]) => number,
+  ...memberCodecs: CodecList<Members>
+): Union<Members> => {
   return new Union(discriminate, ...memberCodecs);
-};
-
-export class TaggedUnionMember<
-  MemberTag extends PropertyKey = PropertyKey,
-  FieldCodecs extends Field[] = Field[],
-> extends Record<[Field<"_tag", Codec<MemberTag>>, ...FieldCodecs]> {
-  constructor(
-    readonly memberTag: MemberTag,
-    ...fieldCodec: FieldCodecs
-  ) {
-    super(
-      new Field("_tag", dummy(memberTag)),
-      ...fieldCodec,
-    );
-  }
-}
-
-export const taggedUnionMember = <
-  MemberTag extends PropertyKey = PropertyKey,
-  FieldCodecs extends Field[] = Field[],
->(
-  memberTag: MemberTag,
-  ...fieldCodecs: FieldCodecs
-): TaggedUnionMember<MemberTag, FieldCodecs> => {
-  return new TaggedUnionMember(memberTag, ...fieldCodecs);
-};
-
-// TODO: get rid of contravariant incompatibility without typing member constraint tags as `any`
-export class TaggedUnion<MemberCodecs extends TaggedUnionMember<any>[] = TaggedUnionMember<any>[]>
-  extends Union<MemberCodecs>
-{
-  constructor(...memberCodecs: MemberCodecs) {
-    super(
-      (value) => {
-        return memberCodecs.findIndex((memberEncoder) => memberEncoder.memberTag === value._tag);
-      },
-      ...memberCodecs,
-    );
-  }
-}
-// TODO: same thing here
-export const taggedUnion = <MemberCodecs extends TaggedUnionMember<any>[]>(
-  ...memberCodecs: MemberCodecs
-): TaggedUnion<MemberCodecs> => {
-  return new TaggedUnion(...memberCodecs);
-};
-
-export class ReferenceUnion<
-  MemberCodec extends Codec,
-  Member extends Native<MemberCodec>,
-> extends Union<Codec<Member>[]> {
-  constructor(
-    memberCodec: MemberCodec,
-    ...members: Member[]
-  ) {
-    super(
-      (value) => {
-        return members.findIndex((member) => member === value);
-      },
-      ...new Array(members.length).fill(memberCodec),
-    );
-  }
-}
-export const referenceUnion = <
-  MemberCodec extends Codec,
-  Member extends Native<MemberCodec>,
->(
-  memberCodec: MemberCodec,
-  ...members: Member[]
-): ReferenceUnion<MemberCodec, Member> => {
-  return new ReferenceUnion(memberCodec, ...members);
-};
-
-// TODO: would we rather not extend union? Performance could be improved.
-export class LiteralUnion<Member> extends Union<Codec<Member>[]> {
-  constructor(...members: Member[]) {
-    super(
-      (value) => {
-        return members.findIndex((member) => member === value);
-      },
-      ...members.map((member) => {
-        return dummy(member);
-      }),
-    );
-  }
-}
-export const literalUnion = <Member>(...members: Member[]): LiteralUnion<Member> => {
-  return new LiteralUnion(...members);
 };

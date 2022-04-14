@@ -3,34 +3,17 @@ import * as s from "./mod.ts";
 import * as f from "./test-util.ts";
 
 Deno.test("Unions", () => {
-  const c = s.union(
-    (value) => {
-      return {
-        A: 0,
-        B: 1,
-        C: 2,
-        D: 3,
-      }[value._tag];
-    },
-    s.record(["_tag", s.dummy<s.Codec<"A">>("A")]),
-    s.record(
-      ["_tag", s.dummy<s.Codec<"B">>("B")],
-      ["B", s.str],
-    ),
-    s.record(
-      ["_tag", s.dummy<s.Codec<"C">>("C")],
-      ["C", s.tuple(s.u32, s.u64)],
-    ),
-    s.record(
-      ["_tag", s.dummy<s.Codec<"D">>("D")],
-      [
-        "D",
-        s.record(
-          ["a", s.u32],
-          ["b", s.u64],
-        ),
-      ],
-    ),
+  const c = s.taggedUnion(
+    ["A"],
+    ["B", ["B", s.str]],
+    ["C", ["C", s.tuple(s.u32, s.u64)]],
+    ["D", [
+      "D",
+      s.record(
+        ["a", s.u32],
+        ["b", s.u64],
+      ),
+    ]],
   );
 
   f.visitFixtures(f.fixtures.tagged_union_, (bytes, decoded) => {
