@@ -43,3 +43,10 @@ export class Codec<T = any> {
     return this._d(new Cursor(u8a));
   };
 }
+
+export type CodecList<T extends any[]> = {
+  [Key in keyof T]: CodecList._0<Key, T[Key]>;
+};
+namespace CodecList {
+  export type _0<Key extends PropertyKey, Value> = Key extends `${number}` ? Codec<Value> : Value;
+}

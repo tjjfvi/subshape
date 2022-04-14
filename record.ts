@@ -10,7 +10,7 @@ export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
     ? { [_ in K]: Native<V> } & (Rest extends Field[] ? NativeRecord<Rest> : {})
   : never;
 
-class Record_<
+export class Record<
   Fields extends Field<EntryKey, EntryValueCodec>[],
   EntryKey extends PropertyKey = Fields[number][0],
   EntryValueCodec extends Codec = Fields[number][1],
@@ -38,11 +38,10 @@ class Record_<
     );
   }
 }
-export { Record_ as Record };
 export const record = <
   Fields extends Field<EntryKey, EntryValueCodec>[],
   EntryKey extends PropertyKey,
   EntryValueCodec extends Codec,
->(...fields: Fields): Record_<Fields> => {
-  return new Record_(...fields);
+>(...fields: Fields): Record<Fields> => {
+  return new Record(...fields);
 };
