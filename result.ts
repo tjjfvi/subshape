@@ -62,12 +62,12 @@ export class Ok<
 }
 
 export class Result<
-  OkCodec extends Ok,
-  ErrCodec extends Err,
-> extends Union<[OkCodec, ErrCodec]> {
+  Ok extends OkBearer,
+  Err extends Error,
+> extends Union<[Ok, Err]> {
   constructor(
-    okCodec: OkCodec,
-    errCodec: ErrCodec,
+    okCodec: Codec<Ok>,
+    errCodec: Codec<Err>,
   ) {
     super(
       (value) => {
