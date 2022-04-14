@@ -301,7 +301,7 @@ const errorCodec = s.instance(MyError, ["message", s.str]);
 
 const resultCodec = s.Result(errorCodec, s.str);
 
-const errorBytes = resultCodec.resultCodec(new MyError("Uh oh!"));
+const errorBytes = resultCodec.encode(new MyError("Uh oh!"));
 const errorDecoded = resultCodec.decode(errorBytes);
 
 const okBytes = resultCodec.encode("YES!");
