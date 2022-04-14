@@ -2,12 +2,27 @@ import * as asserts from "std/testing/asserts.ts";
 import * as s from "./mod.ts";
 import { fixtures, visitFixtures } from "./test-util.ts";
 
-class Ok<T> implements s.OkBearer<T> {
-  constructor(readonly ok: T) {}
+class ErrFromTuple extends Error {
+  constructor(
+    readonly a: string,
+    readonly b: string,
+  ) {
+    super();
+  }
 }
 
-class Err extends Error {
-  constructor(readonly data: any) {
+class ErrFromObj extends Error {
+  constructor(
+    readonly data: {
+      x: string;
+    },
+  ) {
+    super();
+  }
+}
+
+class ErrFromValue extends Error {
+  constructor(readonly value: any) {
     super();
   }
 }
@@ -18,7 +33,7 @@ Deno.test("Results", () => {
       case 0:
       case 1:
       case 2: {
-        const c = new s.Result(new s.Ok(Ok, s.str), undefined as any);
+        const c = s.result(s.record(["value", s.str]), undefined as any);
         asserts.assertEquals(c.decode(bytes), decoded);
         asserts.assertEquals(c.encode(decoded as any), bytes);
         break;
@@ -26,41 +41,26 @@ Deno.test("Results", () => {
       case 3:
       case 4:
       case 5: {
-        const c = new s.Result(
-          undefined as any,
-          new s.Err(Err, s.record(["a", s.str])),
-        );
+        const c = s.result(undefined as any, s.instance(ErrFromValue, ["value", s.str]));
         const d = c.decode(bytes);
-        asserts.assert(d instanceof Err);
-        asserts.assertEquals(d.data, (decoded as Err).data);
+        asserts.assert(d instanceof ErrFromValue);
+        asserts.assertEquals(d.value, (decoded as ErrFromValue).value);
         asserts.assertEquals(c.encode(decoded), bytes);
         break;
       }
       case 6: {
-        const c = new s.Result(
-          undefined as any,
-          new s.Err(
-            Err,
-            s.record(
-              [0, s.str],
-              [1, s.str],
-            ),
-          ),
-        );
+        const c = s.result(undefined as any, s.instance(ErrFromTuple, ["a", s.str], ["b", s.str]));
         const d = c.decode(bytes);
-        asserts.assert(d instanceof Err);
-        asserts.assertEquals(d.data, (decoded as Err).data);
-        asserts.assertEquals(c.encode(decoded), bytes);
+        asserts.assert(d instanceof ErrFromTuple);
+        asserts.assertEquals(d.a, (decoded as any).a);
+        asserts.assertEquals(d.b, (decoded as any).b);
         break;
       }
       case 7: {
-        const c = new s.Result(
-          undefined as any,
-          new s.Err(Err, s.record(["x", s.str])),
-        );
+        const c = s.result(undefined as any, s.instance(ErrFromObj, ["data", s.record(["x", s.str])]));
         const d = c.decode(bytes);
-        asserts.assert(d instanceof Err);
-        asserts.assertEquals(d.data, (decoded as Err).data);
+        asserts.assert(d instanceof ErrFromObj);
+        asserts.assertEquals(d.data, (decoded as ErrFromObj).data);
         asserts.assertEquals(c.encode(decoded), bytes);
         break;
       }
@@ -69,19 +69,16 @@ Deno.test("Results", () => {
     const deserialized = JSON.parse(raw);
     const key = Object.keys(deserialized)[0]!;
     if (key === "Ok") {
-      return new Ok(deserialized.Ok);
+      return {
+        value: deserialized.Ok,
+      };
     }
     if (Array.isArray(deserialized.Err)) {
-      return new Err((deserialized.Err as any[]).reduce<Record<number, any>>((acc, cur, i) => {
-        return {
-          ...acc,
-          [i]: cur,
-        };
-      }, {}));
+      return new ErrFromTuple(...deserialized.Err as [string, string]);
     }
     if (typeof deserialized.Err === "object") {
-      return new Err(deserialized.Err);
+      return new ErrFromObj(deserialized.Err);
     }
-    return new Err({ a: deserialized.Err });
+    return new ErrFromValue(deserialized.Err);
   });
 });
