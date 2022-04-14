@@ -5,6 +5,7 @@ export * from "./compact.ts";
 export * from "./comparable_value_union.ts";
 export * from "./dummy.ts";
 export * from "./implicit_init_num_enum.ts";
+export * from "./instance.ts";
 export * from "./int.ts";
 export * from "./option.ts";
 export * from "./record.ts";
