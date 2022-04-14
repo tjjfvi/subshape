@@ -4,17 +4,25 @@ A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endi
 
 ## Setup
 
-Install the `scale` NPM package.
+If you're using Deno, simply import via the `denoland/x` specifier.
+
+```ts
+import * as s from "https://deno.land/x/scale/mod.ts";
+```
+
+If you're using Node, install as follows.
 
 ```
-npm install scale
+npm install scale-ts
 ```
 
-> NOTE: This is not yet published (while WIP, clone and use a local copy)
+> NOTE: The published package name is (while in beta) subject to change
 
-> NOTE: The published package name is subject to change, as we may not be able to get `scale`
+Then import as follows.
 
-> Deno users can reference the library root from `https://deno.land/x/scale/mod.ts`.
+```ts
+import * as s from "scale";
+```
 
 ## Usage
 
@@ -26,64 +34,72 @@ npm install scale
 
 ```ts
 // 1
-import * as s from "scale";
+import * as s from "https://deno.land/x/scale/mod.ts";
 
 // 2
 const codec = new s.record(
-  new s.field("name", s.str),
-  new s.field("nickName", s.str),
-  new s.field("superPower", s.option(s.str)),
+  ["name", s.str],
+  ["nickName", s.str],
+  ["superPower", s.option(s.str)],
 );
 
-// 3
-const decoded = codec.decode(bytes); // <- `bytes` needs to be in scope & valid
-```
-
-In this example, `decoded` should contain the "inflated" data.
-
-```ts
-type Value = s.Native<typeof codec>;
-
-const value: Value = {
+const valueToEncode = {
   name: "Magdalena",
   nickName: "Magz",
   superPower: "Hydrokinesis",
 };
 
-const encoded = codec.encode(value);
-const decoded = codec.decode(encoded);
+const encodedBytes = codec.encode(valueToEncode);
+const decodedValue = codec.decode(encodedBytes);
+
+assertEquals(decodedValue, valueToEncode);
 ```
 
-The signature of `decoded` will look as does the following interface.
+To extract the JS-native TypeScript type from a given codec, use the `Native` utility type.
 
 ```ts
-interface NativeType {
+type NativeType = s.Native<typeof codec>;
+
+assertTypeEquals<NativeType, {
   name: string;
   nickName: string;
   superPower: string | undefined;
-}
+}>();
 ```
 
 In cases where codecs are exceptionally large, we may want to spare the TS checker of extra work.
 
-```diff
-- const codec = s.record(
-+ const codec: Codec<NativeType> = s.record(
-    new s.field("name", s.str),
-    new s.field("nickName", s.str),
-    new s.field("superPower", s.option(s.str)),
-  );
+```ts
+interface Person {
+  name: string;
+  nickName: string;
+  superPower: string | undefined;
+}
+
+const codec: Codec<Person> = s.record(
+  ["name", s.str],
+  ["nickName", s.str],
+  ["superPower", s.option(s.str)],
+);
 ```
 
 This has the added benefit of producing type errors if the codec does not directly mirror the TS type.
 
 ```ts
 const codec: Codec<NativeType> = s.record(
+  //  ~~~~~
+  //  ^ error (message below)
   s.field("nickName", s.str),
   s.field("superPower", s.option(s.str)),
 );
+```
 
-// ^ type error: field `name` is missing from `codec`
+Hovering over the error squigglies will reveal the following diagnostic.
+
+```
+Type 'Record<[["name", Codec<string>], ["nickName", Codec<string>]], "name" | "nickName", Codec<string>>' is not assignable to type 'Codec<Person>'.
+  The types returned by '_d(...)' are incompatible between these types.
+    Property 'superPower' is missing in type '{ name: string; } & { nickName: string; }' but required in type 'Person'.
 ```
 
 ## Error Handling
@@ -106,12 +122,7 @@ const bytes = s.u8.encode(9);
 const value = s.u8.decode(bytes);
 ```
 
-### Compacts
-
-```ts
-const bytes = s.compact.encode(BigInt(2 ^ 30 - 1));
-const value = s.compact.decode(bytes);
-```
+Other such integer types include `i8`, `u16`, `i16`, `u32`, `i32`, `u64`, `i64`, `u128`, `i128` and [`compact`](https://docs.substrate.io/v3/advanced/scale-codec/#compactgeneral-integers).
 
 ### Options
 
@@ -126,6 +137,17 @@ const value2 = codec.decode(bytes2);
 ```
 
 ### Arrays
+
+#### Sized
+
+```ts
+const codec = s.sizedArray(s.u8, 2);
+
+const bytes = codec.encode([3, 9]);
+const value = codec.decode(bytes);
+```
+
+#### Dynamic
 
 ```ts
 const codec = s.array(s.u8);
@@ -147,9 +169,9 @@ const value = codec.decode(bytes);
 
 ```ts
 const codec = s.record(
-  s.field("name", s.str),
-  s.field("nickName", s.str),
-  s.field("superPower", s.option(s.str)),
+  ["name", s.str],
+  ["nickName", s.str],
+  ["superPower", s.option(s.str)],
 );
 
 const bytes = codec.encode({
@@ -162,7 +184,7 @@ const value = codec.decode(bytes);
 
 ### Unions
 
-#### Classic
+#### Explicitly Discriminated
 
 ```ts
 const codec = s.union(
@@ -190,8 +212,9 @@ const value2 = codec.decode(bytes2);
 
 ```ts
 const codec = s.taggedUnion(
-  s.taggedUnionMember("dog", s.field("bark", s.str)),
-  s.taggedUnionMember("cat", s.field("pur", s.str)),
+  "_tag",
+  ["dog", ["bark", s.str]],
+  ["cat", ["pur", s.str]],
 );
 
 const bytes1 = codec.encode({
@@ -206,6 +229,8 @@ const bytes2 = codec.encode({
 });
 const value2 = codec.decode(bytes2);
 ```
+
+<!-- TODO: narrowing gif -->
 
 ### Results
 
