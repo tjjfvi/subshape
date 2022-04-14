@@ -4,6 +4,7 @@ import * as f from "./test-util.ts";
 
 Deno.test("Unions", () => {
   const c = s.taggedUnion(
+    "_tag",
     ["A"],
     ["B", ["B", s.str]],
     ["C", ["C", s.tuple(s.u32, s.u64)]],
