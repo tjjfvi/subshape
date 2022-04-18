@@ -13,7 +13,7 @@ import * as s from "https://deno.land/x/scale/mod.ts";
 If you're using [Node](https://nodejs.org/), install as follows.
 
 ```
-npm install scale-ts
+npm install scale-combinators
 ```
 
 > NOTE: The published package name is (while in beta) subject to change
