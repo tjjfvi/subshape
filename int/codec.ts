@@ -44,19 +44,19 @@ class X128 extends Codec<bigint> {
         return 16;
       },
       (cursor, value) => {
-        cursor.view.setBigInt64(cursor.i, value, true)
+        cursor.view.setBigInt64(cursor.i, value, true);
         cursor.view[
           signed ? 'setBigInt64' : 'setBigUint64'
-        ](cursor.i + 8, value >> 64n, true)
-        cursor.i += 16
+        ](cursor.i + 8, value >> 64n, true);
+        cursor.i += 16;
       },
       (cursor) => {
-        const right = cursor.view.getBigUint64(cursor.i, true)
+        const right = cursor.view.getBigUint64(cursor.i, true);
         const left = cursor.view[
           signed ? 'getBigInt64' : 'getBigUint64'
-        ](cursor.i + 8, true)
+        ](cursor.i + 8, true);
         cursor.i += 16
-        return (left << 64n) + right
+        return (left << 64n) + right;
       },
     );
   }
