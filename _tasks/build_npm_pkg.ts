@@ -10,7 +10,7 @@ await build({
   outDir: "target/npm_pkg",
   package: {
     // TODO: rename if/when we get access to `scale` package name
-    name: "scale-ts",
+    name: "scale-combinators",
     version: Deno.args[0]!,
     description: DESCRIPTION,
   },

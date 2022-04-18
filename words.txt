@@ -11,3 +11,4 @@ deno
 combinators
 typeof
 denoland
+contravariance

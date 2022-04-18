@@ -1,4 +1,4 @@
-import { Codec } from "./common.ts";
+import { Codec, Flatten } from "./common.ts";
 import { dummy } from "./dummy.ts";
 import { Field, NativeRecord, record } from "./record.ts";
 import { Union } from "./union.ts";
@@ -28,7 +28,7 @@ export type NativeTaggedUnionMembers<
 export class TaggedUnion<
   TagKey extends PropertyKey,
   Members extends TaggedUnionMember[],
-> extends Union<NativeTaggedUnionMembers<TagKey, Members>[]> {
+> extends Union<Flatten<NativeTaggedUnionMembers<TagKey, Members>>[]> {
   constructor(
     tagKey: TagKey,
     ...members: Members
@@ -40,9 +40,8 @@ export class TaggedUnion<
         });
       },
       ...members.map(([memberTag, ...fields]) => {
-        return record(["_tag", dummy(memberTag)], ...fields || []);
-        // TODO: investigate alternatives
-      }) as any[],
+        return record(["_tag", dummy(memberTag)], ...fields || []) as NativeTaggedUnionMembers<TagKey, Members>;
+      }),
     );
   }
 }

@@ -4,7 +4,9 @@ import * as f from "./test-util.ts";
 
 Deno.test("Options", () => {
   f.visitFixtures(f.fixtures.option_, (bytes, decoded, i) => {
-    const o = s.option(
+    // Be explicit with an `any` type arg so that inference doesn't produce contravariance issue pertaining to
+    // `string` and `number` args of supplied codec's `_s` methods.
+    const o = s.option<any>(
       {
         0: s.str,
         1: s.u8,

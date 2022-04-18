@@ -50,3 +50,24 @@ export type CodecList<T extends any[]> = {
 namespace CodecList {
   export type _0<Key extends PropertyKey, Value> = Key extends `${number}` ? Codec<Value> : Value;
 }
+
+export type ValueOf<X> = X[keyof X];
+
+// TODO: replace with safer `Entries` if such a utility type comes into existence
+export type Entries<X> = ValueOf<
+  { [K in keyof X]: [K, Codec<X[K]>] }
+>[];
+
+// // Causes issues with recursion depth / checker performance
+// export type Entries<X> = ValueOf<
+//   {
+//     [K in keyof X]: [
+//       [K, X[K]],
+//       ...([Entries<Omit<X, K>>] extends [never] ? [] : Entries<Omit<X, K>>),
+//     ];
+//   }
+// >;
+
+// export type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x: infer R) => any ? R : never;
+
+export type Flatten<T> = T extends any[] ? T : T extends object ? { [K in keyof T]: Flatten<T[K]> } : T;

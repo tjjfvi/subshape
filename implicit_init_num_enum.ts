@@ -1,15 +1,8 @@
 import { Codec } from "./common.ts";
 import { u8 } from "./int.ts";
 
-type NativeEnum<Key extends string = string> =
-  & {
-    [_ in Key]: number;
-  }
-  & {
-    [K in Key as number]: K;
-  };
-
-export class OrderedNumEnum<Enum = NativeEnum> extends Codec<Enum[keyof Enum]> {
+// TODO: decide whether to pursue further static-type-level safeguards
+export class OrderedNumEnum<Enum> extends Codec<Enum[keyof Enum]> {
   constructor(enum_: Enum) {
     super(
       () => {
@@ -26,6 +19,6 @@ export class OrderedNumEnum<Enum = NativeEnum> extends Codec<Enum[keyof Enum]> {
     );
   }
 }
-export const orderedNumEnum = <NativeEnum>(nativeEnum: NativeEnum): OrderedNumEnum<NativeEnum> => {
-  return new OrderedNumEnum(nativeEnum);
+export const orderedNumEnum = <Enum>(enum_: Enum): OrderedNumEnum<Enum> => {
+  return new OrderedNumEnum(enum_);
 };

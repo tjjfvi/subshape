@@ -9,5 +9,5 @@
     }
   ],
   "dictionaries": ["project-words"],
-  "ignorePaths": ["_/assets/lipsum.txt", "Cargo.lock", "deno.lock", "npm"]
+  "ignorePaths": ["lipsum.txt", "Cargo.lock", "deno.lock", "target"]
 }
