@@ -13,11 +13,7 @@ export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
     ? { [_ in K]: Native<V> } & (Rest extends Field[] ? NativeRecord<Rest> : {})
   : never;
 
-export class Record<
-  Fields extends Field<EntryKey, EntryValueCodec>[],
-  EntryKey extends PropertyKey = Fields[number][0],
-  EntryValueCodec extends Codec = Fields[number][1],
-> extends Codec<Flatten<NativeRecord<Fields>>> {
+export class Record<Fields extends Field[]> extends Codec<Flatten<NativeRecord<Fields>>> {
   constructor(...fields: Fields) {
     super(
       (value) => {
