@@ -8,16 +8,18 @@ class NumCodec<K extends NumMethodKeys> extends Codec<NumMethodVal<K>> {
     len: number,
     key: K,
   ) {
+    const setter = DataView.prototype[`set${key}`] as any;
+    const getter = DataView.prototype[`get${key}`] as any;
     super(
       () => {
         return len;
       },
       (cursor, value) => {
-        (DataView.prototype[`set${key}`] as any).call(cursor.view, cursor.i, value, true);
+        setter.call(cursor.view, cursor.i, value, true);
         cursor.i += len;
       },
       (cursor) => {
-        const decoded = (DataView.prototype[`get${key}`] as any).call(cursor.view, cursor.i, true);
+        const decoded = getter.call(cursor.view, cursor.i, true);
         cursor.i += len;
         return decoded;
       },
