@@ -1,6 +1,8 @@
-# SCALE
+# `scale-ts`
 
 A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/v3/advanced/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
+
+⚠️ `scale-ts` is in beta. If you encounter a bug or want to give feedback on the API design, please create an issue.
 
 ## Setup
 
@@ -87,8 +89,8 @@ This has the added benefit of producing type errors if the codec does not direct
 const codec: Codec<NativeType> = s.record(
   //  ~~~~~
   //  ^ error (message below)
-  s.field("nickName", s.str),
-  s.field("superPower", s.option(s.str)),
+  ["nickName", s.str],
+  ["superPower", s.option(s.str)],
 );
 ```
 
