@@ -68,6 +68,4 @@ export type Entries<X> = ValueOf<
 //   }
 // >;
 
-// export type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x: infer R) => any ? R : never;
-
-export type Flatten<T> = T extends any[] ? T : T extends object ? { [K in keyof T]: Flatten<T[K]> } : T;
+export type Flatten<T> = T extends Function ? T : { [K in keyof T]: T[K] };
