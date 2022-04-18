@@ -1,28 +1,28 @@
-import { Codec, CodecList } from "./common.ts";
+import { Codec } from "./common.ts";
 import { Union } from "./union.ts";
 
 export class ComparableValueUnion<
-  MemberCodec extends Codec,
-  Members extends any[],
-> extends Union<Members> {
+  MemberWide,
+  Member extends MemberWide,
+> extends Union<Member[]> {
   constructor(
-    memberCodec: MemberCodec,
-    ...members: Members
+    memberCodec: Codec<MemberWide>,
+    ...members: Member[]
   ) {
     super(
       (value) => {
         return members.findIndex((member) => member === value);
       },
-      ...new Array(members.length).fill(memberCodec) as CodecList<Members>,
+      ...new Array(members.length).fill(memberCodec),
     );
   }
 }
 export const comparableValueUnion = <
-  MemberCodec extends Codec,
-  Members extends any[],
+  MemberWide,
+  Member extends MemberWide,
 >(
-  memberCodec: MemberCodec,
-  ...members: Members
-): ComparableValueUnion<MemberCodec, Members> => {
+  memberCodec: Codec<MemberWide>,
+  ...members: Member[]
+): ComparableValueUnion<MemberWide, Member> => {
   return new ComparableValueUnion(memberCodec, ...members);
 };

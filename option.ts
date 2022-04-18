@@ -1,8 +1,8 @@
-import { Codec, Native } from "./common.ts";
+import { Codec } from "./common.ts";
 import { u8 } from "./int.ts";
 
-export class Option<SomeCodec extends Codec> extends Codec<Native<SomeCodec> | undefined> {
-  constructor(readonly someCodec: SomeCodec) {
+export class Option<Some> extends Codec<Some | undefined> {
+  constructor(readonly someCodec: Codec<Some>) {
     super(
       (value) => {
         return 1 + (value === undefined ? 0 : someCodec._s(value));
@@ -27,6 +27,6 @@ export class Option<SomeCodec extends Codec> extends Codec<Native<SomeCodec> | u
     );
   }
 }
-export const option = <SomeCodec extends Codec>(someCodec: SomeCodec): Option<SomeCodec> => {
+export const option = <Some>(someCodec: Codec<Some>): Option<Some> => {
   return new Option(someCodec);
 };

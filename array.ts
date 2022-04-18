@@ -1,51 +1,49 @@
-import { Codec, Native } from "./common.ts";
+import { Codec } from "./common.ts";
 import { compact } from "./compact.ts";
 
-export type NativeArray<ElCodec extends Codec> = Native<ElCodec>[];
-
 export class SizedArray<
-  ElCodec extends Codec,
+  El,
   Len extends number,
-> extends Codec<NativeArray<ElCodec> & { length: Len }> {
+> extends Codec<El[]> {
   constructor(
-    elCodec: ElCodec,
+    elCodec: Codec<El>,
     len: Len,
   ) {
     super(
       (value) => {
         let sum = 0;
         for (let i = 0; i < len; i += 1) {
-          sum += elCodec._s(value[i]);
+          sum += elCodec._s(value[i]!);
         }
         return sum;
       },
       (cursor, value) => {
         for (let i = 0; i < len; i += 1) {
-          elCodec._e(cursor, value[i]);
+          elCodec._e(cursor, value[i]!);
         }
       },
       (cursor) => {
-        const result: Native<ElCodec>[] = [];
+        const result: El[] = [];
         for (let i = 0; i < len; i += 1) {
           result.push(elCodec._d(cursor));
         }
-        return result as NativeArray<ElCodec> & { length: Len };
+        return result as El[] & { length: Len };
       },
     );
   }
 }
 export const sizedArray = <
-  ElCodec extends Codec,
+  El,
   Len extends number,
 >(
-  elCodec: ElCodec,
+  elCodec: Codec<El>,
   len: Len,
-): SizedArray<ElCodec, Len> => {
+): SizedArray<El, Len> => {
   return new SizedArray(elCodec, len);
 };
 
-export class Array<ElCodec extends Codec> extends Codec<NativeArray<ElCodec>> {
-  constructor(elCodec: ElCodec) {
+export class Array<El> extends Codec<El[]> {
+  constructor(elCodec: Codec<El>) {
     super(
       (value) => {
         return compact._s(value.length) + new SizedArray(elCodec, value.length)._s(value);

@@ -1,14 +1,13 @@
-import { Codec, Native } from "./common.ts";
+import { Codec, Flatten, Native } from "./common.ts";
 
 export type Field<
   Key extends PropertyKey = PropertyKey,
   ValueCodec extends Codec = Codec,
 > = [Key, ValueCodec];
 
-export type Fields<T extends any[]> = T extends [] ? []
-  : T extends [infer E, ...infer Rest] ? [[PropertyKey, Codec<E>], ...Fields<Rest>]
-  : never;
+export type NativeField<F extends Field> = { [_ in F[0]]: Native<F[1]> };
 
+// // TODO: do we prefer the following (variadic) approach?
 export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
   : Fields extends [Field<infer K, infer V>, ...infer Rest]
     ? { [_ in K]: Native<V> } & (Rest extends Field[] ? NativeRecord<Rest> : {})
@@ -18,7 +17,7 @@ export class Record<
   Fields extends Field<EntryKey, EntryValueCodec>[],
   EntryKey extends PropertyKey = Fields[number][0],
   EntryValueCodec extends Codec = Fields[number][1],
-> extends Codec<NativeRecord<Fields>> {
+> extends Codec<Flatten<NativeRecord<Fields>>> {
   constructor(...fields: Fields) {
     super(
       (value) => {
@@ -32,12 +31,12 @@ export class Record<
         });
       },
       (cursor) => {
-        return fields.reduce<Partial<NativeRecord<Fields>>>((acc, [key, fieldCodec]) => {
+        return fields.reduce<Partial<Flatten<NativeRecord<Fields>>>>((acc, [key, fieldCodec]) => {
           return {
             ...acc,
             [key]: fieldCodec._d(cursor),
           };
-        }, {}) as NativeRecord<Fields>;
+        }, {}) as Flatten<NativeRecord<Fields>>;
       },
     );
   }
