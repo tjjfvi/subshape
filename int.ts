@@ -1,21 +1,23 @@
-import { Codec } from "./common.ts";
+import { Codec, ValueOf } from "./common.ts";
 
-class NumCodec<T extends number | bigint> extends Codec<T> {
+type NumMethodKeys = ValueOf<{ [K in keyof DataView]: K extends `get${infer N}` ? N : never }>;
+type NumMethodVal<K extends NumMethodKeys> = ReturnType<DataView[`get${K}`]>;
+
+class NumCodec<K extends NumMethodKeys> extends Codec<NumMethodVal<K>> {
   constructor(
-    readonly len: number,
-    readonly setter: (dv: DataView, i: number, value: T) => void,
-    readonly getter: (dv: DataView, i: number) => T,
+    len: number,
+    key: K,
   ) {
     super(
       () => {
         return len;
       },
       (cursor, value) => {
-        setter(cursor.view, cursor.i, value);
+        (DataView.prototype[`set${key}`] as any).call(cursor.view, cursor.i, value, true);
         cursor.i += len;
       },
       (cursor) => {
-        const decoded = getter(cursor.view, cursor.i);
+        const decoded = (DataView.prototype[`get${key}`] as any).call(cursor.view, cursor.i, true);
         cursor.i += len;
         return decoded;
       },
@@ -23,53 +25,14 @@ class NumCodec<T extends number | bigint> extends Codec<T> {
   }
 }
 
-export const u8 = new NumCodec<number>(
-  1,
-  (dv, i, value) => dv.setUint8(i, value),
-  (dv, i) => dv.getUint8(i),
-);
-
-export const i8 = new NumCodec<number>(
-  1,
-  (dv, i, value) => dv.setInt8(i, value),
-  (dv, i) => dv.getInt8(i),
-);
-
-export const u16 = new NumCodec<number>(
-  2,
-  (dv, i, value) => dv.setUint16(i, value, true),
-  (dv, i) => dv.getUint16(i, true),
-);
-
-export const i16 = new NumCodec<number>(
-  2,
-  (dv, i, value) => dv.setInt16(i, value, true),
-  (dv, i) => dv.getInt16(i, true),
-);
-
-export const u32 = new NumCodec<number>(
-  4,
-  (dv, i, value) => dv.setUint32(i, value, true),
-  (dv, i) => dv.getUint32(i, true),
-);
-
-export const i32 = new NumCodec<number>(
-  4,
-  (dv, i, value) => dv.setInt32(i, value, true),
-  (dv, i) => dv.getInt32(i, true),
-);
-
-export const u64 = new NumCodec<bigint>(
-  8,
-  (dv, i, value) => dv.setBigUint64(i, value, true),
-  (dv, i) => dv.getBigUint64(i, true),
-);
-
-export const i64 = new NumCodec<bigint>(
-  8,
-  (dv, i, value) => dv.setBigInt64(i, value, true),
-  (dv, i) => dv.getBigInt64(i, true),
-);
+export const u8 = new NumCodec(1, "Uint8");
+export const i8 = new NumCodec(1, "Int8");
+export const u16 = new NumCodec(2, "Uint16");
+export const i16 = new NumCodec(2, "Int16");
+export const u32 = new NumCodec(4, "Uint32");
+export const i32 = new NumCodec(4, "Int32");
+export const u64 = new NumCodec(8, "BigUint64");
+export const i64 = new NumCodec(8, "BigInt64");
 
 class X128 extends Codec<bigint> {
   constructor(signed: boolean) {
