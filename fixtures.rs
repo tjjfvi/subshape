@@ -31,13 +31,32 @@ where
   JsString::from(serde_json::to_string(&t).unwrap())
 }
 
+#[path = "./array/fixtures.rs"]
 pub mod array_fixtures;
+
+#[path = "./bool/fixtures.rs"]
 pub mod bool_fixtures;
+
+#[path = "./compact/fixtures.rs"]
 pub mod compact_fixtures;
+
+#[path = "./int/fixtures.rs"]
 pub mod int_fixtures;
+
+#[path = "./option/fixtures.rs"]
 pub mod option_fixtures;
+
+#[path = "./record/fixtures.rs"]
 pub mod record_fixtures;
+
+#[path = "./result/fixtures.rs"]
 pub mod result_fixtures;
+
+#[path = "./str/fixtures.rs"]
 pub mod str_fixtures;
+
+#[path = "./tuple/fixtures.rs"]
 pub mod tuple_fixtures;
+
+#[path = "./union/fixtures.rs"]
 pub mod union_fixtures;
