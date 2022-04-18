@@ -1,10 +1,18 @@
 import { Codec } from "../common.ts";
 import { compact } from "../compact/codec.ts";
 
+type ArrayOfLenth<
+  N extends number,
+  T,
+  A extends T[] = [],
+> = number extends N ? T[]
+  : N extends A["length"] ? A
+  : ArrayOfLenth<N, T, [...A, T]>;
+
 export class SizedArray<
   El,
   Len extends number,
-> extends Codec<El[]> {
+> extends Codec<ArrayOfLenth<Len, El>> {
   constructor(
     elCodec: Codec<El>,
     len: Len,
@@ -27,7 +35,7 @@ export class SizedArray<
         for (let i = 0; i < len; i += 1) {
           result.push(elCodec._d(cursor));
         }
-        return result as El[] & { length: Len };
+        return result as ArrayOfLenth<Len, El>;
       },
     );
   }

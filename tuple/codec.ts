@@ -1,11 +1,8 @@
 import { Codec } from "../common.ts";
 
 export type NativeTuple<ElCodecs extends Codec[]> = {
-  [I in keyof ElCodecs]: NativeTuple._0<ElCodecs[I]>;
+  [I in keyof ElCodecs]: ElCodecs[I] extends Codec<infer T> ? T : never;
 };
-namespace NativeTuple {
-  export type _0<I> = I extends Codec<infer T> ? T : I;
-}
 
 export class Tuple<ElCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple<ElCodecs>> {
   constructor(...elCodecs: ElCodecs) {
