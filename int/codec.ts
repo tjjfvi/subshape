@@ -36,6 +36,7 @@ export const i32 = new NumCodec(4, "Int32");
 export const u64 = new NumCodec(8, "BigUint64");
 export const i64 = new NumCodec(8, "BigInt64");
 
+// https://github.com/unstoppablejs/unstoppablejs/blob/2082bf14d9836e52d282d89921df0d6f76db8eda/packages/scale-ts/src/codecs/i128.ts
 class X128 extends Codec<bigint> {
   constructor(signed: boolean) {
     super(
@@ -43,25 +44,19 @@ class X128 extends Codec<bigint> {
         return 16;
       },
       (cursor, value) => {
-        if (value < 0) {
-          value = BigInt.asUintN(16 * 8, value);
-        }
-        encodePositiveBigIntInto(value, cursor.u8a, cursor.i, 16);
-        cursor.i += 16;
+        cursor.view.setBigInt64(cursor.i, value, true)
+        cursor.view[
+          signed ? 'setBigInt64' : 'setBigUint64'
+        ](cursor.i + 8, value >> 64n, true)
+        cursor.i += 16
       },
       (cursor) => {
-        let value = 0n;
-        for (let i = 0, shift = 0n; i < 16; i += 1, shift += 8n) {
-          value += BigInt(cursor.u8a[cursor.i + i]!) << shift;
-        }
-        if (signed) {
-          const isNegative = (cursor.u8a[cursor.i + 16 - 1]! & 0b1000_0000) >> 7 === 1;
-          if (isNegative) {
-            value = BigInt.asIntN(16 * 8, value);
-          }
-        }
-        cursor.i += 16;
-        return value;
+        const right = cursor.view.getBigUint64(cursor.i, true)
+        const left = cursor.view[
+          signed ? 'getBigInt64' : 'getBigUint64'
+        ](cursor.i + 8, true)
+        cursor.i += 16
+        return (left << 64n) + right
       },
     );
   }
@@ -69,18 +64,3 @@ class X128 extends Codec<bigint> {
 
 export const u128 = new X128(false);
 export const i128 = new X128(true);
-
-// https://github.com/soramitsu/scale-codec-js-library/blob/master/packages/core/src/codecs/int.ts
-export const encodePositiveBigIntInto = (
-  value: bigint,
-  u8a: Uint8Array,
-  i: number,
-  limit: number,
-): number => {
-  let j = 0;
-  while (value > 0 && j < limit) {
-    u8a[i + j++] = Number(value & 0xffn);
-    value >>= 8n;
-  }
-  return j;
-};
