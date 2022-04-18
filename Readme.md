@@ -21,7 +21,7 @@ npm install scale-combinators
 Then import as follows.
 
 ```ts
-import * as s from "scale";
+import * as s from "scale-combinators";
 ```
 
 ## Usage
