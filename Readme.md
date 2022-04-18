@@ -37,7 +37,7 @@ import * as s from "scale-combinators";
 ```ts
 import * as s from "https://deno.land/x/scale/mod.ts";
 
-const codec = new s.record(
+const codec = s.record(
   ["name", s.str],
   ["nickName", s.str],
   ["superPower", s.option(s.str)],
