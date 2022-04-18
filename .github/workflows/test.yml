@@ -15,5 +15,6 @@ jobs:
       - uses: denoland/setup-deno@main
         with:
           deno-version: v1.x
+      - run: rustup target add wasm32-unknown-unknown
       - run: deno task build_fixtures
       - run: deno task test

@@ -12,3 +12,4 @@ combinators
 typeof
 denoland
 contravariance
+rustup
