@@ -58,6 +58,6 @@ export class Array<El> extends Codec<El[]> {
     );
   }
 }
-export const array = <ElCodec extends Codec>(elCodec: ElCodec): Array<ElCodec> => {
+export const array = <El>(elCodec: Codec<El>): Array<El> => {
   return new Array(elCodec);
 };
