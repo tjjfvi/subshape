@@ -1,8 +1,8 @@
-# `parity-scale-codec-ts`
+# SCALE Codecs for JavaScript and TypeScript
 
 A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/v3/advanced/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
 
-⚠️ `parity-scale-scale-ts` is in beta. If you encounter a bug or want to give feedback on the API design, please create an issue.
+⚠️ This TypeScript implementation of Parity's SCALE Codecs is in beta. If you encounter a bug or want to give feedback on the API design, please create an issue.
 
 ## Setup
 
@@ -23,7 +23,7 @@ npm install parity-scale-codec
 Then import as follows.
 
 ```ts
-import * as s from "parity-scale-codec-ts";
+import * as s from "parity-scale-codec";
 ```
 
 ## Usage

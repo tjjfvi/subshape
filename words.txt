@@ -1,4 +1,5 @@
 bindgen
+paritytech
 lipsum
 cummon
 bitvec
