@@ -45,7 +45,7 @@ export const compact = new Codec<number | bigint>(
   },
   (cursor) => {
     const b = u8._d(cursor);
-    switch ((b & 3) as 0 | 1 | 2 | 3) {
+    switch (b & 3) {
       case 0: {
         return b >> 2;
       }
@@ -77,6 +77,9 @@ export const compact = new Codec<number | bigint>(
           base += 8n;
         }
         return decodedU32AsBigint;
+      }
+      default: {
+        throw new Error(`Encountered invalid compact mode \`${b}\``);
       }
     }
   },
