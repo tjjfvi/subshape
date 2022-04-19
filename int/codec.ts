@@ -56,7 +56,7 @@ class X128 extends Codec<bigint> {
           signed ? 'getBigInt64' : 'getBigUint64'
         ](cursor.i + 8, true);
         cursor.i += 16
-        return (left << 64n) + right;
+        return (left << 64n) | right;
       },
     );
   }
