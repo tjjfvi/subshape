@@ -20,7 +20,11 @@ export class Union<Members extends any[]> extends Codec<Members[number]> {
       },
       (cursor) => {
         const discriminant = u8._d(cursor);
-        return memberCodecs[discriminant]!._d(cursor);
+        const memberCodec = memberCodecs[discriminant];
+        if (!memberCodec) {
+          throw new Error(`No such member codec matching the discriminant \`${discriminant}\``);
+        }
+        return memberCodec._d(cursor);
       },
     );
   }
