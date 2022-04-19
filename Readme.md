@@ -1,8 +1,8 @@
-# `scale-ts`
+# `parity-scale-codec-ts`
 
 A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/v3/advanced/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
 
-⚠️ `scale-ts` is in beta. If you encounter a bug or want to give feedback on the API design, please create an issue.
+⚠️ `parity-scale-scale-ts` is in beta. If you encounter a bug or want to give feedback on the API design, please create an issue.
 
 ## Setup
 
@@ -15,7 +15,7 @@ import * as s from "https://deno.land/x/scale/mod.ts";
 If you're using [Node](https://nodejs.org/), install as follows.
 
 ```
-npm install scale-combinators
+npm install parity-scale-codec
 ```
 
 > NOTE: The published package name is (while in beta) subject to change
@@ -23,7 +23,7 @@ npm install scale-combinators
 Then import as follows.
 
 ```ts
-import * as s from "scale-combinators";
+import * as s from "parity-scale-codec-ts";
 ```
 
 ## Usage
