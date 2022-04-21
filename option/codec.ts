@@ -15,12 +15,15 @@ export class Option<Some> extends Codec<Some | undefined> {
         }
       },
       (cursor) => {
-        switch (u8._d(cursor) as 0 | 1) {
+        switch (u8._d(cursor)) {
           case 0: {
             return undefined;
           }
           case 1: {
             return someCodec._d(cursor);
+          }
+          default: {
+            throw new Error("Could not decode Option as `Some(_)` nor `None`");
           }
         }
       },
