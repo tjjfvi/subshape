@@ -230,7 +230,7 @@ const bytes2 = codec.encode({
 const value2 = codec.decode(bytes2);
 ```
 
-#### Key Literals (aka., Native JS Enums)
+#### Key Literals (aka., Native TypeScript Enums)
 
 ```ts
 enum Dinosaur {
