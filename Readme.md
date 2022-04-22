@@ -230,6 +230,28 @@ const bytes2 = codec.encode({
 const value2 = codec.decode(bytes2);
 ```
 
+#### Key Literals (aka., Native JS Enums)
+
+```ts
+enum Dinosaur {
+  Liopleurodon = "Liopleurodon",
+  Kosmoceratops = "Kosmoceratops",
+  Psittacosaurus = "Psittacosaurus",
+}
+
+const codec = s.keyLiteralUnion(
+  Dinosaur.Liopleurodon,
+  Dinosaur.Kosmoceratops,
+  Dinosaur.Psittacosaurus,
+);
+
+const encoded = codec.encode(Dinosaur.Psittacosaurus);
+assertEquals(encoded, new Uint8Array([2]));
+
+const decoded = codec.decode(encoded);
+assertEquals(decoded, Dinosaur.Psittacosaurus);
+```
+
 <!-- TODO: narrowing gif -->
 
 ### Instance
