@@ -5,7 +5,7 @@ export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberC
 
 export class Union<Members extends any[]> extends Codec<Members[number]> {
   constructor(
-    readonly discriminate: (value: Members[number]) => number,
+    discriminate: (value: Members[number]) => number,
     ...memberCodecs: CodecList<Members>
   ) {
     super(

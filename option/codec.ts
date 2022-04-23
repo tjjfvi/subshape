@@ -2,7 +2,7 @@ import { Codec } from "../common.ts";
 import { u8 } from "../int/codec.ts";
 
 export class Option<Some> extends Codec<Some | undefined> {
-  constructor(readonly someCodec: Codec<Some>) {
+  constructor(someCodec: Codec<Some>) {
     super(
       (value) => {
         return 1 + (value === undefined ? 0 : someCodec._s(value));
@@ -10,7 +10,7 @@ export class Option<Some> extends Codec<Some | undefined> {
       (cursor, value) => {
         cursor.view.setUint8(cursor.i, value === undefined ? 0 : 1);
         cursor.i += 1;
-        if (value) {
+        if (value !== undefined) {
           someCodec._e(cursor, value);
         }
       },
