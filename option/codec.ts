@@ -10,7 +10,7 @@ export class Option<Some> extends Codec<Some | undefined> {
       (cursor, value) => {
         cursor.view.setUint8(cursor.i, value === undefined ? 0 : 1);
         cursor.i += 1;
-        if (value) {
+        if (value !== undefined) {
           someCodec._e(cursor, value);
         }
       },
