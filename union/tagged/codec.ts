@@ -40,7 +40,10 @@ export class TaggedUnion<
         });
       },
       ...members.map(([memberTag, ...fields]) => {
-        return record(["_tag", dummy(memberTag)], ...fields || []) as NativeTaggedUnionMembers<TagKey, Members>;
+        return record(
+          ["_tag", dummy(memberTag)],
+          ...fields || [],
+        ) as NativeTaggedUnionMembers<TagKey, Members>;
       }),
     );
   }
