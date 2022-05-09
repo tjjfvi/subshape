@@ -1,5 +1,5 @@
-import { Codec, Entries } from "../common.ts";
-import { record } from "../record/codec.ts";
+import { Codec, Entries, Native } from "../common.ts";
+import { Field, NativeRecord, record } from "../record/codec.ts";
 
 export class Instance<Ctor extends new(...args: any[]) => any> extends Codec<InstanceType<Ctor>> {
   constructor(
@@ -30,9 +30,18 @@ export class Instance<Ctor extends new(...args: any[]) => any> extends Codec<Ins
  * @param fields the ordered fields used to decode params for the constructor / encode from the instance
  * @returns the instance codec
  */
-export const instance = <Ctor extends new(...args: any[]) => any>(
+export const instance = <
+  Ctor extends new(
+    ...args: {
+      [K in keyof Fields]: Native<Extract<Fields[K], Field>[1]>;
+    }
+  ) => NativeRecord<Fields>,
+  Fields extends Field<EntryKey, EntryValueCodec>[],
+  EntryKey extends PropertyKey,
+  EntryValueCodec extends Codec,
+>(
   ctor: Ctor,
-  ...fields: Entries<InstanceType<Ctor>>
+  ...fields: Fields
 ) => {
-  return new Instance(ctor, ...fields);
+  return new Instance(ctor, ...(fields as any));
 };
