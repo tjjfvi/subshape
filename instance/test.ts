@@ -1,5 +1,5 @@
 import * as asserts from "std/testing/asserts.ts";
-import * as s from "../mod.ts";
+import * as $ from "../mod.ts";
 
 class MyError extends Error {
   constructor(
@@ -16,16 +16,16 @@ class MyError extends Error {
 }
 
 Deno.test("Instances", () => {
-  const c = s.instance(
+  const c = $.instance(
     MyError,
-    ["code", s.u8],
-    ["message", s.str],
+    ["code", $.u8],
+    ["message", $.str],
     [
       "payload",
-      s.record(
-        ["a", s.str],
-        ["b", s.u8],
-        ["c", s.bool],
+      $.record(
+        ["a", $.str],
+        ["b", $.u8],
+        ["c", $.bool],
       ),
     ],
   );
@@ -49,24 +49,24 @@ namespace _typeTests {
   // @ts-ignore: Prevent execution
   if (1 as 0) return;
 
-  let sPayload = s.record(
-    ["a", s.str],
-    ["b", s.u8],
-    ["c", s.bool],
+  let sPayload = $.record(
+    ["a", $.str],
+    ["b", $.u8],
+    ["c", $.bool],
   );
 
   // ok
-  s.instance(MyError, ["code", s.u8], ["message", s.str], ["payload", sPayload]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["payload", sPayload]);
 
   // @ts-expect-error: Missing constructor parameters
-  s.instance(MyError);
+  $.instance(MyError);
 
   // @ts-expect-error: Constructor parameter type mismatch
-  s.instance(MyError, ["code", s.u8], ["message", s.str], ["name", s.str]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", $.str]);
 
   // @ts-expect-error: Missing field
-  s.instance(MyError, ["code", s.u8], ["message", s.str], ["paidload", sPayload]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["paidload", sPayload]);
 
   // @ts-expect-error: Field type mismatch
-  s.instance(MyError, ["code", s.u8], ["message", s.str], ["name", sPayload]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", sPayload]);
 }

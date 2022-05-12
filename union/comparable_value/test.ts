@@ -1,5 +1,5 @@
 import * as asserts from "std/testing/asserts.ts";
-import * as s from "../../mod.ts";
+import * as $ from "../../mod.ts";
 
 Deno.test("Comparable Value Union", () => {
   enum X {
@@ -7,7 +7,7 @@ Deno.test("Comparable Value Union", () => {
     B = "B",
     C = "C",
   }
-  const c = s.comparableValueUnion(s.str, X.A, X.B, X.C);
+  const c = $.comparableValueUnion($.str, X.A, X.B, X.C);
 
   const aBytes = c.encode(X.A);
   const aDecoded = c.decode(aBytes);
