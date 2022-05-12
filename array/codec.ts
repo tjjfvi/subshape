@@ -31,9 +31,9 @@ export class SizedArray<
         }
       },
       (cursor) => {
-        const result: El[] = [];
+        const result: El[] = globalThis.Array(len);
         for (let i = 0; i < len; i += 1) {
-          result.push(elCodec._d(cursor));
+          result[i] = elCodec._d(cursor);
         }
         return result as ArrayOfLenth<Len, El>;
       },
@@ -54,14 +54,25 @@ export class Array<El> extends Codec<El[]> {
   constructor(elCodec: Codec<El>) {
     super(
       (value) => {
-        return compact._s(value.length) + new SizedArray(elCodec, value.length)._s(value);
+        let sum = 0;
+        for (let i = 0; i < value.length; i += 1) {
+          sum += elCodec._s(value[i]!);
+        }
+        return compact._s(value.length) + sum;
       },
       (cursor, value) => {
         compact._e(cursor, value.length);
-        new SizedArray(elCodec, value.length)._e(cursor, value);
+        for (let i = 0; i < value.length; i += 1) {
+          elCodec._e(cursor, value[i]!);
+        }
       },
       (cursor) => {
-        return new SizedArray(elCodec, Number(compact._d(cursor)))._d(cursor);
+        const len = Number(compact._d(cursor));
+        const result: El[] = globalThis.Array(len);
+        for (let i = 0; i < len; i += 1) {
+          result[i] = elCodec._d(cursor);
+        }
+        return result;
       },
     );
   }
