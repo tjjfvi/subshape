@@ -1,5 +1,5 @@
 import { Codec } from "../common.ts";
-import { encodePositiveBigIntInto, u16, u32, u8 } from "../int/codec.ts";
+import { u16, u32, u8 } from "../int/codec.ts";
 
 const MAX_U8 = 2 ** (8 - 2) - 1;
 const MAX_U16 = 2 ** (16 - 2) - 1;
@@ -84,3 +84,18 @@ export const compact = new Codec<number | bigint>(
 
 // TODO: finesse
 export const nCompact = compact as any as Codec<number>;
+
+// https://github.com/soramitsu/scale-codec-js-library/blob/master/packages/core/src/codecs/int.ts
+const encodePositiveBigIntInto = (
+  value: bigint,
+  u8a: Uint8Array,
+  i: number,
+  limit: number,
+): number => {
+  let j = 0;
+  while (value > 0 && j < limit) {
+    u8a[i + j++] = Number(value & 0xffn);
+    value >>= 8n;
+  }
+  return j;
+};
