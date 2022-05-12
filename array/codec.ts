@@ -1,4 +1,4 @@
-import { Codec } from "../common.ts";
+import { Codec, Cursor } from "../common.ts";
 import { compact } from "../compact/codec.ts";
 
 type ArrayOfLenth<
@@ -13,31 +13,30 @@ export class SizedArrayCodec<
   El,
   Len extends number,
 > extends Codec<ArrayOfLenth<Len, El>> {
+  _size(value: El[]) {
+    let sum = 0;
+    for (let i = 0; i < this.len; i += 1) {
+      sum += this.elCodec._size(value[i]!);
+    }
+    return sum;
+  }
+  _encode(cursor: Cursor, value: El[]) {
+    for (let i = 0; i < this.len; i += 1) {
+      this.elCodec._encode(cursor, value[i]!);
+    }
+  }
+  _decode(cursor: Cursor) {
+    const result: El[] = Array(this.len);
+    for (let i = 0; i < this.len; i += 1) {
+      result[i] = this.elCodec._decode(cursor);
+    }
+    return result as ArrayOfLenth<Len, El>;
+  }
   constructor(
-    elCodec: Codec<El>,
-    len: Len,
+    readonly elCodec: Codec<El>,
+    readonly len: Len,
   ) {
-    super(
-      (value) => {
-        let sum = 0;
-        for (let i = 0; i < len; i += 1) {
-          sum += elCodec._s(value[i]!);
-        }
-        return sum;
-      },
-      (cursor, value) => {
-        for (let i = 0; i < len; i += 1) {
-          elCodec._e(cursor, value[i]!);
-        }
-      },
-      (cursor) => {
-        const result: El[] = Array(len);
-        for (let i = 0; i < len; i += 1) {
-          result[i] = elCodec._d(cursor);
-        }
-        return result as ArrayOfLenth<Len, El>;
-      },
-    );
+    super();
   }
 }
 export const sizedArray = <
@@ -51,30 +50,29 @@ export const sizedArray = <
 };
 
 export class ArrayCodec<El> extends Codec<El[]> {
-  constructor(elCodec: Codec<El>) {
-    super(
-      (value) => {
-        let sum = 0;
-        for (let i = 0; i < value.length; i += 1) {
-          sum += elCodec._s(value[i]!);
-        }
-        return compact._s(value.length) + sum;
-      },
-      (cursor, value) => {
-        compact._e(cursor, value.length);
-        for (let i = 0; i < value.length; i += 1) {
-          elCodec._e(cursor, value[i]!);
-        }
-      },
-      (cursor) => {
-        const len = Number(compact._d(cursor));
-        const result: El[] = Array(len);
-        for (let i = 0; i < len; i += 1) {
-          result[i] = elCodec._d(cursor);
-        }
-        return result;
-      },
-    );
+  _size(value: El[]) {
+    let sum = 0;
+    for (let i = 0; i < value.length; i += 1) {
+      sum += this.elCodec._size(value[i]!);
+    }
+    return compact._size(value.length) + sum;
+  }
+  _encode(cursor: Cursor, value: El[]) {
+    compact._encode(cursor, value.length);
+    for (let i = 0; i < value.length; i += 1) {
+      this.elCodec._encode(cursor, value[i]!);
+    }
+  }
+  _decode(cursor: Cursor) {
+    const len = Number(compact._decode(cursor));
+    const result: El[] = Array(len);
+    for (let i = 0; i < len; i += 1) {
+      result[i] = this.elCodec._decode(cursor);
+    }
+    return result;
+  }
+  constructor(readonly elCodec: Codec<El>) {
+    super();
   }
 }
 export const array = <El>(elCodec: Codec<El>): ArrayCodec<El> => {

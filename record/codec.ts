@@ -1,4 +1,4 @@
-import { Codec, Flatten, Native } from "../common.ts";
+import { Codec, Cursor, Flatten, Native } from "../common.ts";
 
 export type Field<
   Key extends PropertyKey = PropertyKey,
@@ -14,27 +14,28 @@ export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
   : never;
 
 export class RecordCodec<Fields extends Field[]> extends Codec<Flatten<NativeRecord<Fields>>> {
+  _size(value: Flatten<NativeRecord<Fields>>) {
+    return this.fields.reduce<number>((len, [key, fieldEncoder]) => {
+      return len + fieldEncoder._size((value as any)[key]);
+    }, 0);
+  }
+  _encode(cursor: Cursor, value: Flatten<NativeRecord<Fields>>) {
+    this.fields.forEach(([key, fieldEncoder]) => {
+      fieldEncoder._encode(cursor, (value as any)[key]);
+    });
+  }
+  _decode(cursor: Cursor) {
+    return this.fields.reduce<Partial<Flatten<NativeRecord<Fields>>>>((acc, [key, fieldCodec]) => {
+      return {
+        ...acc,
+        [key]: fieldCodec._decode(cursor),
+      };
+    }, {}) as Flatten<NativeRecord<Fields>>;
+  }
+  readonly fields;
   constructor(...fields: Fields) {
-    super(
-      (value) => {
-        return fields.reduce<number>((len, [key, fieldEncoder]) => {
-          return len + fieldEncoder._s((value as any)[key]);
-        }, 0);
-      },
-      (cursor, value) => {
-        fields.forEach(([key, fieldEncoder]) => {
-          fieldEncoder._e(cursor, (value as any)[key]);
-        });
-      },
-      (cursor) => {
-        return fields.reduce<Partial<Flatten<NativeRecord<Fields>>>>((acc, [key, fieldCodec]) => {
-          return {
-            ...acc,
-            [key]: fieldCodec._d(cursor),
-          };
-        }, {}) as Flatten<NativeRecord<Fields>>;
-      },
-    );
+    super();
+    this.fields = fields;
   }
 }
 export const record = <
