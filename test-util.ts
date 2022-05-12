@@ -1,3 +1,5 @@
+/// <reference lib="deno.unstable"/>
+
 import { Codec } from "./common.ts";
 export * as fixtures from "./target/fixtures/scale_fixtures.js";
 
