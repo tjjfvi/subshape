@@ -37,7 +37,7 @@ import * as $ from "parity-scale-codec";
 ```ts
 import * as $ from "https://deno.land/x/scale/mod.ts";
 
-const codec = $.record(
+const $person = $.record(
   ["name", $.str],
   ["nickName", $.str],
   ["superPower", $.option($.str)],
@@ -49,8 +49,8 @@ const valueToEncode = {
   superPower: "Hydrokinesis",
 };
 
-const encodedBytes = codec.encode(valueToEncode);
-const decodedValue = codec.decode(encodedBytes);
+const encodedBytes = $person.encode(valueToEncode);
+const decodedValue = $person.decode(encodedBytes);
 
 assertEquals(decodedValue, valueToEncode);
 ```
@@ -58,7 +58,7 @@ assertEquals(decodedValue, valueToEncode);
 To extract the JS-native TypeScript type from a given codec, use the `Native` utility type.
 
 ```ts
-type NativeType = $.Native<typeof codec>;
+type NativeType = $.Native<typeof $person>;
 
 assertTypeEquals<NativeType, {
   name: string;
@@ -76,7 +76,7 @@ interface Person {
   superPower: string | undefined;
 }
 
-const codec: Codec<Person> = $.record(
+const $person: Codec<Person> = $.record(
   ["name", $.str],
   ["nickName", $.str],
   ["superPower", $.option($.str)],
@@ -86,7 +86,7 @@ const codec: Codec<Person> = $.record(
 This has the added benefit of producing type errors if the codec does not directly mirror the TS type.
 
 ```ts
-const codec: Codec<NativeType> = $.record(
+const $person: Codec<Person> = $.record(
   //  ~~~~~
   //  ^ error (message below)
   ["nickName", $.str],
@@ -127,13 +127,13 @@ Other such integer types include `i8`, `u16`, `i16`, `u32`, `i32`, `u64`, `i64`,
 ### Options
 
 ```ts
-const codec = $.option($.u8);
+const $foo = $.option($.u8);
 
-const bytes1 = codec.encode(27);
-const value1 = codec.decode(bytes1);
+const bytes1 = $foo.encode(27);
+const value1 = $foo.decode(bytes1);
 
-const bytes2 = codec.encode(undefined);
-const value2 = codec.decode(bytes2);
+const bytes2 = $foo.encode(undefined);
+const value2 = $foo.decode(bytes2);
 ```
 
 ### Arrays
@@ -141,45 +141,45 @@ const value2 = codec.decode(bytes2);
 #### Sized
 
 ```ts
-const codec = $.sizedArray($.u8, 2);
+const $bar = $.sizedArray($.u8, 2);
 
-const bytes = codec.encode([3, 9]);
-const value = codec.decode(bytes);
+const bytes = $bar.encode([3, 9]);
+const value = $bar.decode(bytes);
 ```
 
 #### Dynamic
 
 ```ts
-const codec = $.array($.u8);
+const $baz = $.array($.u8);
 
-const bytes = codec.encode([1, 2, 3, 4, 5]);
-const value = codec.decode(bytes);
+const bytes = $baz.encode([1, 2, 3, 4, 5]);
+const value = $baz.decode(bytes);
 ```
 
 ### Tuples
 
 ```ts
-const codec = $.tuple($.bool, $.u8, $.str);
+const $qux = $.tuple($.bool, $.u8, $.str);
 
-const bytes = codec.encode([true, 81, "｡＾・ｪ・＾｡"]);
-const value = codec.decode(bytes);
+const bytes = $qux.encode([true, 81, "｡＾・ｪ・＾｡"]);
+const value = $qux.decode(bytes);
 ```
 
 ### Records
 
 ```ts
-const codec = $.record(
+const $person = $.record(
   ["name", $.str],
   ["nickName", $.str],
   ["superPower", $.option($.str)],
 );
 
-const bytes = codec.encode({
+const bytes = $person.encode({
   name: "Magdalena",
   nickName: "Magz",
   superPower: "Hydrokinesis",
 });
-const value = codec.decode(bytes);
+const value = $person.decode(bytes);
 ```
 
 ### Unions
@@ -187,7 +187,7 @@ const value = codec.decode(bytes);
 #### Explicitly Discriminated
 
 ```ts
-const codec = $.union(
+const $strOrNum = $.union(
   (value) => { // Discriminate
     if (typeof value === "string") {
       return 0;
@@ -201,33 +201,33 @@ const codec = $.union(
   $.u8, // Member `1`
 );
 
-const bytes1 = codec.encode(27);
-const value1 = codec.decode(bytes1);
+const bytes1 = $strOrNum.encode(27);
+const value1 = $strOrNum.decode(bytes1);
 
-const bytes2 = codec.encode("Parity");
-const value2 = codec.decode(bytes2);
+const bytes2 = $strOrNum.encode("Parity");
+const value2 = $strOrNum.decode(bytes2);
 ```
 
 #### Tagged
 
 ```ts
-const codec = $.taggedUnion(
+const $pet = $.taggedUnion(
   "_tag",
   ["dog", ["bark", $.str]],
-  ["cat", ["pur", $.str]],
+  ["cat", ["purr", $.str]],
 );
 
-const bytes1 = codec.encode({
+const bytes1 = $pet.encode({
   _tag: "dog",
   bark: "Roof",
 });
-const value1 = codec.decode(bytes1);
+const value1 = $pet.decode(bytes1);
 
-const bytes2 = codec.encode({
+const bytes2 = $pet.encode({
   _tag: "cat",
-  pur: "Meow",
+  purr: "Meow",
 });
-const value2 = codec.decode(bytes2);
+const value2 = $pet.decode(bytes2);
 ```
 
 #### Key Literals (aka., Native TypeScript Enums)
@@ -239,16 +239,16 @@ enum Dinosaur {
   Psittacosaurus = "Psittacosaurus",
 }
 
-const codec = $.keyLiteralUnion(
+const $dinosaur = $.keyLiteralUnion(
   Dinosaur.Liopleurodon,
   Dinosaur.Kosmoceratops,
   Dinosaur.Psittacosaurus,
 );
 
-const encoded = codec.encode(Dinosaur.Psittacosaurus);
+const encoded = $dinosaur.encode(Dinosaur.Psittacosaurus);
 assertEquals(encoded, new Uint8Array([2]));
 
-const decoded = codec.decode(encoded);
+const decoded = $dinosaur.decode(encoded);
 assertEquals(decoded, Dinosaur.Psittacosaurus);
 ```
 
@@ -279,7 +279,7 @@ class MyError extends Error {
 We can do so as follows.
 
 ```ts
-const codec = $.instance(
+const $myError = $.instance(
   MyError,
   ["code", $.u8],
   ["message", $.str],
@@ -307,8 +307,8 @@ const myError = new MyError(
   },
 );
 
-const encodedBytes = codec.encode(myError);
-const decoded = codec.decode(encodedBytes);
+const encodedBytes = $myError.encode(myError);
+const decoded = $myError.decode(encodedBytes);
 ```
 
 > Note: executing an equality assertion between `myError` and `decoded` will fail, as they contain different stack traces.
@@ -321,13 +321,13 @@ const decoded = codec.decode(encodedBytes);
 class MyError {
   constructor(readonly message: string) {}
 }
-const errorCodec = $.instance(MyError, ["message", $.str]);
+const $myError = $.instance(MyError, ["message", $.str]);
 
-const resultCodec = $.Result(errorCodec, $.str);
+const $myResult = $.result($myError, $.str);
 
-const errorBytes = resultCodec.encode(new MyError("Uh oh!"));
-const errorDecoded = resultCodec.decode(errorBytes);
+const errorBytes = $myResult.encode(new MyError("Uh oh!"));
+const errorDecoded = $myResult.decode(errorBytes);
 
-const okBytes = resultCodec.encode("YES!");
-const okDecoded = resultCodec.decode(okBytes);
+const okBytes = $myResult.encode("YES!");
+const okDecoded = $myResult.decode(okBytes);
 ```
