@@ -9,7 +9,7 @@ type ArrayOfLenth<
   : N extends A["length"] ? A
   : ArrayOfLenth<N, T, [...A, T]>;
 
-export class SizedArray<
+export class SizedArrayCodec<
   El,
   Len extends number,
 > extends Codec<ArrayOfLenth<Len, El>> {
@@ -31,7 +31,7 @@ export class SizedArray<
         }
       },
       (cursor) => {
-        const result: El[] = globalThis.Array(len);
+        const result: El[] = Array(len);
         for (let i = 0; i < len; i += 1) {
           result[i] = elCodec._d(cursor);
         }
@@ -46,11 +46,11 @@ export const sizedArray = <
 >(
   elCodec: Codec<El>,
   len: Len,
-): SizedArray<El, Len> => {
-  return new SizedArray(elCodec, len);
+): SizedArrayCodec<El, Len> => {
+  return new SizedArrayCodec(elCodec, len);
 };
 
-export class Array<El> extends Codec<El[]> {
+export class ArrayCodec<El> extends Codec<El[]> {
   constructor(elCodec: Codec<El>) {
     super(
       (value) => {
@@ -68,7 +68,7 @@ export class Array<El> extends Codec<El[]> {
       },
       (cursor) => {
         const len = Number(compact._d(cursor));
-        const result: El[] = globalThis.Array(len);
+        const result: El[] = Array(len);
         for (let i = 0; i < len; i += 1) {
           result[i] = elCodec._d(cursor);
         }
@@ -77,6 +77,6 @@ export class Array<El> extends Codec<El[]> {
     );
   }
 }
-export const array = <El>(elCodec: Codec<El>): Array<El> => {
-  return new Array(elCodec);
+export const array = <El>(elCodec: Codec<El>): ArrayCodec<El> => {
+  return new ArrayCodec(elCodec);
 };

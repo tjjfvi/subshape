@@ -1,14 +1,14 @@
 import { Codec } from "../common.ts";
-import { Instance } from "../instance/codec.ts";
-import { Union } from "../union/codec.ts";
+import { InstanceCodec } from "../instance/codec.ts";
+import { UnionCodec } from "../union/codec.ts";
 
-export class Result<
+export class ResultCodec<
   Ok,
   Err extends Error,
-> extends Union<[Ok, Err]> {
+> extends UnionCodec<[Ok, Err]> {
   constructor(
     okCodec: Codec<Ok>,
-    errCodec: Instance<new(...args: any[]) => Err>,
+    errCodec: InstanceCodec<new(...args: any[]) => Err>,
   ) {
     super(
       (value) => {
@@ -24,7 +24,7 @@ export const result = <
   Err extends Error,
 >(
   okCodec: Codec<Ok>,
-  errCodec: Instance<new(...args: any[]) => any>,
-): Result<Ok, Err> => {
-  return new Result(okCodec, errCodec);
+  errCodec: InstanceCodec<new(...args: any[]) => any>,
+): ResultCodec<Ok, Err> => {
+  return new ResultCodec(okCodec, errCodec);
 };

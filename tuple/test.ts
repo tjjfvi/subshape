@@ -7,7 +7,7 @@ Deno.test("Tuples", () => {
     const t = $.tuple(
       ...{
         0: [$.str, $.u8, $.str, $.u32],
-        1: [$.str, $.i16, new $.Option($.u16)],
+        1: [$.str, $.i16, new $.OptionCodec($.u16)],
       }[i]!,
     );
     asserts.assertEquals(t.decode(bytes), decoded);

@@ -2,7 +2,7 @@ import { Codec } from "../../common.ts";
 import { u8 } from "../../int/codec.ts";
 
 // TODO: decide whether to pursue further static-type-level safeguards
-export class OrderedNumEnum<Enum> extends Codec<Enum[keyof Enum]> {
+export class OrderedNumEnumCodec<Enum> extends Codec<Enum[keyof Enum]> {
   constructor(enum_: Enum) {
     super(
       () => {
@@ -19,6 +19,6 @@ export class OrderedNumEnum<Enum> extends Codec<Enum[keyof Enum]> {
     );
   }
 }
-export const orderedNumEnum = <Enum>(enum_: Enum): OrderedNumEnum<Enum> => {
-  return new OrderedNumEnum(enum_);
+export const orderedNumEnum = <Enum>(enum_: Enum): OrderedNumEnumCodec<Enum> => {
+  return new OrderedNumEnumCodec(enum_);
 };

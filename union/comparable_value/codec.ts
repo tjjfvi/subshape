@@ -1,10 +1,10 @@
 import { Codec } from "../../common.ts";
-import { Union } from "../../union/codec.ts";
+import { UnionCodec } from "../../union/codec.ts";
 
-export class ComparableValueUnion<
+export class ComparableValueUnionCodec<
   MemberWide,
   Member extends MemberWide,
-> extends Union<Member[]> {
+> extends UnionCodec<Member[]> {
   constructor(
     memberCodec: Codec<MemberWide>,
     ...members: Member[]
@@ -23,6 +23,6 @@ export const comparableValueUnion = <
 >(
   memberCodec: Codec<MemberWide>,
   ...members: Member[]
-): ComparableValueUnion<MemberWide, Member> => {
-  return new ComparableValueUnion(memberCodec, ...members);
+): ComparableValueUnionCodec<MemberWide, Member> => {
+  return new ComparableValueUnionCodec(memberCodec, ...members);
 };

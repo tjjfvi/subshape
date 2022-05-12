@@ -3,7 +3,7 @@ import { u8 } from "../int/codec.ts";
 
 export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
 
-export class Union<Members extends any[]> extends Codec<Members[number]> {
+export class UnionCodec<Members extends any[]> extends Codec<Members[number]> {
   constructor(
     discriminate: (value: Members[number]) => number,
     ...memberCodecs: CodecList<Members>
@@ -32,6 +32,6 @@ export class Union<Members extends any[]> extends Codec<Members[number]> {
 export const union = <Members extends any[]>(
   discriminate: (value: Members[number]) => number,
   ...memberCodecs: CodecList<Members>
-): Union<Members> => {
-  return new Union(discriminate, ...memberCodecs);
+): UnionCodec<Members> => {
+  return new UnionCodec(discriminate, ...memberCodecs);
 };

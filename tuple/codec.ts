@@ -4,7 +4,7 @@ export type NativeTuple<ElCodecs extends Codec[]> = {
   [I in keyof ElCodecs]: ElCodecs[I] extends Codec<infer T> ? T : never;
 };
 
-export class Tuple<ElCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple<ElCodecs>> {
+export class TupleCodec<ElCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple<ElCodecs>> {
   constructor(...elCodecs: ElCodecs) {
     super(
       (value) => {
@@ -29,6 +29,6 @@ export class Tuple<ElCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple
   }
 }
 
-export const tuple = <ElCodecs extends Codec[]>(...elCodecs: ElCodecs): Tuple<ElCodecs> => {
-  return new Tuple(...elCodecs);
+export const tuple = <ElCodecs extends Codec[]>(...elCodecs: ElCodecs): TupleCodec<ElCodecs> => {
+  return new TupleCodec(...elCodecs);
 };
