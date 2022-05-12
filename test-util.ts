@@ -22,11 +22,11 @@ export const constrainedIdentity = <T>() => {
 };
 
 export function benchCodec<T>(name: string, codec: Codec<T>, value: T) {
-  Deno.bench(`- ${name} [encode]`, () => {
+  const encoded = codec.encode(value);
+  Deno.bench(`- ${name} (${encoded.length}B) [encode] `, () => {
     codec.encode(value);
   });
-  const encoded = codec.encode(value);
-  Deno.bench(`  ${name} [decode]`, () => {
+  Deno.bench(`  ${name} (${encoded.length}B) [decode]`, () => {
     codec.decode(encoded);
   });
 }
