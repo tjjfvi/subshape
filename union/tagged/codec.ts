@@ -1,7 +1,7 @@
 import { Codec, Flatten } from "../../common.ts";
 import { dummy } from "../../dummy/codec.ts";
 import { Field, NativeRecord, record } from "../../record/codec.ts";
-import { Union } from "../../union/codec.ts";
+import { UnionCodec } from "../../union/codec.ts";
 
 export type TaggedUnionMember<
   MemberTag extends PropertyKey = PropertyKey,
@@ -20,15 +20,15 @@ export type NativeTaggedUnionMembers<
   TagKey extends PropertyKey,
   M extends TaggedUnionMember[],
 > = M extends [] ? never
-  : M extends [infer E0, ...infer ERest] ?
+  : M extends [infer E0, ...infer ERest] ? 
     | (E0 extends TaggedUnionMember ? NativeTaggedUnionMember<TagKey, E0> : never)
     | (ERest extends TaggedUnionMember[] ? NativeTaggedUnionMembers<TagKey, ERest> : never)
   : never;
 
-export class TaggedUnion<
+export class TaggedUnionCodec<
   TagKey extends PropertyKey,
   Members extends TaggedUnionMember[],
-> extends Union<Flatten<NativeTaggedUnionMembers<TagKey, Members>>[]> {
+> extends UnionCodec<Flatten<NativeTaggedUnionMembers<TagKey, Members>>[]> {
   constructor(
     tagKey: TagKey,
     ...members: Members
@@ -58,6 +58,6 @@ export const taggedUnion = <
 >(
   tagKey: TagKey,
   ...members: Members
-): TaggedUnion<TagKey, Members> => {
-  return new TaggedUnion(tagKey, ...members);
+): TaggedUnionCodec<TagKey, Members> => {
+  return new TaggedUnionCodec(tagKey, ...members);
 };

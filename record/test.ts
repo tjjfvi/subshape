@@ -1,13 +1,13 @@
 import * as asserts from "std/testing/asserts.ts";
-import * as s from "../mod.ts";
+import * as $ from "../mod.ts";
 import * as f from "../test-util.ts";
 
 Deno.test("Records", () => {
-  const c = s.record(
-    ["name", s.str],
-    ["nickName", s.str],
-    ["superPower", s.option(s.str)],
-    ["luckyNumber", s.u8],
+  const c = $.record(
+    ["name", $.str],
+    ["nickName", $.str],
+    ["superPower", $.option($.str)],
+    ["luckyNumber", $.u8],
   );
   f.visitFixtures(f.fixtures.record_, (bytes, decoded) => {
     asserts.assertEquals(c.decode(bytes), decoded);

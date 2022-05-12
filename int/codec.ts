@@ -37,7 +37,7 @@ export const u64 = new NumCodec(8, "BigUint64");
 export const i64 = new NumCodec(8, "BigInt64");
 
 // https://github.com/unstoppablejs/unstoppablejs/blob/7022e34f756ccc25e6ed9d4680284455b2ff714b/packages/scale-ts/src/codecs/fixed-width-ints.ts#L59-L74
-class X128 extends Codec<bigint> {
+class X128Codec extends Codec<bigint> {
   constructor(signed: boolean) {
     super(
       () => {
@@ -51,14 +51,14 @@ class X128 extends Codec<bigint> {
       (cursor) => {
         const right = cursor.view.getBigUint64(cursor.i, true);
         const left = cursor.view[
-          signed ? 'getBigInt64' : 'getBigUint64'
+          signed ? "getBigInt64" : "getBigUint64"
         ](cursor.i + 8, true);
-        cursor.i += 16
+        cursor.i += 16;
         return (left << 64n) | right;
       },
     );
   }
 }
 
-export const u128 = new X128(false);
-export const i128 = new X128(true);
+export const u128 = new X128Codec(false);
+export const i128 = new X128Codec(true);

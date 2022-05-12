@@ -1,18 +1,18 @@
 import * as asserts from "std/testing/asserts.ts";
-import * as s from "../../mod.ts";
+import * as $ from "../../mod.ts";
 import * as f from "../../test-util.ts";
 
 Deno.test("Unions", () => {
-  const c = s.taggedUnion(
+  const c = $.taggedUnion(
     "_tag",
     ["A"],
-    ["B", ["B", s.str]],
-    ["C", ["C", s.tuple(s.u32, s.u64)]],
+    ["B", ["B", $.str]],
+    ["C", ["C", $.tuple($.u32, $.u64)]],
     ["D", [
       "D",
-      s.record(
-        ["a", s.u32],
-        ["b", s.u64],
+      $.record(
+        ["a", $.u32],
+        ["b", $.u64],
       ),
     ]],
   );

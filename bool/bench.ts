@@ -1,4 +1,4 @@
 import { benchCodec } from "../test-util.ts";
-import * as s from "./codec.ts";
+import * as $ from "./codec.ts";
 
-benchCodec("bool", s.bool, true);
+benchCodec("bool", $.bool, true);

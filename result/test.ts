@@ -1,5 +1,5 @@
 import * as asserts from "std/testing/asserts.ts";
-import * as s from "../mod.ts";
+import * as $ from "../mod.ts";
 import { fixtures, visitFixtures } from "../test-util.ts";
 
 class ErrFromTuple extends Error {
@@ -33,7 +33,7 @@ Deno.test("Results", () => {
       case 0:
       case 1:
       case 2: {
-        const c = s.result(s.record(["value", s.str]), undefined as any);
+        const c = $.result($.record(["value", $.str]), undefined as any);
         asserts.assertEquals(c.decode(bytes), decoded);
         asserts.assertEquals(c.encode(decoded as any), bytes);
         break;
@@ -41,7 +41,7 @@ Deno.test("Results", () => {
       case 3:
       case 4:
       case 5: {
-        const c = s.result(undefined as any, s.instance(ErrFromValue, ["value", s.str]));
+        const c = $.result(undefined as any, $.instance(ErrFromValue, ["value", $.str]));
         const d = c.decode(bytes);
         asserts.assert(d instanceof ErrFromValue);
         asserts.assertEquals(d.value, (decoded as ErrFromValue).value);
@@ -49,7 +49,7 @@ Deno.test("Results", () => {
         break;
       }
       case 6: {
-        const c = s.result(undefined as any, s.instance(ErrFromTuple, ["a", s.str], ["b", s.str]));
+        const c = $.result(undefined as any, $.instance(ErrFromTuple, ["a", $.str], ["b", $.str]));
         const d = c.decode(bytes);
         asserts.assert(d instanceof ErrFromTuple);
         asserts.assertEquals(d.a, (decoded as any).a);
@@ -57,7 +57,7 @@ Deno.test("Results", () => {
         break;
       }
       case 7: {
-        const c = s.result(undefined as any, s.instance(ErrFromObj, ["data", s.record(["x", s.str])]));
+        const c = $.result(undefined as any, $.instance(ErrFromObj, ["data", $.record(["x", $.str])]));
         const d = c.decode(bytes);
         asserts.assert(d instanceof ErrFromObj);
         asserts.assertEquals(d.data, (decoded as ErrFromObj).data);

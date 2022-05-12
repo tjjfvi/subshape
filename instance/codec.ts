@@ -1,7 +1,7 @@
 import { Codec, Entries, Native } from "../common.ts";
 import { Field, NativeRecord, record } from "../record/codec.ts";
 
-export class Instance<Ctor extends new(...args: any[]) => any> extends Codec<InstanceType<Ctor>> {
+export class InstanceCodec<Ctor extends new(...args: any[]) => any> extends Codec<InstanceType<Ctor>> {
   constructor(
     ctor: Ctor,
     ...fields: Entries<InstanceType<Ctor>>
@@ -43,5 +43,5 @@ export const instance = <
   ctor: Ctor,
   ...fields: Fields
 ) => {
-  return new Instance(ctor, ...(fields as any));
+  return new InstanceCodec(ctor, ...(fields as any));
 };

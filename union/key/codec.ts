@@ -1,7 +1,7 @@
 import { Codec } from "../../common.ts";
 import { u8 } from "../../int/codec.ts";
 
-export class KeyLiteralUnion<Member extends PropertyKey> extends Codec<Member> {
+export class KeyLiteralUnionCodec<Member extends PropertyKey> extends Codec<Member> {
   constructor(...members: Member[]) {
     const discriminantByKey = members.reduce<Partial<Record<Member, number>>>((acc, cur, i) => {
       return {
@@ -24,6 +24,6 @@ export class KeyLiteralUnion<Member extends PropertyKey> extends Codec<Member> {
     );
   }
 }
-export const keyLiteralUnion = <Member extends PropertyKey>(...members: Member[]): KeyLiteralUnion<Member> => {
-  return new KeyLiteralUnion(...members);
+export const keyLiteralUnion = <Member extends PropertyKey>(...members: Member[]): KeyLiteralUnionCodec<Member> => {
+  return new KeyLiteralUnionCodec(...members);
 };

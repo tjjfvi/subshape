@@ -1,7 +1,7 @@
 import { Codec } from "../common.ts";
 import { u8 } from "../int/codec.ts";
 
-export class Option<Some> extends Codec<Some | undefined> {
+export class OptionCodec<Some> extends Codec<Some | undefined> {
   constructor(someCodec: Codec<Some>) {
     super(
       (value) => {
@@ -30,6 +30,6 @@ export class Option<Some> extends Codec<Some | undefined> {
     );
   }
 }
-export const option = <Some>(someCodec: Codec<Some>): Option<Some> => {
-  return new Option(someCodec);
+export const option = <Some>(someCodec: Codec<Some>): OptionCodec<Some> => {
+  return new OptionCodec(someCodec);
 };
