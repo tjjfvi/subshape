@@ -1,16 +1,13 @@
 /// <reference lib="deno.unstable"/>
 
-import { dirname, join } from "std/path/win32.ts";
 import { assertEquals } from "std/testing/asserts.ts";
 import { assertSnapshot } from "std/testing/snapshot.ts";
 import { Codec } from "./common.ts";
 
-const file = (path: string) => () => fetch(join(dirname(import.meta.url), path)).then((x) => x.text());
-export const files = {
-  lipsum: file("lipsum.txt"),
-  words: file("words.txt"),
-  cargoLock: file("Cargo.lock"),
-};
+const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
+  () => Deno.readTextFile(fileName)
+);
+export const files = { lipsum: lipsum!, words: words!, cargoLock: cargoLock! };
 
 export function testCodec<T>(name: string, codec: Codec<T>, values: T[] | Record<string, T>) {
   for (const key in values) {
