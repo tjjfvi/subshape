@@ -1,0 +1,5 @@
+export const snapshot = {};
+
+snapshot[`bool true 1`] = `01`;
+
+snapshot[`bool false 1`] = `00`;

@@ -9,7 +9,7 @@ class NumCodec<K extends NumMethodKeys> extends Codec<NumMethodVal<K>> {
     this.setter.call(cursor.view, cursor.i, value, true);
     cursor.i += this._minSize;
   }
-  _decode(cursor: Cursor) {
+  _decode(cursor: Cursor): NumMethodVal<K> {
     const decoded = this.getter.call(cursor.view, cursor.i, true);
     cursor.i += this._minSize;
     return decoded;

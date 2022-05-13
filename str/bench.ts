@@ -1,11 +1,10 @@
-import { dirname, join } from "std/path/mod.ts";
 import * as $ from "../mod.ts";
-import { benchCodec } from "../test-util.ts";
+import { benchCodec, files } from "../test-util.ts";
 
 const trolleybus = "🚎";
 const special = "œ∑é®†¥üîøπåß∂ƒ©˙∆˚¬Ω≈ç√∫ñµ";
-const lipsum = await fetch(join(dirname(import.meta.url), "../lipsum.txt")).then((x) => x.text());
-const cargoLock = await fetch(join(dirname(import.meta.url), "../Cargo.lock")).then((x) => x.text());
+const lipsum = await files.lipsum();
+const cargoLock = await files.cargoLock();
 
 benchCodec(`""`, $.str, "");
 benchCodec(`"abc"`, $.str, "abc");

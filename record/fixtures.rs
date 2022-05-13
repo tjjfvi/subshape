@@ -1,22 +1,14 @@
-use {
-  crate::{make_fixture_getter, stringify},
-  parity_scale_codec::Encode,
-  serde::Serialize,
-};
+use parity_scale_codec::Encode;
 
-#[derive(Encode, Serialize)]
+#[derive(Encode)]
 struct Person {
   pub name: String,
-  #[serde(rename = "nickName")]
   pub nick_name: String,
-  #[serde(rename = "superPower")]
   pub super_power: Option<String>,
-  #[serde(rename = "luckyNumber")]
   pub lucky_number: u8,
 }
-make_fixture_getter! {
-  record,
-  stringify,
+
+crate::fixtures!(
   Person {
     name: "Darrel".to_string(),
     nick_name: "The Durst".to_string(),
@@ -28,5 +20,5 @@ make_fixture_getter! {
     nick_name: "Mike".to_string(),
     super_power: None,
     lucky_number: 7 // Cummon... be more predictable!
-  }
-}
+  },
+);
