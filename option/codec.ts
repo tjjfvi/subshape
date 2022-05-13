@@ -2,6 +2,9 @@ import { Codec, Cursor } from "../common.ts";
 import { u8 } from "../int/codec.ts";
 
 export class OptionCodec<Some> extends Codec<Some | undefined> {
+  constructor(readonly someCodec: Codec<Some>) {
+    super();
+  }
   _size(value: Some | undefined) {
     return 1 + (value === undefined ? 0 : this.someCodec._size(value));
   }
@@ -24,9 +27,6 @@ export class OptionCodec<Some> extends Codec<Some | undefined> {
         throw new Error("Could not decode Option as `Some(_)` nor `None`");
       }
     }
-  }
-  constructor(readonly someCodec: Codec<Some>) {
-    super();
   }
 }
 export const option = <Some>(someCodec: Codec<Some>): OptionCodec<Some> => {

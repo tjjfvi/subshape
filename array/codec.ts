@@ -50,6 +50,9 @@ export const sizedArray = <
 };
 
 export class ArrayCodec<El> extends Codec<El[]> {
+  constructor(readonly elCodec: Codec<El>) {
+    super();
+  }
   _size(value: El[]) {
     let sum = 0;
     for (let i = 0; i < value.length; i += 1) {
@@ -70,9 +73,6 @@ export class ArrayCodec<El> extends Codec<El[]> {
       result[i] = this.elCodec._decode(cursor);
     }
     return result;
-  }
-  constructor(readonly elCodec: Codec<El>) {
-    super();
   }
 }
 export const array = <El>(elCodec: Codec<El>): ArrayCodec<El> => {

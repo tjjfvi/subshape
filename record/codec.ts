@@ -14,6 +14,11 @@ export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
   : never;
 
 export class RecordCodec<Fields extends Field[]> extends Codec<Flatten<NativeRecord<Fields>>> {
+  readonly fields;
+  constructor(...fields: Fields) {
+    super();
+    this.fields = fields;
+  }
   _size(value: Flatten<NativeRecord<Fields>>) {
     return this.fields.reduce<number>((len, [key, fieldEncoder]) => {
       return len + fieldEncoder._size((value as any)[key]);
@@ -31,11 +36,6 @@ export class RecordCodec<Fields extends Field[]> extends Codec<Flatten<NativeRec
         [key]: fieldCodec._decode(cursor),
       };
     }, {}) as Flatten<NativeRecord<Fields>>;
-  }
-  readonly fields;
-  constructor(...fields: Fields) {
-    super();
-    this.fields = fields;
   }
 }
 export const record = <
