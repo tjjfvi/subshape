@@ -254,6 +254,24 @@ assertEquals(decoded, Dinosaur.Psittacosaurus);
 
 <!-- TODO: narrowing gif -->
 
+### Numeric Enums
+
+```ts
+enum Dinosaur {
+  Liopleurodon,
+  Kosmoceratops,
+  Psittacosaurus,
+}
+
+const $dinosaur = $.u8 as Codec<Dinosaur>;
+
+const encoded = $dinosaur.encode(Dinosaur.Psittacosaurus);
+assertEquals(encoded, new Uint8Array([2]));
+
+const decoded = $dinosaur.decode(encoded);
+assertEquals(decoded, Dinosaur.Psittacosaurus);
+```
+
 ### Instance
 
 Sometimes, you may want to instantiate a class with the decoded data / encode data from a class instance. In these situations, we can leverage the `instance` codec factory.
