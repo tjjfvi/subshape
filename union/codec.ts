@@ -1,39 +1,27 @@
-import { Codec, CodecList, Cursor, Native } from "../common.ts";
+import { Codec, createCodec, Native } from "../common.ts";
 import { u8 } from "../int/codec.ts";
 
-export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
+export type NativeUnion<MemberCodecs extends Codec<any>[]> = Native<MemberCodecs[number]>;
 
-export class UnionCodec<Members extends any[]> extends Codec<Members[number]> {
-  readonly memberCodecs: Codec<any>[];
-  constructor(
-    readonly discriminate: (value: Members[number]) => number,
-    ...memberCodecs: CodecList<Members>
-  ) {
-    super();
-    this.memberCodecs = memberCodecs;
-  }
-  _minSize = 1;
-  _dynSize(value: Members[number]) {
-    return this.memberCodecs[this.discriminate(value)]!.size(value);
-  }
-  _encode(cursor: Cursor, value: Members[number]) {
-    const discriminant = this.discriminate(value);
-    u8._encode(cursor, discriminant);
-    const memberEncoder = this.memberCodecs[discriminant]!;
-    memberEncoder._encode(cursor, value);
-  }
-  _decode(cursor: Cursor) {
-    const discriminant = u8._decode(cursor);
-    const memberCodec = this.memberCodecs[discriminant];
-    if (!memberCodec) {
-      throw new Error(`No such member codec matching the discriminant \`${discriminant}\``);
-    }
-    return memberCodec._decode(cursor);
-  }
+export function union<Members extends Codec<any>[]>(
+  discriminate: (value: NativeUnion<Members>) => number,
+  ...$members: [...Members]
+) {
+  return createCodec<NativeUnion<Members>>({
+    _staticSize: 1 + Math.max(...$members.map((x) => x._staticSize)),
+    _encode(buffer, value) {
+      const discriminant = discriminate(value);
+      buffer.array[buffer.index++] = discriminant;
+      const $member = $members[discriminant]!;
+      $member._encode(buffer, value);
+    },
+    _decode(buffer) {
+      const discriminant = buffer.array[buffer.index++]!;
+      const $member = $members[discriminant];
+      if (!$member) {
+        throw new Error(`No such member codec matching the discriminant \`${discriminant}\``);
+      }
+      return $member._decode(buffer);
+    },
+  });
 }
-export const union = <Members extends any[]>(
-  discriminate: (value: Members[number]) => number,
-  ...memberCodecs: CodecList<Members>
-): UnionCodec<Members> => {
-  return new UnionCodec(discriminate, ...memberCodecs);
-};

@@ -1,63 +1,69 @@
-import { Codec, Cursor, ValueOf } from "../common.ts";
+import { Codec, createCodec } from "../common.ts";
 
-type NumMethodKeys = ValueOf<{ [K in keyof DataView]: K extends `get${infer N}` ? N : never }>;
+export const u8 = createCodec<number>({
+  _staticSize: 1,
+  _encode(buffer, value) {
+    buffer.array[buffer.index++] = value;
+  },
+  _decode(buffer) {
+    return buffer.array[buffer.index++]!;
+  },
+});
+
+type NumMethodKeys = { [K in keyof DataView]: K extends `get${infer N}` ? N : never }[keyof DataView];
 type NumMethodVal<K extends NumMethodKeys> = ReturnType<DataView[`get${K}`]>;
 
-class NumCodec<K extends NumMethodKeys> extends Codec<NumMethodVal<K>> {
-  _minSize: number;
-  _encode(cursor: Cursor, value: NumMethodVal<K>) {
-    this.setter.call(cursor.view, cursor.i, value, true);
-    cursor.i += this._minSize;
-  }
-  _decode(cursor: Cursor): NumMethodVal<K> {
-    const decoded = this.getter.call(cursor.view, cursor.i, true);
-    cursor.i += this._minSize;
-    return decoded;
-  }
-  readonly setter;
-  readonly getter;
-  constructor(
-    len: number,
-    readonly key: K,
-  ) {
-    super();
-    this._minSize = len;
-    this.setter = DataView.prototype[`set${key}`] as any;
-    this.getter = DataView.prototype[`get${key}`] as any;
-  }
+function _int<K extends NumMethodKeys>(size: number, key: K): Codec<NumMethodVal<K>> {
+  const getMethod = DataView.prototype["get" + key as never] as any;
+  const setMethod = DataView.prototype["set" + key as never] as any;
+  return createCodec({
+    _staticSize: size,
+    _encode(buffer, value) {
+      setMethod.call(buffer.view, buffer.index, value, true);
+      buffer.index += size;
+    },
+    _decode(buffer) {
+      const value = getMethod.call(buffer.view, buffer.index, true);
+      buffer.index += size;
+      return value;
+    },
+  });
 }
 
-export const u8 = new NumCodec(1, "Uint8");
-export const i8 = new NumCodec(1, "Int8");
-export const u16 = new NumCodec(2, "Uint16");
-export const i16 = new NumCodec(2, "Int16");
-export const u32 = new NumCodec(4, "Uint32");
-export const i32 = new NumCodec(4, "Int32");
-export const u64 = new NumCodec(8, "BigUint64");
-export const i64 = new NumCodec(8, "BigInt64");
+export const i8 = _int(1, "Int8");
+export const u16 = _int(2, "Uint16");
+export const i16 = _int(2, "Int16");
+export const u32 = _int(4, "Uint32");
+export const i32 = _int(4, "Int32");
+export const u64 = _int(8, "BigUint64");
+export const i64 = _int(8, "BigInt64");
 
-// https://github.com/unstoppablejs/unstoppablejs/blob/7022e34f756ccc25e6ed9d4680284455b2ff714b/packages/scale-ts/src/codecs/fixed-width-ints.ts#L59-L74
-class X128Codec extends Codec<bigint> {
-  readonly _getterMethod;
-  constructor(readonly signed: boolean) {
-    super();
-    this._getterMethod = DataView.prototype[
-      this.signed ? "getBigInt64" : "getBigUint64"
-    ];
-  }
-  _minSize = 16;
-  _encode(cursor: Cursor, value: bigint) {
-    cursor.view.setBigInt64(cursor.i, value, true);
-    cursor.view.setBigInt64(cursor.i + 8, value >> 64n, true);
-    cursor.i += 16;
-  }
-  _decode(cursor: Cursor) {
-    const right = cursor.view.getBigUint64(cursor.i, true);
-    const left = this._getterMethod.call(cursor.view, cursor.i + 8, true);
-    cursor.i += 16;
+export const u128 = createCodec<bigint>({
+  _staticSize: 16,
+  _encode(buffer, value) {
+    buffer.view.setBigInt64(buffer.index, value, true);
+    buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
+    buffer.index += 16;
+  },
+  _decode(buffer) {
+    const right = buffer.view.getBigUint64(buffer.index, true);
+    const left = buffer.view.getBigUint64(buffer.index + 8, true);
+    buffer.index += 16;
     return (left << 64n) | right;
-  }
-}
+  },
+});
 
-export const u128 = new X128Codec(false);
-export const i128 = new X128Codec(true);
+export const i128 = createCodec<bigint>({
+  _staticSize: 16,
+  _encode(buffer, value) {
+    buffer.view.setBigInt64(buffer.index, value, true);
+    buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
+    buffer.index += 16;
+  },
+  _decode(buffer) {
+    const right = buffer.view.getBigUint64(buffer.index, true);
+    const left = buffer.view.getBigInt64(buffer.index + 8, true);
+    buffer.index += 16;
+    return (left << 64n) | right;
+  },
+});

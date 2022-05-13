@@ -1,35 +1,26 @@
-import { Codec, Cursor } from "../common.ts";
-import { u8 } from "../int/codec.ts";
+import { Codec, createCodec } from "../common.ts";
 
-export class OptionCodec<Some> extends Codec<Some | undefined> {
-  constructor(readonly someCodec: Codec<Some>) {
-    super();
-  }
-  _minSize = 1;
-  _dynSize(value: Some | undefined) {
-    return (value === undefined ? 0 : this.someCodec.size(value));
-  }
-  _encode(cursor: Cursor, value: Some | undefined) {
-    cursor.view.setUint8(cursor.i, value === undefined ? 0 : 1);
-    cursor.i += 1;
-    if (value !== undefined) {
-      this.someCodec._encode(cursor, value);
-    }
-  }
-  _decode(cursor: Cursor) {
-    switch (u8._decode(cursor)) {
-      case 0: {
-        return undefined;
+export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
+  return createCodec({
+    _staticSize: 1 + $some._staticSize,
+    _encode(buffer, value) {
+      buffer.array[buffer.index++] = +(value !== undefined);
+      if (value !== undefined) {
+        $some._encode(buffer, value);
       }
-      case 1: {
-        return this.someCodec._decode(cursor);
+    },
+    _decode(buffer) {
+      switch (buffer.array[buffer.index++]) {
+        case 0: {
+          return undefined;
+        }
+        case 1: {
+          return $some._decode(buffer);
+        }
+        default: {
+          throw new Error("Could not decode Option as `Some(_)` nor `None`");
+        }
       }
-      default: {
-        throw new Error("Could not decode Option as `Some(_)` nor `None`");
-      }
-    }
-  }
+    },
+  });
 }
-export const option = <Some>(someCodec: Codec<Some>): OptionCodec<Some> => {
-  return new OptionCodec(someCodec);
-};

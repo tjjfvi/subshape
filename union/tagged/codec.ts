@@ -1,12 +1,12 @@
-import { Codec, Flatten } from "../../common.ts";
+import { Codec } from "../../common.ts";
 import { dummy } from "../../dummy/codec.ts";
 import { Field, NativeRecord, record } from "../../record/codec.ts";
-import { UnionCodec } from "../../union/codec.ts";
+import { union } from "../../union/codec.ts";
 
 export type TaggedUnionMember<
   MemberTag extends PropertyKey = PropertyKey,
   MemberEntryKey extends PropertyKey = PropertyKey,
-  MemberEntryValueCodec extends Codec = Codec,
+  MemberEntryValueCodec extends Codec<any> = Codec<any>,
 > = [MemberTag, ...Field<MemberEntryKey, MemberEntryValueCodec>[]];
 
 export type NativeTaggedUnionMember<
@@ -25,39 +25,27 @@ export type NativeTaggedUnionMembers<
     | (ERest extends TaggedUnionMember[] ? NativeTaggedUnionMembers<TagKey, ERest> : never)
   : never;
 
-export class TaggedUnionCodec<
-  TagKey extends PropertyKey,
-  Members extends TaggedUnionMember[],
-> extends UnionCodec<Flatten<NativeTaggedUnionMembers<TagKey, Members>>[]> {
-  constructor(
-    tagKey: TagKey,
-    ...members: Members
-  ) {
-    super(
-      (value) => {
-        return members.findIndex((member) => {
-          return member[0] === value[tagKey];
-        });
-      },
-      ...members.map(([memberTag, ...fields]) => {
-        return record(
-          ["_tag", dummy(memberTag)],
-          ...fields || [],
-        ) as NativeTaggedUnionMembers<TagKey, Members>;
-      }),
-    );
-  }
-}
-
-export const taggedUnion = <
+export function taggedUnion<
   TagKey extends PropertyKey,
   Members extends TaggedUnionMember<MemberTag, MemberEntryKey, MemberEntryValueCodec>[],
   MemberTag extends PropertyKey,
   MemberEntryKey extends PropertyKey,
-  MemberEntryValueCodec extends Codec,
+  MemberEntryValueCodec extends Codec<any>,
 >(
   tagKey: TagKey,
   ...members: Members
-): TaggedUnionCodec<TagKey, Members> => {
-  return new TaggedUnionCodec(tagKey, ...members);
-};
+) {
+  return union<Codec<NativeTaggedUnionMembers<TagKey, Members>>[]>(
+    (value) => {
+      return members.findIndex((member) => {
+        return member[0] === value[tagKey];
+      });
+    },
+    ...members.map(([memberTag, ...fields]) => {
+      return record(
+        ["_tag", dummy(memberTag)],
+        ...fields || [],
+      ) as NativeTaggedUnionMembers<TagKey, Members>;
+    }),
+  );
+}
