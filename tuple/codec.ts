@@ -6,18 +6,22 @@ export type NativeTuple<ElCodecs extends Codec[]> = {
 
 export class TupleCodec<ElCodecs extends Codec[] = Codec[]> extends Codec<NativeTuple<ElCodecs>> {
   readonly elCodecs;
+  readonly _minSize;
+  readonly dynSizeEls;
   constructor(...elCodecs: ElCodecs) {
     super();
     this.elCodecs = elCodecs;
+    this._minSize = elCodecs.reduce((len, field) => len + field._minSize, 0);
+    this.dynSizeEls = elCodecs.map((field, i) => [i, field] as const).filter(([_, field]) => !field._dynSizeZero);
+    this._dynSizeZero = this.dynSizeEls.length === 0;
   }
-  _minSize = 0;
   _dynSize(value: NativeTuple<ElCodecs>) {
-    let size = 0;
-    let i = value.length;
-    while (--i >= 0) {
-      size += this.elCodecs[i]!.size(value[i]);
+    let sum = 0;
+    for (let i = 0; i < this.dynSizeEls.length; i++) {
+      const [k, elCodec] = this.dynSizeEls[i]!;
+      sum += elCodec!._dynSize(value[k]);
     }
-    return size;
+    return sum;
   }
   _encode(cursor: Cursor, value: NativeTuple<ElCodecs>) {
     for (let i = 0; i < value.length; i += 1) {

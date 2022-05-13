@@ -13,11 +13,19 @@ export class SizedArrayCodec<
   El,
   Len extends number,
 > extends Codec<ArrayOfLenth<Len, El>> {
-  _minSize = 0;
+  constructor(
+    readonly elCodec: Codec<El>,
+    readonly len: Len,
+  ) {
+    super();
+    this._minSize = elCodec._minSize * len;
+    this._dynSizeZero = elCodec._dynSizeZero;
+  }
+  readonly _minSize;
   _dynSize(value: El[]) {
     let sum = 0;
     for (let i = 0; i < this.len; i += 1) {
-      sum += this.elCodec.size(value[i]!);
+      sum += this.elCodec._dynSize(value[i]!);
     }
     return sum;
   }
@@ -32,12 +40,6 @@ export class SizedArrayCodec<
       result[i] = this.elCodec._decode(cursor);
     }
     return result as ArrayOfLenth<Len, El>;
-  }
-  constructor(
-    readonly elCodec: Codec<El>,
-    readonly len: Len,
-  ) {
-    super();
   }
 }
 export const sizedArray = <
@@ -54,13 +56,15 @@ export class ArrayCodec<El> extends Codec<El[]> {
   constructor(readonly elCodec: Codec<El>) {
     super();
   }
-  _minSize = 0;
+  _minSize = compact._minSize;
   _dynSize(value: El[]) {
-    let sum = 0;
-    for (let i = 0; i < value.length; i += 1) {
-      sum += this.elCodec.size(value[i]!);
+    let sum = this.elCodec._minSize * value.length;
+    if (!this.elCodec._dynSizeZero) {
+      for (let i = 0; i < value.length; i += 1) {
+        sum += this.elCodec._dynSize(value[i]!);
+      }
     }
-    return compact.size(value.length) + sum;
+    return compact._dynSize(value.length) + sum;
   }
   _encode(cursor: Cursor, value: El[]) {
     compact._encode(cursor, value.length);
