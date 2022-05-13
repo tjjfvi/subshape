@@ -6,9 +6,7 @@ export class OrderedNumEnumCodec<Enum> extends Codec<Enum[keyof Enum]> {
   constructor(readonly enum_: Enum) {
     super();
   }
-  _size() {
-    return 1;
-  }
+  _minSize = 1;
   _encode(cursor: Cursor, value: Enum[keyof Enum]) {
     const discriminant = (this.enum_ as any)[(this.enum_ as any)[value]];
     u8._encode(cursor, discriminant);

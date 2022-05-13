@@ -4,25 +4,24 @@ type NumMethodKeys = ValueOf<{ [K in keyof DataView]: K extends `get${infer N}` 
 type NumMethodVal<K extends NumMethodKeys> = ReturnType<DataView[`get${K}`]>;
 
 class NumCodec<K extends NumMethodKeys> extends Codec<NumMethodVal<K>> {
-  _size() {
-    return this.len;
-  }
+  _minSize: number;
   _encode(cursor: Cursor, value: NumMethodVal<K>) {
     this.setter.call(cursor.view, cursor.i, value, true);
-    cursor.i += this.len;
+    cursor.i += this._minSize;
   }
   _decode(cursor: Cursor) {
     const decoded = this.getter.call(cursor.view, cursor.i, true);
-    cursor.i += this.len;
+    cursor.i += this._minSize;
     return decoded;
   }
   readonly setter;
   readonly getter;
   constructor(
-    readonly len: number,
+    len: number,
     readonly key: K,
   ) {
     super();
+    this._minSize = len;
     this.setter = DataView.prototype[`set${key}`] as any;
     this.getter = DataView.prototype[`get${key}`] as any;
   }
@@ -42,9 +41,7 @@ class X128Codec extends Codec<bigint> {
   constructor(readonly signed: boolean) {
     super();
   }
-  _size() {
-    return 16;
-  }
+  _minSize = 16;
   _encode(cursor: Cursor, value: bigint) {
     cursor.view.setBigInt64(cursor.i, value, true);
     cursor.view.setBigInt64(cursor.i + 8, value >> 64n, true);

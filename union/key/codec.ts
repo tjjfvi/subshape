@@ -14,9 +14,7 @@ export class KeyLiteralUnionCodec<Member extends PropertyKey> extends Codec<Memb
       };
     }, {}) as Partial<Record<Member, number>>;
   }
-  _size() {
-    return u8._size();
-  }
+  _minSize = u8._minSize;
   _encode(cursor: Cursor, value: Member) {
     const discriminant = this.discriminantByKey[value]!;
     u8._encode(cursor, discriminant);

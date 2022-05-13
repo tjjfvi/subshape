@@ -10,11 +10,12 @@ export class TupleCodec<ElCodecs extends Codec[] = Codec[]> extends Codec<Native
     super();
     this.elCodecs = elCodecs;
   }
-  _size(value: NativeTuple<ElCodecs>) {
+  _minSize = 0;
+  _dynSize(value: NativeTuple<ElCodecs>) {
     let size = 0;
     let i = value.length;
     while (--i >= 0) {
-      size += this.elCodecs[i]!._size(value[i]);
+      size += this.elCodecs[i]!.size(value[i]);
     }
     return size;
   }

@@ -5,8 +5,9 @@ export class OptionCodec<Some> extends Codec<Some | undefined> {
   constructor(readonly someCodec: Codec<Some>) {
     super();
   }
-  _size(value: Some | undefined) {
-    return 1 + (value === undefined ? 0 : this.someCodec._size(value));
+  _minSize = 1;
+  _dynSize(value: Some | undefined) {
+    return (value === undefined ? 0 : this.someCodec.size(value));
   }
   _encode(cursor: Cursor, value: Some | undefined) {
     cursor.view.setUint8(cursor.i, value === undefined ? 0 : 1);

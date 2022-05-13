@@ -5,7 +5,8 @@ import { Field, NativeRecord, RecordCodec } from "../record/codec.ts";
 // from RecordCodec directly, but have it be typed as though it extends from Codec directly
 export interface InstanceCodec<Ctor extends new(...args: any[]) => any> {
   fields: Field<string, Codec<any>>[];
-  _size(value: InstanceType<Ctor>): number;
+  _minSize: number;
+  _dynSize(value: InstanceType<Ctor>): number;
   _encode(cursor: Cursor, value: InstanceType<Ctor>): number;
 }
 export class InstanceCodec<Ctor extends new(...args: any[]) => any>

@@ -19,9 +19,10 @@ export class RecordCodec<Fields extends Field[]> extends Codec<Flatten<NativeRec
     super();
     this.fields = fields;
   }
-  _size(value: Flatten<NativeRecord<Fields>>) {
+  _minSize = 0;
+  _dynSize(value: Flatten<NativeRecord<Fields>>) {
     return this.fields.reduce<number>((len, [key, fieldEncoder]) => {
-      return len + fieldEncoder._size((value as any)[key]);
+      return len + fieldEncoder.size((value as any)[key]);
     }, 0);
   }
   _encode(cursor: Cursor, value: Flatten<NativeRecord<Fields>>) {

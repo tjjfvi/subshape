@@ -11,21 +11,40 @@ export type Native<C extends Codec> = C extends Codec<infer N> ? N : never;
 
 /** A means of encoding and decoding a type `T` to and from its SCALE byte representation */
 export abstract class Codec<T = any> {
-  /** Accepts the decoded value and returns its to-be-encoded size */
-  abstract _size(value: T): number;
+  /** The minimum size of values encoded with this codec */
+  abstract _minSize: number;
+  /**
+   * Accepts the decoded value and returns the size minus minSize.
+   * May be overridden by subclasses.
+   */
+  _dynSize(value: T): number {
+    value;
+    return 0;
+  }
+  /**
+   * If true, _dynSize will always return 0.
+   * This may be overridden by subclasses, but it must still uphold the above contract.
+   */
+  _dynSizeZero = this._dynSize === Codec.prototype._dynSize;
+
   /** Accepts the cursor and value and writes its bytes into the cursor's byte array */
   abstract _encode(cursor: Cursor, value: T): void;
+
   /** Decodes the currently-focused bytes into `T` and moves the cursor as is appropriate */
   abstract _decode(cursor: Cursor): T;
 
   constructor() {}
+
+  size(value: T): number {
+    return this._minSize + this._dynSize(value);
+  }
 
   /**
    * @param decoded the JS-native representation, `T`
    * @returns the SCALE byte representation of `T`
    */
   encode = (decoded: T): Uint8Array => {
-    const cursor = new Cursor(new Uint8Array(this._size(decoded)));
+    const cursor = new Cursor(new Uint8Array(this.size(decoded)));
     this._encode(cursor, decoded);
     return cursor.u8a;
   };

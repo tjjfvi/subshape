@@ -4,9 +4,7 @@ class DummyCodec<T> extends Codec<T> {
   constructor(readonly value: T) {
     super();
   }
-  _size() {
-    return 0;
-  }
+  _minSize = 0;
   _encode() {}
   _decode() {
     return this.value;

@@ -13,10 +13,11 @@ export class SizedArrayCodec<
   El,
   Len extends number,
 > extends Codec<ArrayOfLenth<Len, El>> {
-  _size(value: El[]) {
+  _minSize = 0;
+  _dynSize(value: El[]) {
     let sum = 0;
     for (let i = 0; i < this.len; i += 1) {
-      sum += this.elCodec._size(value[i]!);
+      sum += this.elCodec.size(value[i]!);
     }
     return sum;
   }
@@ -53,12 +54,13 @@ export class ArrayCodec<El> extends Codec<El[]> {
   constructor(readonly elCodec: Codec<El>) {
     super();
   }
-  _size(value: El[]) {
+  _minSize = 0;
+  _dynSize(value: El[]) {
     let sum = 0;
     for (let i = 0; i < value.length; i += 1) {
-      sum += this.elCodec._size(value[i]!);
+      sum += this.elCodec.size(value[i]!);
     }
-    return compact._size(value.length) + sum;
+    return compact.size(value.length) + sum;
   }
   _encode(cursor: Cursor, value: El[]) {
     compact._encode(cursor, value.length);

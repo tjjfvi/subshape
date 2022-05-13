@@ -2,9 +2,10 @@ import { Codec, Cursor } from "../common.ts";
 import { compact } from "../compact/codec.ts";
 
 export const str = new class StrCodec extends Codec<string> {
-  _size(value: string) {
+  _minSize = 0;
+  _dynSize(value: string) {
     const len = new TextEncoder().encode(value).length;
-    return len + compact._size(len);
+    return len + compact.size(len);
   }
   _encode(cursor: Cursor, value: string) {
     const len = new TextEncoder().encode(value).length;

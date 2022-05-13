@@ -8,7 +8,8 @@ const MAX_U32 = 2 ** (32 - 2) - 1;
 // https://github.com/soramitsu/scale-codec-js-library/blob/master/packages/core/src/codecs/compact.ts
 // TODO: clean this up a bit / simplify
 export const compact = new class CompactCodec extends Codec<number | bigint> {
-  _size(value: number | bigint) {
+  _minSize = 0;
+  _dynSize(value: number | bigint) {
     if (value <= MAX_U8) {
       return 1;
     }

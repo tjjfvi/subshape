@@ -12,8 +12,9 @@ export class UnionCodec<Members extends any[]> extends Codec<Members[number]> {
     super();
     this.memberCodecs = memberCodecs;
   }
-  _size(value: Members[number]) {
-    return 1 + this.memberCodecs[this.discriminate(value)]!._size(value);
+  _minSize = 1;
+  _dynSize(value: Members[number]) {
+    return this.memberCodecs[this.discriminate(value)]!.size(value);
   }
   _encode(cursor: Cursor, value: Members[number]) {
     const discriminant = this.discriminate(value);
