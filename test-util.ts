@@ -1,27 +1,37 @@
 /// <reference lib="deno.unstable"/>
 
+import { assertEquals } from "std/testing/asserts.ts";
+import { assertSnapshot } from "std/testing/snapshot.ts";
 import { Codec } from "./common.ts";
-export * as fixtures from "./target/fixtures/scale_fixtures.js";
 
-export const visitFixtures = <D, N>(
-  getFixtures: () => Map<Uint8Array, D>,
-  visit: (
-    bytes: Uint8Array,
-    decoded: N,
-    i: number,
-  ) => void,
-  normalize: (raw: D) => N,
-) => {
-  let count = 0;
-  for (const [bytes, decoded] of getFixtures().entries()) {
-    visit(bytes, normalize(decoded), count);
-    count += 1;
+const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
+  () => Deno.readTextFile(fileName)
+);
+export const files = { lipsum: lipsum!, words: words!, cargoLock: cargoLock! };
+
+export function testCodec<T>(name: string, codec: Codec<T>, values: T[] | Record<string, T>) {
+  for (const key in values) {
+    const value = values[key as never] as T;
+    const label = values instanceof Array
+      ? Deno.inspect(value, {
+        depth: Infinity,
+        trailingComma: true,
+        compact: true,
+        iterableLimit: Infinity,
+      })
+      : key;
+    Deno.test(`${name} ${label}`, async (t) => {
+      const encoded = codec.encode(value);
+      const decoded = codec.decode(encoded);
+      assertEquals(decoded, value);
+      await assertSnapshot(t, encoded, { serializer: serializeU8A });
+    });
   }
-};
+}
 
-export const constrainedIdentity = <T>() => {
-  return (t: T) => t;
-};
+function serializeU8A(array: Uint8Array) {
+  return [...array].map((x) => x.toString(16).padStart(2, "0")).join("\n");
+}
 
 export function benchCodec<T>(name: string, codec: Codec<T>, value: T) {
   const encoded = codec.encode(value);

@@ -1,12 +1,9 @@
-import * as asserts from "std/testing/asserts.ts";
 import * as $ from "../mod.ts";
-import { fixtures } from "../test-util.ts";
+import { testCodec } from "../test-util.ts";
 
-Deno.test("Arrays", () => {
-  fixtures.array_().forEach(([decoded, encoded, sizedEncoded]: [any[], Uint8Array, Uint8Array]) => {
-    asserts.assertEquals($.array($.u8).decode(encoded), decoded);
-    asserts.assertEquals($.array($.u8).encode(decoded), encoded);
-    asserts.assertEquals($.sizedArray($.u8, decoded.length).decode(sizedEncoded), decoded);
-    asserts.assertEquals($.sizedArray($.u8, decoded.length).encode(decoded), sizedEncoded);
-  });
-});
+testCodec("u8[]", $.array($.u8), [
+  [1, 2, 3, 4, 5],
+  [6, 7, 8, 9, 10],
+  [11, 12, 13, 14, 15],
+  [16, 17, 18, 19, 20, 21],
+]);

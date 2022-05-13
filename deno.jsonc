@@ -25,11 +25,10 @@
   "importMap": "import_map.json",
   "include": ["."],
   "tasks": {
-    "build_wasm": "cargo build --release --target wasm32-unknown-unknown",
-    "build_wasm_bindings": "wasm-bindgen target/wasm32-unknown-unknown/release/scale_fixtures.wasm --target deno --weak-refs --out-dir target/fixtures",
-    "build_fixtures": "deno task build_wasm && deno task build_wasm_bindings",
     "build_npm_pkg": "deno run -A --no-check=remote _tasks/build_npm_pkg.ts",
     "test": "deno test -A --no-check=remote -L=info",
+    "test-update": "deno test -A --no-check=remote -L=info -- --update",
+    "test-rust": "cargo test",
     "bench": "deno bench -A --no-check=remote --unstable"
   }
 }

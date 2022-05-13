@@ -1,0 +1,55 @@
+export const snapshot = {};
+
+snapshot[`compact 0 1`] = `00`;
+
+snapshot[`compact 255 1`] = `
+fd
+03
+`;
+
+snapshot[`compact 65535 1`] = `
+fe
+ff
+03
+00
+`;
+
+snapshot[`compact 4294967295 1`] = `
+03
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`compact 18446744073709551615n 1`] = `
+13
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`compact 340282366920938463463374607431768211455n 1`] = `
+33
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;

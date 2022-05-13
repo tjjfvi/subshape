@@ -1,35 +1,7 @@
 #![allow(non_snake_case)]
 
-use {js_sys::JsString, serde::Serialize, wee_alloc::WeeAlloc};
-
-#[global_allocator]
-static ALLOC: WeeAlloc = WeeAlloc::INIT;
-
-macro_rules! make_fixture_getter {
-  ($t:ident, $js_ty_from:expr, $($val:expr),* $(,)?) => { paste::paste! {
-    #[wasm_bindgen::prelude::wasm_bindgen]
-    pub fn [<$t _>]() -> Result<js_sys::Map, wasm_bindgen::JsError> {
-      console_error_panic_hook::set_once();
-      let result = js_sys::Map::new();
-      $(result.set(
-        &js_sys::Uint8Array::from(&parity_scale_codec::Encode::encode(&($val))[..]),
-        &$js_ty_from($val),
-      );)*
-      return Ok(result);
-    }
-  }};
-}
-pub(crate) use make_fixture_getter;
-
-pub(crate) const LIPSUM: &'static str = include_str!("lipsum.txt");
-pub(crate) const WORDS: &'static str = include_str!("words.txt");
-
-pub(crate) fn stringify<T>(t: T) -> JsString
-where
-  T: Serialize,
-{
-  JsString::from(serde_json::to_string(&t).unwrap())
-}
+use itertools::Itertools;
+use std::{fs, path::Path};
 
 #[path = "./array/fixtures.rs"]
 pub mod array_fixtures;
@@ -60,3 +32,53 @@ pub mod tuple_fixtures;
 
 #[path = "./union/fixtures.rs"]
 pub mod union_fixtures;
+
+pub(crate) const LIPSUM: &'static str = include_str!("lipsum.txt");
+pub(crate) const WORDS: &'static str = include_str!("words.txt");
+pub(crate) const CARGO_LOCK: &'static str = include_str!("Cargo.lock");
+
+#[macro_export]
+macro_rules! fixtures {
+  ($($expr:expr),+ $(,)?) => {
+    #[allow(dead_code)]
+    fn _check_fixtures(){
+      crate::test_fixtures(file!(), vec![$((stringify!($expr), parity_scale_codec::Encode::encode(&$expr))),+])
+    }
+    #[test]
+    fn check_fixtures(){
+      _check_fixtures()
+    }
+  }
+}
+
+pub(crate) fn test_fixtures(
+  path: &'static str,
+  values: Vec<(&'static str, Vec<u8>)>,
+) {
+  let snapshot = fs::read_to_string(
+    Path::new(path)
+      .parent()
+      .unwrap()
+      .join("./__snapshots__/test.ts.snap"),
+  )
+  .unwrap();
+  let entries: Vec<(&str, Vec<u8>)> = snapshot
+    .split('`')
+    .skip(1)
+    .step_by(2)
+    .tuples::<(_, _)>()
+    .map(|(k, v)| {
+      (
+        k,
+        v.trim()
+          .split('\n')
+          .map(|s| u8::from_str_radix(s, 16).unwrap())
+          .collect(),
+      )
+    })
+    .collect();
+  assert_eq!(entries.len(), values.len(), "count mismatch");
+  for ((key1, expected), (key2, actual)) in entries.iter().zip(values.iter()) {
+    assert_eq!(expected, actual, "{} / {}", key1, key2);
+  }
+}
