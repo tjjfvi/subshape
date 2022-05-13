@@ -17,8 +17,7 @@ export abstract class Codec<T = any> {
    * Accepts the decoded value and returns the size minus minSize.
    * May be overridden by subclasses.
    */
-  _dynSize(value: T): number {
-    value;
+  _dynSize(_value: T): number {
     return 0;
   }
   /**

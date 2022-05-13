@@ -38,8 +38,12 @@ export const i64 = new NumCodec(8, "BigInt64");
 
 // https://github.com/unstoppablejs/unstoppablejs/blob/7022e34f756ccc25e6ed9d4680284455b2ff714b/packages/scale-ts/src/codecs/fixed-width-ints.ts#L59-L74
 class X128Codec extends Codec<bigint> {
+  readonly _getterMethod;
   constructor(readonly signed: boolean) {
     super();
+    this._getterMethod = DataView.prototype[
+      this.signed ? "getBigInt64" : "getBigUint64"
+    ];
   }
   _minSize = 16;
   _encode(cursor: Cursor, value: bigint) {
@@ -49,9 +53,7 @@ class X128Codec extends Codec<bigint> {
   }
   _decode(cursor: Cursor) {
     const right = cursor.view.getBigUint64(cursor.i, true);
-    const left = cursor.view[
-      this.signed ? "getBigInt64" : "getBigUint64"
-    ](cursor.i + 8, true);
+    const left = this._getterMethod.call(cursor.view, cursor.i + 8, true);
     cursor.i += 16;
     return (left << 64n) | right;
   }
