@@ -20,9 +20,11 @@ export class InstanceCodec<Ctor extends new(...args: any[]) => any>
   }
 
   _decode(cursor: Cursor): InstanceType<Ctor> {
-    return new this.ctor(...this.fields.map((field) => {
-      return field[1]._decode(cursor);
-    }));
+    const arr = Array(this.fields.length);
+    for (let i = 0; i < arr.length; i++) {
+      arr[i] = this.fields[i]![1]._decode(cursor);
+    }
+    return new this.ctor(...arr);
   }
 }
 

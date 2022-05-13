@@ -29,9 +29,11 @@ export class TupleCodec<ElCodecs extends Codec[] = Codec[]> extends Codec<Native
     }
   }
   _decode(cursor: Cursor) {
-    return this.elCodecs.map((elCodec) => {
-      return elCodec._decode(cursor);
-    }) as NativeTuple<ElCodecs>;
+    const arr = Array(this.elCodecs.length);
+    for (let i = 0; i < arr.length; i++) {
+      arr[i] = this.elCodecs[i]!._decode(cursor);
+    }
+    return arr as NativeTuple<ElCodecs>;
   }
 }
 

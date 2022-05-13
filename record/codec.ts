@@ -38,12 +38,12 @@ export class RecordCodec<Fields extends Field[]> extends Codec<Flatten<NativeRec
     });
   }
   _decode(cursor: Cursor) {
-    return this.fields.reduce<Partial<Flatten<NativeRecord<Fields>>>>((acc, [key, fieldCodec]) => {
-      return {
-        ...acc,
-        [key]: fieldCodec._decode(cursor),
-      };
-    }, {}) as Flatten<NativeRecord<Fields>>;
+    const obj: Record<string, unknown> = {};
+    for (let i = 0; i < this.fields.length; i++) {
+      const [key, field] = this.fields[i]!;
+      obj[key as any] = field._decode(cursor);
+    }
+    return obj as Flatten<NativeRecord<Fields>>;
   }
 }
 export const record = <
