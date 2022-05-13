@@ -1,4 +1,4 @@
-import { Codec, Flatten, Native } from "../common.ts";
+import { Codec, Cursor, Flatten, Native } from "../common.ts";
 
 export type Field<
   Key extends PropertyKey = PropertyKey,
@@ -14,27 +14,36 @@ export type NativeRecord<Fields extends Field[]> = Fields extends [] ? {}
   : never;
 
 export class RecordCodec<Fields extends Field[]> extends Codec<Flatten<NativeRecord<Fields>>> {
+  readonly fields;
+  readonly dynSizeFields;
+  readonly _minSize;
   constructor(...fields: Fields) {
-    super(
-      (value) => {
-        return fields.reduce<number>((len, [key, fieldEncoder]) => {
-          return len + fieldEncoder._s((value as any)[key]);
-        }, 0);
-      },
-      (cursor, value) => {
-        fields.forEach(([key, fieldEncoder]) => {
-          fieldEncoder._e(cursor, (value as any)[key]);
-        });
-      },
-      (cursor) => {
-        return fields.reduce<Partial<Flatten<NativeRecord<Fields>>>>((acc, [key, fieldCodec]) => {
-          return {
-            ...acc,
-            [key]: fieldCodec._d(cursor),
-          };
-        }, {}) as Flatten<NativeRecord<Fields>>;
-      },
-    );
+    super();
+    this.fields = fields;
+    this._minSize = this.fields.reduce((len, [_, field]) => len + field._minSize, 0);
+    this.dynSizeFields = fields.filter(([_, field]) => !field._dynSizeZero);
+    this._dynSizeZero = this.dynSizeFields.length === 0;
+  }
+  _dynSize(value: Flatten<NativeRecord<Fields>>) {
+    let sum = 0;
+    for (let i = 0; i < this.dynSizeFields.length; i++) {
+      const [key, fieldEncoder] = this.dynSizeFields[i]!;
+      sum += fieldEncoder._dynSize((value as any)[key]);
+    }
+    return sum;
+  }
+  _encode(cursor: Cursor, value: Flatten<NativeRecord<Fields>>) {
+    this.fields.forEach(([key, fieldEncoder]) => {
+      fieldEncoder._encode(cursor, (value as any)[key]);
+    });
+  }
+  _decode(cursor: Cursor) {
+    const obj: Record<string, unknown> = {};
+    for (let i = 0; i < this.fields.length; i++) {
+      const [key, field] = this.fields[i]!;
+      obj[key as any] = field._decode(cursor);
+    }
+    return obj as Flatten<NativeRecord<Fields>>;
   }
 }
 export const record = <

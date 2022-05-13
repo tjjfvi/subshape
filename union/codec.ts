@@ -1,32 +1,34 @@
-import { Codec, CodecList, Native } from "../common.ts";
+import { Codec, CodecList, Cursor, Native } from "../common.ts";
 import { u8 } from "../int/codec.ts";
 
 export type NativeUnion<MemberCodecs extends Codec[] = Codec[]> = Native<MemberCodecs[number]>;
 
 export class UnionCodec<Members extends any[]> extends Codec<Members[number]> {
+  readonly memberCodecs: Codec<any>[];
   constructor(
-    discriminate: (value: Members[number]) => number,
+    readonly discriminate: (value: Members[number]) => number,
     ...memberCodecs: CodecList<Members>
   ) {
-    super(
-      (value) => {
-        return 1 + memberCodecs[discriminate(value)]!._s(value);
-      },
-      (cursor, value) => {
-        const discriminant = discriminate(value);
-        u8._e(cursor, discriminant);
-        const memberEncoder = memberCodecs[discriminant]!;
-        memberEncoder._e(cursor, value);
-      },
-      (cursor) => {
-        const discriminant = u8._d(cursor);
-        const memberCodec = memberCodecs[discriminant];
-        if (!memberCodec) {
-          throw new Error(`No such member codec matching the discriminant \`${discriminant}\``);
-        }
-        return memberCodec._d(cursor);
-      },
-    );
+    super();
+    this.memberCodecs = memberCodecs;
+  }
+  _minSize = 1;
+  _dynSize(value: Members[number]) {
+    return this.memberCodecs[this.discriminate(value)]!.size(value);
+  }
+  _encode(cursor: Cursor, value: Members[number]) {
+    const discriminant = this.discriminate(value);
+    u8._encode(cursor, discriminant);
+    const memberEncoder = this.memberCodecs[discriminant]!;
+    memberEncoder._encode(cursor, value);
+  }
+  _decode(cursor: Cursor) {
+    const discriminant = u8._decode(cursor);
+    const memberCodec = this.memberCodecs[discriminant];
+    if (!memberCodec) {
+      throw new Error(`No such member codec matching the discriminant \`${discriminant}\``);
+    }
+    return memberCodec._decode(cursor);
   }
 }
 export const union = <Members extends any[]>(

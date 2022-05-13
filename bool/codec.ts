@@ -1,15 +1,12 @@
-import { Codec } from "../common.ts";
-import { u8 } from "../int/codec.ts";
+import { Codec, Cursor } from "../common.ts";
 
-export const bool = new Codec<boolean>(
-  () => {
-    return 1;
-  },
-  (cursor, value) => {
+export const bool = new class BoolCodec extends Codec<boolean> {
+  _minSize = 1;
+  _encode(cursor: Cursor, value: boolean) {
     cursor.view.setUint8(cursor.i, Number(value));
     cursor.i += 1;
-  },
-  (cursor) => {
-    return !!u8._d(cursor);
-  },
-);
+  }
+  _decode(cursor: Cursor) {
+    return !!cursor.u8a[cursor.i++];
+  }
+}();
