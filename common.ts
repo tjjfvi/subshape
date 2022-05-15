@@ -50,7 +50,7 @@ export class EncodeBuffer {
    * Insert a Uint8Array at the current position in the buffer.
    * This does not take any of the pre-allocated space.
    */
-  add(buffer: Uint8Array) {
+  insertArray(buffer: Uint8Array) {
     this.finishedArrays.push(this.array.subarray(0, this.index), buffer);
     this.finishedSize += this.index + buffer.length;
     this.array = this.array.subarray(this.index);
@@ -62,7 +62,7 @@ export class EncodeBuffer {
    * Allocate more space in the EncodeBuffer.
    * `.pop()` must be called after this space is used.
    */
-  push(size: number) {
+  pushAlloc(size: number) {
     this.finishedArrays.push(this.array.subarray(0, this.index));
     this.finishedSize += this.index;
     this.queuedArrays.push(this.array.subarray(this.index));
@@ -75,7 +75,7 @@ export class EncodeBuffer {
    * Finishes the current array and resumes writing on the previous array.
    * Must be called after `.push()`.
    */
-  pop() {
+  popAlloc() {
     this.finishedArrays.push(this.array.subarray(0, this.index));
     this.finishedSize += this.index;
     this.array = this.queuedArrays.pop()!;

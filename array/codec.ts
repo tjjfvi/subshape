@@ -7,11 +7,11 @@ export function array<T>($el: Codec<T>) {
     _encode(buffer, value) {
       compact._encode(buffer, value.length);
       if (value.length) {
-        buffer.push(value.length * $el._staticSize);
+        buffer.pushAlloc(value.length * $el._staticSize);
         for (let i = 0; i < value.length; i++) {
           $el._encode(buffer, value[i]!);
         }
-        buffer.pop();
+        buffer.popAlloc();
       }
     },
     _decode(buffer) {

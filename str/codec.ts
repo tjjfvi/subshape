@@ -6,7 +6,7 @@ export const str = createCodec<string>({
   _encode(buffer, value) {
     const array = new TextEncoder().encode(value);
     compact._encode(buffer, array.length);
-    buffer.add(array);
+    buffer.insertArray(array);
   },
   _decode(buffer) {
     // TODO: do we like this conversion? Safeguard.

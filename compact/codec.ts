@@ -30,12 +30,12 @@ export const compact = createCodec<number | bigint>({
     buffer.array[buffer.index++] = ((bytesLength - 4) << 2) + 0b11;
     for (let i = 0; i < bytesLength; i++) {
       if (i === 3) {
-        buffer.push(bytesLength - 3);
+        buffer.pushAlloc(bytesLength - 3);
       }
       buffer.array[buffer.index++] = Number(_value & 0xffn);
       _value >>= 8n;
     }
-    buffer.pop();
+    buffer.popAlloc();
   },
   _decode(buffer) {
     const b = u8._decode(buffer);
