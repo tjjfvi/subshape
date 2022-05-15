@@ -1,29 +1,21 @@
-import { Codec, Cursor } from "../../common.ts";
-import { u8 } from "../../int/codec.ts";
+import { createCodec } from "../../common.ts";
 
-export class KeyLiteralUnionCodec<Member extends PropertyKey> extends Codec<Member> {
-  readonly members;
-  readonly discriminantByKey;
-  constructor(...members: Member[]) {
-    super();
-    this.members = members;
-    this.discriminantByKey = members.reduce<Partial<Record<Member, number>>>((acc, cur, i) => {
-      return {
-        ...acc,
-        [cur]: i,
-      };
-    }, {}) as Partial<Record<Member, number>>;
-  }
-  _minSize = u8._minSize;
-  _encode(cursor: Cursor, value: Member) {
-    const discriminant = this.discriminantByKey[value]!;
-    u8._encode(cursor, discriminant);
-  }
-  _decode(cursor: Cursor) {
-    const discriminant = u8._decode(cursor);
-    return this.members[discriminant]!;
-  }
+export function keyLiteralUnion<Member extends PropertyKey>(...members: Member[]) {
+  const discriminantByKey = members.reduce<Partial<Record<Member, number>>>((acc, cur, i) => {
+    return {
+      ...acc,
+      [cur]: i,
+    };
+  }, {}) as Partial<Record<Member, number>>;
+  return createCodec<Member>({
+    _staticSize: 1,
+    _encode(buffer, value) {
+      const discriminant = discriminantByKey[value]!;
+      buffer.array[buffer.index++] = discriminant;
+    },
+    _decode(buffer) {
+      const discriminant = buffer.array[buffer.index++]!;
+      return members[discriminant]!;
+    },
+  });
 }
-export const keyLiteralUnion = <Member extends PropertyKey>(...members: Member[]): KeyLiteralUnionCodec<Member> => {
-  return new KeyLiteralUnionCodec(...members);
-};

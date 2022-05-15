@@ -1,84 +1,114 @@
-export class Cursor {
+export interface Codec<T> {
+  /** Encode a value into a new Uint8Array */
+  encode: (value: T) => Uint8Array;
+  /** Decode a value from a Uint8Array */
+  decode: (buffer: Uint8Array) => T;
+
+  /** [implementation] A static estimation of the size, which may be an under- or over-estimate */
+  _staticSize: number;
+  /** [implementation] Encodes the value into the supplied buffer */
+  _encode: (buffer: EncodeBuffer, value: T) => void;
+  /** [implementation] Decodes the value from the supplied buffer */
+  _decode: (buffer: DecodeBuffer) => T;
+}
+
+export function createCodec<T>(codec: Pick<Codec<T>, "_staticSize" | "_encode" | "_decode">): Codec<T> {
+  const { _staticSize, _encode, _decode } = codec;
+  return {
+    _staticSize,
+    _encode,
+    _decode,
+    encode(value) {
+      const buf = new EncodeBuffer(_staticSize);
+      _encode(buf, value);
+      return buf.finish();
+    },
+    decode(array) {
+      const buf = new DecodeBuffer(array);
+      return _decode(buf);
+    },
+  };
+}
+
+export type Native<T extends Codec<any>> = T extends Codec<infer U> ? U : never;
+
+export class EncodeBuffer {
+  finishedArrays: Uint8Array[] = [];
+  finishedSize = 0;
+  array: Uint8Array;
+  queuedArrays: Uint8Array[] = [];
   view;
-  i = 0;
+  index = 0;
 
-  constructor(readonly u8a: Uint8Array) {
-    this.view = new DataView(u8a.buffer, u8a.byteOffset, u8a.byteLength);
-  }
-}
-
-export type Native<C extends Codec> = C extends Codec<infer N> ? N : never;
-
-/** A means of encoding and decoding a type `T` to and from its SCALE byte representation */
-export abstract class Codec<T = any> {
-  /** The minimum size of values encoded with this codec */
-  abstract _minSize: number;
-  /**
-   * Accepts the decoded value and returns the size minus minSize.
-   * May be overridden by subclasses.
-   */
-  _dynSize(_value: T): number {
-    return 0;
-  }
-  /**
-   * If true, _dynSize will always return 0.
-   * This may be overridden by subclasses, but it must still uphold the above contract.
-   */
-  _dynSizeZero = this._dynSize === Codec.prototype._dynSize;
-
-  /** Accepts the cursor and value and writes its bytes into the cursor's byte array */
-  abstract _encode(cursor: Cursor, value: T): void;
-
-  /** Decodes the currently-focused bytes into `T` and moves the cursor as is appropriate */
-  abstract _decode(cursor: Cursor): T;
-
-  constructor() {}
-
-  size(value: T): number {
-    return this._minSize + this._dynSize(value);
+  /** Create a new EncodeBuffer with a specified initial size */
+  constructor(size: number) {
+    this.array = new Uint8Array(size);
+    this.view = new DataView(this.array.buffer);
   }
 
   /**
-   * @param decoded the JS-native representation, `T`
-   * @returns the SCALE byte representation of `T`
+   * Insert a Uint8Array at the current position in the buffer.
+   * This does not take any of the pre-allocated space.
    */
-  encode = (decoded: T): Uint8Array => {
-    const cursor = new Cursor(new Uint8Array(this.size(decoded)));
-    this._encode(cursor, decoded);
-    return cursor.u8a;
-  };
+  insertArray(buffer: Uint8Array) {
+    this.finishedArrays.push(this.array.subarray(0, this.index), buffer);
+    this.finishedSize += this.index + buffer.length;
+    this.array = this.array.subarray(this.index);
+    this.view = new DataView(this.array.buffer, this.array.byteOffset, this.array.byteLength);
+    this.index = 0;
+  }
 
   /**
-   * @param u8a the SCALE byte representation of `T`
-   * @returns the JS-native representation, `T`
+   * Allocate more space in the EncodeBuffer.
+   * `.pop()` must be called after this space is used.
    */
-  decode = (u8a: Uint8Array): T => {
-    return this._decode(new Cursor(u8a));
-  };
+  pushAlloc(size: number) {
+    this.finishedArrays.push(this.array.subarray(0, this.index));
+    this.finishedSize += this.index;
+    this.queuedArrays.push(this.array.subarray(this.index));
+    this.array = new Uint8Array(size);
+    this.view = new DataView(this.array.buffer, this.array.byteOffset, this.array.byteLength);
+    this.index = 0;
+  }
+
+  /**
+   * Finishes the current array and resumes writing on the previous array.
+   * Must be called after `.push()`.
+   */
+  popAlloc() {
+    this.finishedArrays.push(this.array.subarray(0, this.index));
+    this.finishedSize += this.index;
+    this.array = this.queuedArrays.pop()!;
+    this.view = new DataView(this.array.buffer, this.array.byteOffset, this.array.byteLength);
+    this.index = 0;
+  }
+
+  /**
+   * Finishes the current array, and returns a Uint8Array containing everything written.
+   * The EncodeBuffer is left in an undefined state, and should not be used afterwards.
+   */
+  finish(): Uint8Array {
+    if (!this.finishedArrays.length) return this.array.subarray(0, this.index);
+    this.finishedArrays.push(this.array.subarray(0, this.index));
+    this.finishedSize += this.index;
+    const fullArray = new Uint8Array(this.finishedSize);
+    let index = 0;
+    for (let i = 0; i < this.finishedArrays.length; i++) {
+      const array = this.finishedArrays[i]!;
+      fullArray.set(array, index);
+      index += array.length;
+    }
+    return fullArray;
+  }
 }
 
-export type CodecList<T extends any[]> = {
-  [Key in keyof T]: CodecList._0<Key, T[Key]>;
-};
-namespace CodecList {
-  export type _0<Key extends PropertyKey, Value> = Key extends `${number}` ? Codec<Value> : Value;
+export class DecodeBuffer {
+  view;
+  index = 0;
+  constructor(public array: Uint8Array) {
+    this.view = new DataView(array.buffer);
+  }
 }
 
-export type ValueOf<X> = X[keyof X];
-
-// TODO: replace with safer `Entries` if such a utility type comes into existence
-export type Entries<X> = ValueOf<
-  { [K in keyof X]: [K, Codec<X[K]>] }
->[];
-
-// // Causes issues with recursion depth / checker performance
-// export type Entries<X> = ValueOf<
-//   {
-//     [K in keyof X]: [
-//       [K, X[K]],
-//       ...([Entries<Omit<X, K>>] extends [never] ? [] : Entries<Omit<X, K>>),
-//     ];
-//   }
-// >;
-
-export type Flatten<T> = T extends Function ? T : { [K in keyof T]: T[K] };
+export type Expand<T> = T extends T ? { [K in keyof T]: T[K] } : never;
+export type U2I<U> = (U extends U ? (u: U) => 0 : never) extends (i: infer I) => 0 ? Extract<I, U> : never;

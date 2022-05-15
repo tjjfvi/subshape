@@ -10,17 +10,17 @@ const $abc = $.union(
       D: 3,
     }[value._tag];
   },
-  $.record(["_tag", $.dummy<$.Codec<"A">>("A")]),
+  $.record(["_tag", $.dummy<"A">("A")]),
   $.record(
-    ["_tag", $.dummy<$.Codec<"B">>("B")],
+    ["_tag", $.dummy<"B">("B")],
     ["B", $.str],
   ),
   $.record(
-    ["_tag", $.dummy<$.Codec<"C">>("C")],
+    ["_tag", $.dummy<"C">("C")],
     ["C", $.tuple($.u32, $.u64)],
   ),
   $.record(
-    ["_tag", $.dummy<$.Codec<"D">>("D")],
+    ["_tag", $.dummy<"D">("D")],
     ["a", $.u32],
     ["b", $.u64],
   ),
