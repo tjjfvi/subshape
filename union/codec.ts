@@ -1,5 +1,4 @@
 import { Codec, createCodec, Native } from "../common.ts";
-import { u8 } from "../int/codec.ts";
 
 export type NativeUnion<MemberCodecs extends Codec<any>[]> = Native<MemberCodecs[number]>;
 
