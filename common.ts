@@ -1,8 +1,14 @@
 export interface Codec<T> {
+  /** Encode a value into a new Uint8Array */
   encode: (value: T) => Uint8Array;
+  /** Decode a value from a Uint8Array */
   decode: (buffer: Uint8Array) => T;
+
+  /** [implementation] A static estimation of the size, which may be an under- or over-estimate */
   _staticSize: number;
+  /** [implementation] Encodes the value into the supplied buffer */
   _encode: (buffer: EncodeBuffer, value: T) => void;
+  /** [implementation] Decodes the value from the supplied buffer */
   _decode: (buffer: DecodeBuffer) => T;
 }
 
@@ -34,11 +40,16 @@ export class EncodeBuffer {
   view;
   index = 0;
 
+  /** Create a new EncodeBuffer with a specified initial size */
   constructor(size: number) {
     this.array = new Uint8Array(size);
     this.view = new DataView(this.array.buffer);
   }
 
+  /**
+   * Insert a Uint8Array at the current position in the buffer.
+   * This does not take any of the pre-allocated space.
+   */
   add(buffer: Uint8Array) {
     this.finishedArrays.push(this.array.subarray(0, this.index), buffer);
     this.finishedSize += this.index + buffer.length;
@@ -47,6 +58,10 @@ export class EncodeBuffer {
     this.index = 0;
   }
 
+  /**
+   * Allocate more space in the EncodeBuffer.
+   * `.pop()` must be called after this space is used.
+   */
   push(size: number) {
     this.finishedArrays.push(this.array.subarray(0, this.index));
     this.finishedSize += this.index;
@@ -56,6 +71,10 @@ export class EncodeBuffer {
     this.index = 0;
   }
 
+  /**
+   * Finishes the current array and resumes writing on the previous array.
+   * Must be called after `.push()`.
+   */
   pop() {
     this.finishedArrays.push(this.array.subarray(0, this.index));
     this.finishedSize += this.index;
@@ -64,6 +83,10 @@ export class EncodeBuffer {
     this.index = 0;
   }
 
+  /**
+   * Finishes the current array, and returns a Uint8Array containing everything written.
+   * The EncodeBuffer is left in an undefined state, and should not be used afterwards.
+   */
   finish(): Uint8Array {
     if (!this.finishedArrays.length) return this.array.subarray(0, this.index);
     this.finishedArrays.push(this.array.subarray(0, this.index));
