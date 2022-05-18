@@ -119,6 +119,29 @@ incompatibility between the input and codec definition. This library prioritizes
 performance over end-developer DX, as it is not intended for end developers, but
 rather for tool developers.
 
+## Codec Naming
+
+This library adopts a convention of denoting codecs with a `$` – `$.foo` for
+built-in codec, and `$foo` for user-defined codecs. This makes codecs easily
+distinguishable from other values, and makes it easier to have codecs in scope
+with other variables:
+
+```ts
+interface Person { ... }
+const $person = $.object(...)
+const person = { ... }
+```
+
+Here, the type, codec, and a value can all coexist without clashing, without
+having to resort to wordy workarounds like `personCodec`.
+
+The main other library this could possibly clash with is jQuery, and its usage
+has waned enough that this is not a serious problem.
+
+While we recommend following this convention for consistency, you can, of
+course, adopt an alternative convention if the `$` is problematic – `$.foo` can
+easily become `s.foo` or `scale.foo` with an alternate import name.
+
 ## Types
 
 ### Primitives
