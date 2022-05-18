@@ -8,6 +8,6 @@ testCodec("u8[]", $.array($.u8), [
   [16, 17, 18, 19, 20, 21],
 ]);
 
-testCodec("[u8; 1]", $.sizedArray(1, $.u8), [[1]]);
-testCodec("[u8; 2]", $.sizedArray(2, $.u8), [[1, 1]]);
-testCodec("[u8; 100]", $.sizedArray(100, $.u8), [Array(100).fill(1) as any]);
+testCodec("[u8; 1]", $.sizedArray($.u8, 1), [[1]]);
+testCodec("[u8; 2]", $.sizedArray($.u8, 2), [[1, 1]]);
+testCodec("[u8; 100]", $.sizedArray($.u8, 100), [Array(100).fill(1) as any]);

@@ -2,15 +2,15 @@ import { Codec, createCodec } from "../common.ts";
 import { compact } from "../compact/codec.ts";
 
 type ArrayOfLength<
-  L extends number,
   T,
+  L extends number,
   A extends T[] = [],
 > = number extends L ? T[]
   : L extends A["length"] ? A
-  : ArrayOfLength<L, T, [...A, T]>;
+  : ArrayOfLength<T, L, [...A, T]>;
 
-export function sizedArray<L extends number, T>(length: L, $el: Codec<T>) {
-  return createCodec<ArrayOfLength<L, T>>({
+export function sizedArray<L extends number, T>($el: Codec<T>, length: L) {
+  return createCodec<ArrayOfLength<T, L>>({
     _staticSize: $el._staticSize * length,
     _encode(buffer, value) {
       for (let i = 0; i < value.length; i++) {
@@ -22,7 +22,7 @@ export function sizedArray<L extends number, T>(length: L, $el: Codec<T>) {
       for (let i = 0; i < value.length; i++) {
         value[i] = $el._decode(buffer);
       }
-      return value as ArrayOfLength<L, T>;
+      return value as ArrayOfLength<T, L>;
     },
   });
 }
