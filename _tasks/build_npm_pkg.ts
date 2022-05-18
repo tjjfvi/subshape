@@ -24,3 +24,5 @@ await build({
   importMap: "import_map.json",
   test: false,
 });
+
+await Deno.copyFile("Readme.md", "target/npm_pkg/Readme.md");
