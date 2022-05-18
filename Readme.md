@@ -111,14 +111,6 @@ Type 'Codec<{ nickName: string; superPower: string | undefined; }>' is not assig
     Type '{ nickName: string; superPower: string | undefined; }' is not assignable to type 'Person'.
 ```
 
-## Error Handling
-
-This library **intentionally** does not check for conditions that would suggest
-an error. If an error is produced, it is because of invalid input or
-incompatibility between the input and codec definition. This library prioritizes
-performance over end-developer DX, as it is not intended for end developers, but
-rather for tool developers.
-
 ## Codec Naming
 
 This library adopts a convention of denoting codecs with a `$` – `$.foo` for
