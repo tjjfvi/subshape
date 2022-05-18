@@ -8,7 +8,7 @@ export type Field<
 export type NativeField<F extends Field> = { [_ in F[0]]: Native<F[1]> };
 
 // // TODO: do we prefer the following (variadic) approach?
-export type NativeRecord<Fields extends Field[]> = Expand<
+export type NativeObject<Fields extends Field[]> = Expand<
   U2I<
     | {}
     | {
@@ -17,12 +17,12 @@ export type NativeRecord<Fields extends Field[]> = Expand<
   >
 >;
 
-export function record<
+export function object<
   Fields extends Field<EntryKey, EntryValueCodec>[],
   EntryKey extends PropertyKey,
   EntryValueCodec extends Codec<any>,
 >(...fields: Fields) {
-  return createCodec<NativeRecord<Fields>>({
+  return createCodec<NativeObject<Fields>>({
     _staticSize: fields.map((x) => x[1]._staticSize).reduce((a, b) => a + b, 0),
     _encode(buffer, value) {
       fields.forEach(([key, fieldEncoder]) => {

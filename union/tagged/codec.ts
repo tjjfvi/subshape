@@ -1,6 +1,6 @@
 import { Codec } from "../../common.ts";
 import { dummy } from "../../dummy/codec.ts";
-import { Field, NativeRecord, record } from "../../record/codec.ts";
+import { Field, NativeObject, object } from "../../object/codec.ts";
 import { union } from "../../union/codec.ts";
 
 export type TaggedUnionMember<
@@ -14,7 +14,7 @@ export type NativeTaggedUnionMember<
   M extends TaggedUnionMember,
 > =
   & { [_ in TagKey]: M[0] }
-  & (M extends [any, ...infer R] ? R extends Field[] ? NativeRecord<R> : {} : never);
+  & (M extends [any, ...infer R] ? R extends Field[] ? NativeObject<R> : {} : never);
 
 export type NativeTaggedUnionMembers<
   TagKey extends PropertyKey,
@@ -42,7 +42,7 @@ export function taggedUnion<
       });
     },
     ...members.map(([memberTag, ...fields]) => {
-      return record(
+      return object(
         ["_tag", dummy(memberTag)],
         ...fields || [],
       ) as NativeTaggedUnionMembers<TagKey, Members>;

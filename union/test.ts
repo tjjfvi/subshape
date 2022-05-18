@@ -10,16 +10,16 @@ const $abc = $.union(
       D: 3,
     }[value._tag];
   },
-  $.record(["_tag", $.dummy<"A">("A")]),
-  $.record(
+  $.object(["_tag", $.dummy<"A">("A")]),
+  $.object(
     ["_tag", $.dummy<"B">("B")],
     ["B", $.str],
   ),
-  $.record(
+  $.object(
     ["_tag", $.dummy<"C">("C")],
     ["C", $.tuple($.u32, $.u64)],
   ),
-  $.record(
+  $.object(
     ["_tag", $.dummy<"D">("D")],
     ["a", $.u32],
     ["b", $.u64],

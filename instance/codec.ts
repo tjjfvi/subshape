@@ -1,5 +1,5 @@
 import { Codec, createCodec, Native } from "../common.ts";
-import { Field, NativeRecord, record } from "../record/codec.ts";
+import { Field, NativeObject, object } from "../object/codec.ts";
 
 /**
  * @param ctor The constructor with which to instantiate the instance / from whose instance to encode
@@ -11,7 +11,7 @@ export function instance<
     ...args: {
       [K in keyof Fields]: Native<Extract<Fields[K], Field>[1]>;
     }
-  ) => NativeRecord<Fields>,
+  ) => NativeObject<Fields>,
   Fields extends Field<EntryKey, EntryValueCodec>[],
   EntryKey extends PropertyKey,
   EntryValueCodec extends Codec<any>,
@@ -19,9 +19,9 @@ export function instance<
   ctor: Ctor,
   ...fields: Fields
 ) {
-  const $record = record(...fields);
+  const $object = object(...fields);
   return createCodec<InstanceType<Ctor>>({
-    ...$record as Codec<any>,
+    ...$object as Codec<any>,
     _decode(buffer) {
       const arr = Array(fields.length);
       for (let i = 0; i < arr.length; i++) {
