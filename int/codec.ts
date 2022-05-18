@@ -38,32 +38,48 @@ export const i32 = _int(4, "Int32");
 export const u64 = _int(8, "BigUint64");
 export const i64 = _int(8, "BigInt64");
 
-export const u128 = createCodec<bigint>({
-  _staticSize: 16,
-  _encode(buffer, value) {
-    buffer.view.setBigInt64(buffer.index, value, true);
-    buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
-    buffer.index += 16;
-  },
-  _decode(buffer) {
-    const right = buffer.view.getBigUint64(buffer.index, true);
-    const left = buffer.view.getBigUint64(buffer.index + 8, true);
-    buffer.index += 16;
-    return (left << 64n) | right;
-  },
-});
+const _128 = (signed: boolean) => {
+  const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
+  return createCodec<bigint>({
+    _staticSize: 16,
+    _encode(buffer, value) {
+      buffer.view.setBigInt64(buffer.index, value, true);
+      buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
+      buffer.index += 16;
+    },
+    _decode(buffer) {
+      const b = buffer.view.getBigUint64(buffer.index, true);
+      const a = getMethod.call(buffer.view, buffer.index + 8, true);
+      buffer.index += 16;
+      return (a << 64n) | b;
+    },
+  });
+};
 
-export const i128 = createCodec<bigint>({
-  _staticSize: 16,
-  _encode(buffer, value) {
-    buffer.view.setBigInt64(buffer.index, value, true);
-    buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
-    buffer.index += 16;
-  },
-  _decode(buffer) {
-    const right = buffer.view.getBigUint64(buffer.index, true);
-    const left = buffer.view.getBigInt64(buffer.index + 8, true);
-    buffer.index += 16;
-    return (left << 64n) | right;
-  },
-});
+export const u128 = _128(false);
+export const i128 = _128(true);
+
+const _256 = (signed: boolean) => {
+  const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
+  return createCodec<bigint>({
+    _staticSize: 32,
+    _encode(buffer, value) {
+      buffer.view.setBigInt64(buffer.index, value, true);
+      buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
+      buffer.view.setBigInt64(buffer.index + 16, value >> 128n, true);
+      buffer.view.setBigInt64(buffer.index + 24, value >> 192n, true);
+      buffer.index += 32;
+    },
+    _decode(buffer) {
+      const d = buffer.view.getBigUint64(buffer.index, true);
+      const b = buffer.view.getBigUint64(buffer.index + 8, true);
+      const c = buffer.view.getBigUint64(buffer.index + 16, true);
+      const a = getMethod.call(buffer.view, buffer.index + 24, true);
+      buffer.index += 32;
+      return (a << 192n) | (b << 128n) | (c << 64n) | d;
+    },
+  });
+};
+
+export const u256 = _256(false);
+export const i256 = _256(true);
