@@ -231,7 +231,7 @@ const $dinosaur = $.keyLiteralUnion(
 $dinosaur; // Codec<Dinosaur>
 ```
 
-### Numeric Enums
+#### Numeric Enums
 
 ```ts
 enum Dinosaur {
