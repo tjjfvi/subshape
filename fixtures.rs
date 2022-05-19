@@ -18,8 +18,8 @@ pub mod int_fixtures;
 #[path = "./option/fixtures.rs"]
 pub mod option_fixtures;
 
-#[path = "./record/fixtures.rs"]
-pub mod record_fixtures;
+#[path = "./object/fixtures.rs"]
+pub mod object_fixtures;
 
 #[path = "./result/fixtures.rs"]
 pub mod result_fixtures;

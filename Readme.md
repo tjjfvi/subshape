@@ -37,7 +37,7 @@ import * as $ from "parity-scale-codec";
 ```ts
 import * as $ from "https://deno.land/x/scale/mod.ts";
 
-const $person = $.record(
+const $person = $.object(
   ["name", $.str],
   ["nickName", $.str],
   ["superPower", $.option($.str)],
@@ -76,7 +76,7 @@ interface Person {
   superPower: string | undefined;
 }
 
-const $person: Codec<Person> = $.record(
+const $person: Codec<Person> = $.object(
   ["name", $.str],
   ["nickName", $.str],
   ["superPower", $.option($.str)],
@@ -86,7 +86,7 @@ const $person: Codec<Person> = $.record(
 This has the added benefit of producing type errors if the codec does not directly mirror the TS type.
 
 ```ts
-const $person: Codec<Person> = $.record(
+const $person: Codec<Person> = $.object(
   //  ~~~~~
   //  ^ error (message below)
   ["nickName", $.str],
@@ -165,10 +165,10 @@ const bytes = $qux.encode([true, 81, "｡＾・ｪ・＾｡"]);
 const value = $qux.decode(bytes);
 ```
 
-### Records
+### Objects
 
 ```ts
-const $person = $.record(
+const $person = $.object(
   ["name", $.str],
   ["nickName", $.str],
   ["superPower", $.option($.str)],
@@ -303,7 +303,7 @@ const $myError = $.instance(
   ["message", $.str],
   [
     "payload",
-    $.record(
+    $.object(
       ["a", $.str],
       ["b", $.u8],
       ["c", $.bool],

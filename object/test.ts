@@ -1,14 +1,14 @@
 import * as $ from "../mod.ts";
 import { testCodec } from "../test-util.ts";
 
-const $person = $.record(
+const $person = $.object(
   ["name", $.str],
   ["nickName", $.str],
   ["superPower", $.option($.str)],
   ["luckyNumber", $.u8],
 );
 
-testCodec("record", $person, [
+testCodec("object", $person, [
   {
     name: "Darrel",
     nickName: "The Durst",

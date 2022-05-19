@@ -22,7 +22,7 @@ Deno.test("Instances", () => {
     ["message", $.str],
     [
       "payload",
-      $.record(
+      $.object(
         ["a", $.str],
         ["b", $.u8],
         ["c", $.bool],
@@ -49,7 +49,7 @@ namespace _typeTests {
   // @ts-ignore: Prevent execution
   if (1 as 0) return;
 
-  const $payload = $.record(
+  const $payload = $.object(
     ["a", $.str],
     ["b", $.u8],
     ["c", $.bool],
