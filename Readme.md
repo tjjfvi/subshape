@@ -152,6 +152,8 @@ $.u64; // Codec<bigint>
 $.i64; // Codec<bigint>
 $.u128; // Codec<bigint>
 $.i128; // Codec<bigint>
+$.u256; // Codec<bigint>
+$.i256; // Codec<bigint>
 
 // https://docs.substrate.io/v3/advanced/scale-codec/#compactgeneral-integers
 $.compact; // Codec<number | bigint>
