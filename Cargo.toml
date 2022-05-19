@@ -9,3 +9,4 @@ path = "fixtures.rs"
 [dependencies]
 itertools = "0.10.3"
 parity-scale-codec = { version = "3.0.0", features = ["derive"] }
+primitive-types = "0.11.1"
