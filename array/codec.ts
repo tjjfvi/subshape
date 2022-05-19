@@ -50,3 +50,17 @@ export function array<T>($el: Codec<T>) {
     },
   });
 }
+
+export const uint8array = createCodec<Uint8Array>({
+  _staticSize: compact._staticSize,
+  _encode(buffer, value) {
+    compact._encode(buffer, value.length);
+    buffer.insertArray(value); // the contents of this will eventually be cloned by buffer
+  },
+  _decode(buffer) {
+    const length = Number(compact._decode(buffer));
+    const value = buffer.array.subarray(buffer.index, buffer.index + length);
+    buffer.index += length;
+    return value;
+  },
+});

@@ -154,3 +154,40 @@ snapshot[`[u8; 100] [
 01
 01
 `;
+
+snapshot[`uint8array Uint8Array(5) [ 1, 2, 3, 4, 5 ] 1`] = `
+14
+01
+02
+03
+04
+05
+`;
+
+snapshot[`uint8array Uint8Array(5) [ 6, 7, 8, 9, 10 ] 1`] = `
+14
+06
+07
+08
+09
+0a
+`;
+
+snapshot[`uint8array Uint8Array(5) [ 11, 12, 13, 14, 15 ] 1`] = `
+14
+0b
+0c
+0d
+0e
+0f
+`;
+
+snapshot[`uint8array Uint8Array(6) [ 16, 17, 18, 19, 20, 21 ] 1`] = `
+18
+10
+11
+12
+13
+14
+15
+`;
