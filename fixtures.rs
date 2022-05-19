@@ -18,6 +18,9 @@ pub mod int_fixtures;
 #[path = "./option/fixtures.rs"]
 pub mod option_fixtures;
 
+#[path = "./option/optionBool/fixtures.rs"]
+pub mod option_bool_fixtures;
+
 #[path = "./object/fixtures.rs"]
 pub mod object_fixtures;
 

@@ -174,6 +174,7 @@ $person; /* Codec<{
 
 ```ts
 $.option($.u8); // Codec<number | undefined>
+$.optionBool; // Codec<boolean | undefined> (stores as single byte; see OptionBool in Rust impl)
 ```
 
 ### Unions
