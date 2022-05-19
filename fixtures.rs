@@ -15,6 +15,9 @@ pub mod compact_fixtures;
 #[path = "./int/fixtures.rs"]
 pub mod int_fixtures;
 
+#[path = "./iterable/fixtures.rs"]
+pub mod iterable_fixtures;
+
 #[path = "./option/fixtures.rs"]
 pub mod option_fixtures;
 

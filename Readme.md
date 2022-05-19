@@ -170,6 +170,22 @@ $person; /* Codec<{
 }> */
 ```
 
+### Iterables
+
+```ts
+$.set($.u8); // Codec<Set<number>>
+
+$.map($.str, $.u8); // Codec<Map<string, number>>
+
+const $manualSetU8 = $.iterable<number, Set<number>>({
+  $el: $.u8,
+  calcLength: (set) => set.size,
+  rehydrate: (values) => new Set(values),
+});
+
+$manualSetU8; // Codec<Set<number>>
+```
+
 ### Options
 
 ```ts
