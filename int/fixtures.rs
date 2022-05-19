@@ -1,18 +1,31 @@
-#[rustfmt::skip]
-crate::fixtures!(
-  0u8, 1u8, 2u8, 9u8,
-  0u16, 1u16, 2u16, 9u16,
-  0u32, 1u32, 2u32, 9u32,
-  0u64, 1u64, 2u64, 9u64,
-  0u128, 1u128, 2u128, 9u128,
-  [0, 0u64], [1, 0u64], [2, 0u64], [9, 0u64],
-  [0, 0u128], [1, 0u128], [2, 0u128], [9, 0u128],
+use primitive_types::U256;
 
-  -9i8, -2i8, -1i8, 0i8, 1i8, 2i8, 9i8,
-  -9i16, -2i16, -1i16, 0i16, 1i16, 2i16, 9i16,
-  -9i32, -2i32, -1i32, 0i32, 1i32, 2i32, 9i32,
-  -9i64, -2i64, -1i64, 0i64, 1i64, 2i64, 9i64,
-  -9i128, -2i128, -1i128, 0i128, 1i128, 2i128, 9i128,
-  [-9, -1i64], [-2, -1i64], [-1, -1i64], [0, 0i64], [1, 0i64], [2, 0i64], [9, 0i64],
-  [-9, -1i128], [-2, -1i128], [-1, -1i128], [0, 0i128], [1, 0i128], [2, 0i128], [9, 0i128],
-);
+macro_rules! int_fixtures {
+    ($($uN:ident),*;$($iN:ident),*;($($x:tt)*)) => {
+        crate::fixtures!(
+          $(
+            $uN::from(0u8),
+            $uN::from(1u8),
+            ($uN::from(1u8) << (std::mem::size_of::<$uN>() * 8 / 2)) - 1,
+            $uN::MAX,
+          )*
+          $(
+            $iN::MIN,
+            (-1 as $iN) << (std::mem::size_of::<$iN>() * 8 / 2 - 1),
+            -1 as $iN,
+            0 as $iN,
+            1 as $iN,
+            ((1 as $iN) << (std::mem::size_of::<$iN>() * 8 / 2 - 1)) - 1,
+            $iN::MAX,
+          )*
+          $($x)*
+        );
+    };
+}
+
+int_fixtures!(u8, u16, u32, u64, u128, U256; i8, i16, i32, i64, i128; (
+  // An additional check that the i256 array format is correct
+  [0, i64::MIN],  [i64::MIN, -1],  [-1, -1i64],  [0, 0i64],  [1, 0i64],  [i64::MAX, 0],  [-1, i64::MAX],
+  // Because there is no i256, we have to simulate it with two i128s
+  [0, i128::MIN], [i128::MIN, -1], [-1, -1i128], [0, 0i128], [1, 0i128], [i128::MAX, 0], [-1, i128::MAX],
+));

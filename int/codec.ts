@@ -72,8 +72,8 @@ const _256 = (signed: boolean) => {
     },
     _decode(buffer) {
       const d = buffer.view.getBigUint64(buffer.index, true);
-      const b = buffer.view.getBigUint64(buffer.index + 8, true);
-      const c = buffer.view.getBigUint64(buffer.index + 16, true);
+      const c = buffer.view.getBigUint64(buffer.index + 8, true);
+      const b = buffer.view.getBigUint64(buffer.index + 16, true);
       const a = getMethod.call(buffer.view, buffer.index + 24, true);
       buffer.index += 32;
       return (a << 192n) | (b << 128n) | (c << 64n) | d;
