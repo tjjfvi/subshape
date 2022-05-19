@@ -1,19 +1,12 @@
 # SCALE Codecs for JavaScript and TypeScript
 
-A TypeScript implementation of [SCALE (Simple Concatenated Aggregate
-Little-Endian) transcoding](https://docs.substrate.io/v3/advanced/scale-codec/)
-(see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes
-JS-land representations and e2e type-safety. These types are described
-[below](#types).
+A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/v3/advanced/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
 
-⚠️ This TypeScript implementation of Parity's SCALE Codecs is in beta. If you
-encounter a bug or want to give feedback on the API design, please create an
-issue.
+⚠️ This TypeScript implementation of Parity's SCALE Codecs is in beta. If you encounter a bug or want to give feedback on the API design, please create an issue.
 
 ## Setup
 
-If you're using [Deno](https://deno.land/), simply import via the `denoland/x`
-specifier.
+If you're using [Deno](https://deno.land/), simply import via the `denoland/x` specifier.
 
 ```ts
 import * as $ from "https://deno.land/x/scale/mod.ts";
@@ -62,8 +55,7 @@ const decodedValue: Person = $person.decode(encodedBytes);
 assertEquals(decodedValue, valueToEncode);
 ```
 
-To extract the JS-native TypeScript type from a given codec, use the `Native`
-utility type.
+To extract the JS-native TypeScript type from a given codec, use the `Native` utility type.
 
 ```ts
 type Person = $.Native<typeof $person>;
@@ -74,8 +66,7 @@ type Person = $.Native<typeof $person>;
 } */
 ```
 
-In cases where codecs are exceptionally large, we may want to spare the TS
-checker of extra work.
+In cases where codecs are exceptionally large, we may want to spare the TS checker of extra work.
 
 ```ts
 interface Person {
@@ -91,8 +82,7 @@ const $person: Codec<Person> = $.object(
 );
 ```
 
-This has the added benefit of producing type errors if the codec does not
-directly mirror the TS type.
+This has the added benefit of producing type errors if the codec does not directly mirror the TS type.
 
 ```ts
 const $person: Codec<Person> = $.object(
@@ -113,10 +103,7 @@ Type 'Codec<{ nickName: string; superPower: string | undefined; }>' is not assig
 
 ## Codec Naming
 
-This library adopts a convention of denoting codecs with a `$` – `$.foo` for
-built-in codec, and `$foo` for user-defined codecs. This makes codecs easily
-distinguishable from other values, and makes it easier to have codecs in scope
-with other variables:
+This library adopts a convention of denoting codecs with a `$` – `$.foo` for built-in codec, and `$foo` for user-defined codecs. This makes codecs easily distinguishable from other values, and makes it easier to have codecs in scope with other variables:
 
 ```ts
 interface Person { ... }
@@ -124,15 +111,11 @@ const $person = $.object(...)
 const person = { ... }
 ```
 
-Here, the type, codec, and a value can all coexist without clashing, without
-having to resort to wordy workarounds like `personCodec`.
+Here, the type, codec, and a value can all coexist without clashing, without having to resort to wordy workarounds like `personCodec`.
 
-The main other library this could possibly clash with is jQuery, and its usage
-has waned enough that this is not a serious problem.
+The main other library this could possibly clash with is jQuery, and its usage has waned enough that this is not a serious problem.
 
-While we recommend following this convention for consistency, you can, of
-course, adopt an alternative convention if the `$` is problematic – `$.foo` can
-easily become `s.foo` or `scale.foo` with an alternate import name.
+While we recommend following this convention for consistency, you can, of course, adopt an alternative convention if the `$` is problematic – `$.foo` can easily become `s.foo` or `scale.foo` with an alternate import name.
 
 ## Types
 
@@ -264,9 +247,7 @@ $dinosaur; // Codec<Dinosaur>
 
 ### Instance
 
-Sometimes, you may want to instantiate a class with the decoded data / encode
-data from a class instance. In these situations, we can leverage the `instance`
-codec factory. A common use case for `instance` codecs is `Error` subtypes.
+Sometimes, you may want to instantiate a class with the decoded data / encode data from a class instance. In these situations, we can leverage the `instance` codec factory. A common use case for `instance` codecs is `Error` subtypes.
 
 ```ts
 class MyError extends Error {
