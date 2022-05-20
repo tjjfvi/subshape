@@ -151,6 +151,8 @@ $.sizedArray($.u8, 2); // Codec<[number, number]>
 
 $.array($.u8); // Codec<number[]>
 
+$.uint8array; // Codec<Uint8Array>
+
 $.tuple($.bool, $.u8, $.str); // Codec<[boolean, number, string]>
 ```
 
@@ -170,10 +172,27 @@ $person; /* Codec<{
 }> */
 ```
 
+### Iterables
+
+```ts
+$.set($.u8); // Codec<Set<number>>
+
+$.map($.str, $.u8); // Codec<Map<string, number>>
+
+const $manualSetU8 = $.iterable<number, Set<number>>({
+  $el: $.u8,
+  calcLength: (set) => set.size,
+  rehydrate: (values) => new Set(values),
+});
+
+$manualSetU8; // Codec<Set<number>>
+```
+
 ### Options
 
 ```ts
 $.option($.u8); // Codec<number | undefined>
+$.optionBool; // Codec<boolean | undefined> (stores as single byte; see OptionBool in Rust impl)
 ```
 
 ### Unions

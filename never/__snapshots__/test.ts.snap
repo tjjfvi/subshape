@@ -1,0 +1,3 @@
+export const snapshot = {};
+
+snapshot[`option(never) undefined 1`] = `00`;

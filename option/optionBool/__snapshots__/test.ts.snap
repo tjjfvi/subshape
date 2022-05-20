@@ -1,0 +1,7 @@
+export const snapshot = {};
+
+snapshot[`optionBool undefined 1`] = `00`;
+
+snapshot[`optionBool true 1`] = `01`;
+
+snapshot[`optionBool false 1`] = `02`;
