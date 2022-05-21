@@ -16,8 +16,6 @@ If you're using [Node](https://nodejs.org/), install as follows.
 npm install parity-scale-codec
 ```
 
-> NOTE: The published package name is (while in beta) subject to change
-
 Then import as follows.
 
 ```ts
