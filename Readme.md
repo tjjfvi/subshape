@@ -2,8 +2,6 @@
 
 A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/v3/advanced/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
 
-⚠️ This TypeScript implementation of Parity's SCALE Codecs is in beta. If you encounter a bug or want to give feedback on the API design, please create an issue.
-
 ## Setup
 
 If you're using [Deno](https://deno.land/), simply import via the `denoland/x` specifier.
