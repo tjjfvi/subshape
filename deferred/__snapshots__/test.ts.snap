@@ -1,0 +1,19 @@
+export const snapshot = {};
+
+snapshot[`linkedList undefined 1`] = `00`;
+
+snapshot[`linkedList { val: 1, next: undefined } 1`] = `
+01
+01
+00
+`;
+
+snapshot[`linkedList { val: 1, next: { val: 2, next: { val: 3, next: undefined } } } 1`] = `
+01
+01
+01
+02
+01
+03
+00
+`;
