@@ -12,6 +12,9 @@ pub mod bool_fixtures;
 #[path = "./compact/fixtures.rs"]
 pub mod compact_fixtures;
 
+#[path = "./deferred/fixtures.rs"]
+pub mod deferred_fixtures;
+
 #[path = "./int/fixtures.rs"]
 pub mod int_fixtures;
 

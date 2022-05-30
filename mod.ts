@@ -2,6 +2,7 @@ export * from "./array/codec.ts";
 export * from "./bool/codec.ts";
 export * from "./common.ts";
 export * from "./compact/codec.ts";
+export * from "./deferred/codec.ts";
 export * from "./dummy/codec.ts";
 export * from "./instance/codec.ts";
 export * from "./int/codec.ts";
