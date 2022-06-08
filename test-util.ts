@@ -45,3 +45,12 @@ export function benchCodec<T>(name: string, codec: Codec<T>, value: T) {
     codec.decode(encoded);
   });
 }
+
+export async function assertThrowsSnapshot(t: Deno.TestContext, fn: () => unknown) {
+  try {
+    fn();
+  } catch (e) {
+    return await assertSnapshot(t, e.message);
+  }
+  throw new Error("Expected function to throw");
+}
