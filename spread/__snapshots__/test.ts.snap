@@ -1,0 +1,12 @@
+export const snapshot = {};
+
+snapshot[`object { _tag: "a", bar: 123 } 1`] = `
+00
+7b
+`;
+
+snapshot[`object { _tag: "b", x: 0, bar: 123 } 1`] = `
+01
+00
+7b
+`;
