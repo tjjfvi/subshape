@@ -16,6 +16,5 @@ export * from "./result/codec.ts";
 export * from "./str/codec.ts";
 export * from "./tuple/codec.ts";
 export * from "./union/codec.ts";
-export * from "./union/comparable_value/codec.ts";
 export * from "./union/key/codec.ts";
 export * from "./union/tagged/codec.ts";
