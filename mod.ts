@@ -13,6 +13,7 @@ export * from "./object/codec.ts";
 export * from "./option/codec.ts";
 export * from "./option/optionBool/codec.ts";
 export * from "./result/codec.ts";
+export * from "./spread/codec.ts";
 export * from "./str/codec.ts";
 export * from "./tuple/codec.ts";
 export * from "./union/codec.ts";

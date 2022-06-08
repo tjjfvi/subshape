@@ -36,6 +36,9 @@ pub mod object_fixtures;
 #[path = "./result/fixtures.rs"]
 pub mod result_fixtures;
 
+#[path = "./spread/fixtures.rs"]
+pub mod spread_fixtures;
+
 #[path = "./str/fixtures.rs"]
 pub mod str_fixtures;
 
