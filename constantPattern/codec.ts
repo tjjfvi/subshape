@@ -1,8 +1,8 @@
 import { Codec, createCodec } from "../common.ts";
 
-export function constantPattern<T>(value: T, codec: Codec<T>): Codec<T>;
+export function constantPattern<T>(value: T, codec: Pick<Codec<T>, "encode">): Codec<T>;
 export function constantPattern<T>(value: T, pattern: Uint8Array): Codec<T>;
-export function constantPattern<T>(value: T, c: Codec<T> | Uint8Array): Codec<T> {
+export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8Array): Codec<T> {
   const pattern = c instanceof Uint8Array ? c : c.encode(value);
   return createCodec<T>({
     // We could set `_staticSize` to `pattern.length`, but in this case it will
