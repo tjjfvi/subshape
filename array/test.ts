@@ -18,3 +18,8 @@ testCodec("uint8array", $.uint8array, [
   new Uint8Array([11, 12, 13, 14, 15]),
   new Uint8Array([16, 17, 18, 19, 20, 21]),
 ]);
+
+testCodec("sizedUint8array", $.sizedUint8array(4), [
+  new Uint8Array([0, 0, 0, 0]),
+  new Uint8Array([1, 2, 3, 4]),
+]);
