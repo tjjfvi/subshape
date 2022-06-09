@@ -91,7 +91,8 @@ export const i256 = _256(true);
 export function int(signed: boolean, size: 8 | 16 | 32): Codec<number>;
 export function int(signed: boolean, size: 64 | 128 | 256): Codec<bigint>;
 export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<number> | Codec<bigint>;
-export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<number> | Codec<bigint> {
+export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<number | bigint>;
+export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<any> {
   const key = `${signed ? "i" : "u"}${size}` as const;
   return {
     u8,
