@@ -5,7 +5,8 @@ const MAX_U8 = 2 ** (8 - 2) - 1;
 const MAX_U16 = 2 ** (16 - 2) - 1;
 const MAX_U32 = 2 ** (32 - 2) - 1;
 
-export const compact = createCodec<number | bigint>({
+export const compact: Codec<number | bigint> = createCodec({
+  _metadata: null,
   _staticSize: 4,
   _encode(buffer, value) {
     if (value <= MAX_U8) {

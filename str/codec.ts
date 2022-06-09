@@ -1,7 +1,8 @@
-import { createCodec } from "../common.ts";
+import { Codec, createCodec } from "../common.ts";
 import { compact } from "../compact/codec.ts";
 
-export const str = createCodec<string>({
+export const str: Codec<string> = createCodec({
+  _metadata: null,
   _staticSize: compact._staticSize,
   _encode(buffer, value) {
     const array = new TextEncoder().encode(value);

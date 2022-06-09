@@ -8,8 +8,9 @@ export function iterable<T, I extends Iterable<T>>(
     calcLength: (iterable: I) => number;
     rehydrate: (iterable: Iterable<T>) => I;
   },
-) {
-  return createCodec<I>({
+): Codec<I> {
+  return createCodec({
+    _metadata: [iterable, { $el, calcLength, rehydrate }],
     _staticSize: compact._staticSize,
     _encode(buffer, value) {
       const length = calcLength(value);

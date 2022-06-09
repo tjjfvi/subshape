@@ -9,8 +9,9 @@ type ArrayOfLength<
   : L extends A["length"] ? A
   : ArrayOfLength<T, L, [...A, T]>;
 
-export function sizedArray<L extends number, T>($el: Codec<T>, length: L) {
-  return createCodec<ArrayOfLength<T, L>>({
+export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec<ArrayOfLength<T, L>> {
+  return createCodec({
+    _metadata: [sizedArray, $el, length],
     _staticSize: $el._staticSize * length,
     _encode(buffer, value) {
       for (let i = 0; i < value.length; i++) {
@@ -27,8 +28,9 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L) {
   });
 }
 
-export function array<T>($el: Codec<T>) {
-  return createCodec<T[]>({
+export function array<T>($el: Codec<T>): Codec<T[]> {
+  return createCodec({
+    _metadata: [array, $el],
     _staticSize: compact._staticSize,
     _encode(buffer, value) {
       compact._encode(buffer, value.length);
@@ -51,7 +53,8 @@ export function array<T>($el: Codec<T>) {
   });
 }
 
-export const uint8array = createCodec<Uint8Array>({
+export const uint8array: Codec<Uint8Array> = createCodec({
+  _metadata: null,
   _staticSize: compact._staticSize,
   _encode(buffer, value) {
     compact._encode(buffer, value.length);
@@ -65,8 +68,9 @@ export const uint8array = createCodec<Uint8Array>({
   },
 });
 
-export function sizedUint8array(length: number) {
-  return createCodec<Uint8Array>({
+export function sizedUint8array(length: number): Codec<Uint8Array> {
+  return createCodec({
+    _metadata: [sizedUint8array, length],
     // We could set `_staticSize` to `length`, but in this case it will usually
     // more efficient to insert the array dynamically, rather than manually copy
     // the bytes.

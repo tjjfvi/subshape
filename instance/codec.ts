@@ -18,10 +18,11 @@ export function instance<
 >(
   ctor: Ctor,
   ...fields: Fields
-) {
+): Codec<InstanceType<Ctor>> {
   const $object = object(...fields);
-  return createCodec<InstanceType<Ctor>>({
+  return createCodec({
     ...$object as Codec<any>,
+    _metadata: [instance, ctor, ...fields] as any,
     _decode(buffer) {
       const arr = Array(fields.length);
       for (let i = 0; i < arr.length; i++) {

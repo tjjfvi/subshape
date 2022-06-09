@@ -1,6 +1,7 @@
-import { createCodec } from "../../common.ts";
+import { Codec, createCodec } from "../../common.ts";
 
-export const optionBool = createCodec<boolean | undefined>({
+export const optionBool: Codec<boolean | undefined> = createCodec({
+  _metadata: null,
   _staticSize: 1,
   _encode(buffer, value) {
     buffer.array[buffer.index++] = value === undefined ? 0 : 1 + +!value;

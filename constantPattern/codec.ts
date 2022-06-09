@@ -4,7 +4,8 @@ export function constantPattern<T>(value: T, codec: Pick<Codec<T>, "encode">): C
 export function constantPattern<T>(value: T, pattern: Uint8Array): Codec<T>;
 export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8Array): Codec<T> {
   const pattern = c instanceof Uint8Array ? c : c.encode(value);
-  return createCodec<T>({
+  return createCodec({
+    _metadata: [constantPattern as never, value, pattern],
     // We could set `_staticSize` to `pattern.length`, but in this case it will
     // usually more efficient to insert `pattern` dynamically, rather than
     // manually copy the bytes.

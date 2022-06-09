@@ -10,14 +10,21 @@ export interface Codec<T> {
   _encode: (buffer: EncodeBuffer, value: T) => void;
   /** [implementation] Decodes the value from the supplied buffer */
   _decode: (buffer: DecodeBuffer) => T;
+
+  _metadata?: [Function, ...unknown[]];
 }
 
-export function createCodec<T>(codec: Pick<Codec<T>, "_staticSize" | "_encode" | "_decode">): Codec<T> {
-  const { _staticSize, _encode, _decode } = codec;
+export function createCodec<T, A extends unknown[]>(
+  _codec: Pick<Codec<T>, "_encode" | "_decode" | "_staticSize"> & {
+    _metadata: [(...args: A) => Codec<T>, ...A] | null;
+  },
+): Codec<T> {
+  const { _staticSize, _encode, _decode, _metadata } = _codec;
   return {
     _staticSize,
     _encode,
     _decode,
+    ..._metadata && { _metadata },
     encode(value) {
       const buf = new EncodeBuffer(_staticSize);
       _encode(buf, value);

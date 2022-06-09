@@ -1,6 +1,7 @@
-import { createCodec } from "../common.ts";
+import { Codec, createCodec } from "../common.ts";
 
-export const bool = createCodec<boolean>({
+export const bool: Codec<boolean> = createCodec({
+  _metadata: null,
   _staticSize: 1,
   _encode(buffer, value) {
     buffer.array[buffer.index++] = +value;

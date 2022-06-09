@@ -2,6 +2,7 @@ import { Codec, createCodec } from "../common.ts";
 
 export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
   return createCodec({
+    _metadata: [option, $some],
     _staticSize: 1 + $some._staticSize,
     _encode(buffer, value) {
       buffer.array[buffer.index++] = +(value !== undefined);
