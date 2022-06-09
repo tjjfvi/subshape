@@ -11,11 +11,19 @@ export interface Codec<T> {
   /** [implementation] Decodes the value from the supplied buffer */
   _decode: (buffer: DecodeBuffer) => T;
 
+  /**
+   * If present, a factory function and the corresponding arguments.
+   * `undefined` indicates that this codec is atomic (e.g. `$.str`).
+   */
   _metadata?: [Function, ...unknown[]];
 }
 
 export function createCodec<T, A extends unknown[]>(
   _codec: Pick<Codec<T>, "_encode" | "_decode" | "_staticSize"> & {
+    /**
+     * If non-null, the function calling `createCodec` and the corresponding arguments.
+     * `null` indicates that this codec is atomic (e.g. `$.str`).
+     */
     _metadata: [(...args: A) => Codec<T>, ...A] | null;
   },
 ): Codec<T> {
