@@ -35,17 +35,22 @@ export function taggedUnion<
   tagKey: TagKey,
   ...members: Members
 ) {
-  return union<Codec<NativeTaggedUnionMembers<TagKey, Members>>[]>(
-    (value) => {
-      return members.findIndex((member) => {
-        return member[0] === value[tagKey];
-      });
+  return Object.assign(
+    union<Codec<NativeTaggedUnionMembers<TagKey, Members>>[]>(
+      (value) => {
+        return members.findIndex((member) => {
+          return member[0] === value[tagKey];
+        });
+      },
+      ...members.map(([memberTag, ...fields]) => {
+        return object(
+          ["_tag", dummy(memberTag)],
+          ...fields || [],
+        ) as NativeTaggedUnionMembers<TagKey, Members>;
+      }),
+    ),
+    {
+      metadata: [taggedUnion, tagKey, ...members],
     },
-    ...members.map(([memberTag, ...fields]) => {
-      return object(
-        ["_tag", dummy(memberTag)],
-        ...fields || [],
-      ) as NativeTaggedUnionMembers<TagKey, Members>;
-    }),
   );
 }

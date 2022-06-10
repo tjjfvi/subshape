@@ -4,8 +4,9 @@ export type NativeTuple<ElCodecs extends Codec<any>[]> = {
   [I in keyof ElCodecs]: ElCodecs[I] extends Codec<infer T> ? T : never;
 };
 
-export function tuple<T extends Codec<any>[]>(...codecs: [...T]) {
-  return createCodec<NativeTuple<T>>({
+export function tuple<T extends Codec<any>[]>(...codecs: [...T]): Codec<NativeTuple<T>> {
+  return createCodec<NativeTuple<T>, [...T]>({
+    _metadata: [tuple, ...codecs],
     _staticSize: codecs.map((x) => x._staticSize).reduce((a, b) => a + b, 0),
     _encode(buffer, value) {
       for (let i = 0; i < codecs.length; i++) {

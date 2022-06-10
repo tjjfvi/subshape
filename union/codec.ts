@@ -5,8 +5,9 @@ export type NativeUnion<MemberCodecs extends Codec<any>[]> = Native<MemberCodecs
 export function union<Members extends Codec<any>[]>(
   discriminate: (value: NativeUnion<Members>) => number,
   ...$members: [...Members]
-) {
-  return createCodec<NativeUnion<Members>>({
+): Codec<NativeUnion<Members>> {
+  return createCodec({
+    _metadata: [union, discriminate, ...$members],
     _staticSize: 1 + Math.max(...$members.map((x) => x._staticSize)),
     _encode(buffer, value) {
       const discriminant = discriminate(value);

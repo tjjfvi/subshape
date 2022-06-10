@@ -5,11 +5,16 @@ export function result<Ok, Err extends Error>(
   $ok: Codec<Ok>,
   $err: Codec<Err>,
 ) {
-  return union(
-    (value) => {
-      return value instanceof Error ? 1 : 0;
+  return Object.assign(
+    union(
+      (value) => {
+        return value instanceof Error ? 1 : 0;
+      },
+      $ok,
+      $err,
+    ),
+    {
+      _metadata: [result, $ok, $err],
     },
-    $ok,
-    $err,
   );
 }

@@ -3,6 +3,7 @@ import { Codec } from "../common.ts";
 export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
   let $codec: Codec<T>;
   return {
+    _metadata: [deferred, getCodec],
     _staticSize: 0,
     _encode(buffer, value) {
       $codec ??= getCodec();

@@ -1,6 +1,7 @@
-import { createCodec } from "../common.ts";
+import { Codec, createCodec } from "../common.ts";
 
-export const never = createCodec<never>({
+export const never: Codec<never> = createCodec({
+  _metadata: null,
   _staticSize: 0,
   _encode() {
     throw new Error("Cannot encode $.never");
