@@ -8,6 +8,9 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[typescript]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
   "deno.config": "./deno.jsonc",
   "deno.enable": true,
   "deno.importMap": "./import_map.json",
