@@ -44,7 +44,7 @@ export function taggedUnion<
       },
       ...members.map(([memberTag, ...fields]) => {
         return object(
-          ["_tag", dummy(memberTag)],
+          [tagKey, dummy(memberTag)],
           ...fields || [],
         ) as NativeTaggedUnionMembers<TagKey, Members>;
       }),
