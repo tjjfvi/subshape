@@ -82,7 +82,7 @@ This has the added benefit of producing type errors if the codec does not direct
 
 ```ts
 const $person: Codec<Person> = $.object(
-  //  ~~~~~
+  //  ~~~~~~~
   //  ^ error (message below)
   ["nickName", $.str],
   ["superPower", $.option($.str)],
