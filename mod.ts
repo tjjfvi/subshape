@@ -1,4 +1,5 @@
 export * from "./array/codec.ts";
+export * from "./bitSequence/codec.ts";
 export * from "./bool/codec.ts";
 export * from "./common.ts";
 export * from "./compact/codec.ts";
