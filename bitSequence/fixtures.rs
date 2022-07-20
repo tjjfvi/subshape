@@ -1,5 +1,3 @@
-use std::io::Read;
-
 use bitvec::{bitvec, order::Msb0};
 
 // TODO
