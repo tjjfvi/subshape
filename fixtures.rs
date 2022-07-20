@@ -48,6 +48,9 @@ pub mod tuple_fixtures;
 #[path = "./union/fixtures.rs"]
 pub mod union_fixtures;
 
+#[path = "./bitSequence/fixtures.rs"]
+pub mod bit_sequence;
+
 pub(crate) const LIPSUM: &'static str = include_str!("lipsum.txt");
 pub(crate) const WORDS: &'static str = include_str!("words.txt");
 pub(crate) const CARGO_LOCK: &'static str = include_str!("Cargo.lock");
