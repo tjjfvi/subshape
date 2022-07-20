@@ -1,0 +1,3 @@
+export const snapshot = {};
+
+snapshot[`bitSequence Uint8Array(0) [] 1`] = ``;

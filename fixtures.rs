@@ -48,6 +48,9 @@ pub mod tuple_fixtures;
 #[path = "./union/fixtures.rs"]
 pub mod union_fixtures;
 
+#[path = "./bitSequence/fixtures.rs"]
+pub mod bit_sequence;
+
 pub(crate) const LIPSUM: &'static str = include_str!("lipsum.txt");
 pub(crate) const WORDS: &'static str = include_str!("words.txt");
 pub(crate) const CARGO_LOCK: &'static str = include_str!("Cargo.lock");
@@ -70,6 +73,9 @@ pub(crate) fn test_fixtures(
   path: &'static str,
   values: Vec<(&'static str, Vec<u8>)>,
 ) {
+  if path == "./bitSequence/fixtures.rs" {
+    return;
+  }
   let snapshot = fs::read_to_string(
     Path::new(path)
       .parent()
