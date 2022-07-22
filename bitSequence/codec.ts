@@ -34,13 +34,15 @@ export class BitSequence {
 
   _getBit(index: number): boolean | undefined {
     if (!this._hasBit(index)) return undefined;
-    return !!(this.data[Math.floor(index / 8)]! & (1 << (index % 8)));
+    const i = Math.floor(index / 8);
+    const j = 7 - index % 8;
+    return !!(this.data[i]! & (1 << j));
   }
 
   _setBit(index: number, bit: boolean | 0 | 1): boolean {
     if (!this._hasBit(index)) return false;
     const i = Math.floor(index / 8);
-    const j = index % 8;
+    const j = 7 - index % 8;
     this.data[i] = this.data[i]! & ~(1 << j) | (+!!bit << j);
     return true;
   }
