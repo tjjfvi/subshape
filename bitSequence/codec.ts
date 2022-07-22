@@ -10,7 +10,6 @@ export class BitSequence {
     const byteLength = Math.ceil(length / 8);
     data ??= new Uint8Array(byteLength);
     if (data.length !== byteLength) {
-      console.log("!!!!!", data);
       throw new Error("Incorrectly sized Uint8Array passed to BitSequence constructor");
     }
     this.data = data;
