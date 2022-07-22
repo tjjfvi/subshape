@@ -11,9 +11,6 @@ export const files = { lipsum: lipsum!, words: words!, cargoLock: cargoLock! };
 
 export function testCodec<T>(name: string, codec: Codec<T>, values: NoInfer<T>[] | Record<string, NoInfer<T>>): void;
 export function testCodec<T>(name: string, codec: Codec<T>, values: T[] | Record<string, T>) {
-  if (name === "bitSequence") {
-    return;
-  }
   for (const key in values) {
     const value = values[key as never] as T;
     const label = values instanceof Array
