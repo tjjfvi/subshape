@@ -12,7 +12,7 @@ export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8
     _staticSize: 0,
     _encode(buffer, got) {
       if (got !== value) {
-        throw new Error(`Invalid value; expected ${Deno.inspect(value)}, got ${Deno.inspect(got)}`);
+        throw new Error(`Invalid value; expected ${value}, got ${got}`);
       }
       buffer.insertArray(pattern);
     },

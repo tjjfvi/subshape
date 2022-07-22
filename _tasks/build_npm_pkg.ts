@@ -17,7 +17,9 @@ await build({
     repository: "github:paritytech/parity-scale-codec-ts",
   },
   shims: {
-    deno: true,
+    deno: {
+      test: true,
+    },
   },
   compilerOptions: {
     sourceMap: true,
