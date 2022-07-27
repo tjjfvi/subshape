@@ -7,6 +7,7 @@ import { Codec, createCodec } from "../common.ts";
  */
 export function dummy<T>(value: T): Codec<T> {
   return createCodec({
+    name: "dummy",
     _metadata: [dummy, value],
     _staticSize: 0,
     _encode() {},

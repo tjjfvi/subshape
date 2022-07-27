@@ -8,6 +8,7 @@ export function keyLiteralUnion<Member extends PropertyKey>(...members: Member[]
     };
   }, {}) as Partial<Record<Member, number>>;
   return createCodec({
+    name: "keyLiteralUnion",
     _metadata: [keyLiteralUnion, ...members],
     _staticSize: 1,
     _encode(buffer, value) {

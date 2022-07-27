@@ -6,6 +6,7 @@ export type NativeTuple<ElCodecs extends Codec<any>[]> = {
 
 export function tuple<T extends Codec<any>[]>(...codecs: [...T]): Codec<NativeTuple<T>> {
   return createCodec<NativeTuple<T>, [...T]>({
+    name: "tuple",
     _metadata: [tuple, ...codecs],
     _staticSize: codecs.map((x) => x._staticSize).reduce((a, b) => a + b, 0),
     _encode(buffer, value) {

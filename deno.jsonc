@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "checkJs": false,
-    "experimentalDecorators": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true
@@ -25,10 +24,12 @@
   "importMap": "import_map.json",
   "include": ["."],
   "tasks": {
-    "build_npm_pkg": "deno run -A --no-check=remote _tasks/build_npm_pkg.ts",
+    "run": "deno run -A --no-check=remote",
+    "dnt": "deno task run _tasks/build_npm_pkg.ts",
     "test": "deno test -A --no-check=remote -L=info",
     "test-update": "deno test -A --no-check=remote -L=info -- --update",
     "test-rust": "cargo test",
-    "bench": "deno bench -A --no-check=remote --unstable"
+    "bench": "deno bench -A --no-check=remote --unstable",
+    "star": "deno task run _tasks/star.ts && deno cache --no-check=remote _star.ts"
   }
 }

@@ -2,6 +2,7 @@ import { Codec, createCodec } from "../common.ts";
 import { compact } from "../compact/codec.ts";
 
 export const str: Codec<string> = createCodec({
+  name: "str",
   _metadata: null,
   _staticSize: compact._staticSize,
   _encode(buffer, value) {
