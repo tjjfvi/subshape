@@ -1,5 +1,5 @@
 export interface Codec<T> {
-  name: string;
+  name?: string;
   /** Encode a value into a new Uint8Array */
   encode: (value: T) => Uint8Array;
   /** Decode a value from a Uint8Array */
