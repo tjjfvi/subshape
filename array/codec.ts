@@ -11,6 +11,7 @@ type ArrayOfLength<
 
 export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec<ArrayOfLength<T, L>> {
   return createCodec({
+    name: "sizedArray",
     _metadata: [sizedArray, $el, length],
     _staticSize: $el._staticSize * length,
     _encode(buffer, value) {
@@ -30,6 +31,7 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec
 
 export function array<T>($el: Codec<T>): Codec<T[]> {
   return createCodec({
+    name: "array",
     _metadata: [array, $el],
     _staticSize: compact._staticSize,
     _encode(buffer, value) {
@@ -54,6 +56,7 @@ export function array<T>($el: Codec<T>): Codec<T[]> {
 }
 
 export const uint8array: Codec<Uint8Array> = createCodec({
+  name: "uint8array",
   _metadata: null,
   _staticSize: compact._staticSize,
   _encode(buffer, value) {
@@ -70,6 +73,7 @@ export const uint8array: Codec<Uint8Array> = createCodec({
 
 export function sizedUint8array(length: number): Codec<Uint8Array> {
   return createCodec({
+    name: "sizedUint8array",
     _metadata: [sizedUint8array, length],
     // We could set `_staticSize` to `length`, but in this case it will usually
     // more efficient to insert the array dynamically, rather than manually copy

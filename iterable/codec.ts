@@ -10,6 +10,7 @@ export function iterable<T, I extends Iterable<T>>(
   },
 ): Codec<I> {
   return createCodec({
+    name: "iterable",
     _metadata: [iterable, { $el, calcLength, rehydrate }],
     _staticSize: compact._staticSize,
     _encode(buffer, value) {

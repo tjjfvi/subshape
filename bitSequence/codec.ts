@@ -64,6 +64,7 @@ Object.setPrototypeOf(
 );
 
 export const bitSequence: Codec<BitSequence> = createCodec({
+  name: "bitSequence",
   _metadata: null,
   _staticSize: nCompact._staticSize,
   _encode(buffer, value) {

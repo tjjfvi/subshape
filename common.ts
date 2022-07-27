@@ -1,4 +1,5 @@
 export interface Codec<T> {
+  name: string;
   /** Encode a value into a new Uint8Array */
   encode: (value: T) => Uint8Array;
   /** Decode a value from a Uint8Array */
@@ -19,7 +20,7 @@ export interface Codec<T> {
 }
 
 export function createCodec<T, A extends unknown[]>(
-  _codec: Pick<Codec<T>, "_encode" | "_decode" | "_staticSize"> & {
+  _codec: Pick<Codec<T>, "_encode" | "_decode" | "_staticSize" | "name"> & {
     /**
      * If non-null, the function calling `createCodec` and the corresponding arguments.
      * `null` indicates that this codec is atomic (e.g. `$.str`).
@@ -27,8 +28,9 @@ export function createCodec<T, A extends unknown[]>(
     _metadata: [(...args: A) => Codec<T>, ...A] | null;
   },
 ): Codec<T> {
-  const { _staticSize, _encode, _decode, _metadata } = _codec;
+  const { _staticSize, _encode, _decode, _metadata, name } = _codec;
   return {
+    name,
     _staticSize,
     _encode,
     _decode,

@@ -6,6 +6,7 @@ const MAX_U16 = 2 ** (16 - 2) - 1;
 const MAX_U32 = 2 ** (32 - 2) - 1;
 
 export const compact: Codec<number | bigint> = createCodec({
+  name: "compact",
   _metadata: null,
   _staticSize: 4,
   _encode(buffer, value) {

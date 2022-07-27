@@ -23,6 +23,7 @@ export function object<
   EntryValueCodec extends Codec<any>,
 >(...fields: Fields): Codec<NativeObject<Fields>> {
   return createCodec({
+    name: "object",
     _metadata: [object, ...fields],
     _staticSize: fields.map((x) => x[1]._staticSize).reduce((a, b) => a + b, 0),
     _encode(buffer, value) {

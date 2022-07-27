@@ -1,6 +1,7 @@
 import { Codec, createCodec } from "../common.ts";
 
 export const u8: Codec<number> = createCodec({
+  name: "u8",
   _metadata: [int, false, 8] as any,
   _staticSize: 1,
   _encode(buffer, value) {
@@ -18,6 +19,7 @@ function _int<K extends NumMethodKeys>(size: number, key: K): Codec<NumMethodVal
   const getMethod = DataView.prototype["get" + key as never] as any;
   const setMethod = DataView.prototype["set" + key as never] as any;
   return createCodec({
+    name: `${key[0]!.toLowerCase}${size * 8}`,
     _metadata: [int, key.includes("Int"), size * 8] as any,
     _staticSize: size,
     _encode(buffer, value) {
@@ -43,6 +45,7 @@ export const i64 = _int(8, "BigInt64");
 const _128 = (signed: boolean): Codec<bigint> => {
   const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
   return createCodec({
+    name: `${signed ? "i" : "u"}128`,
     _metadata: [int, signed, 128] as any,
     _staticSize: 16,
     _encode(buffer, value) {
@@ -65,6 +68,7 @@ export const i128 = _128(true);
 const _256 = (signed: boolean): Codec<bigint> => {
   const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
   return createCodec({
+    name: `${signed ? "i" : "u"}256`,
     _metadata: [int, signed, 256] as any,
     _staticSize: 32,
     _encode(buffer, value) {
@@ -94,18 +98,5 @@ export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<
 export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<number | bigint>;
 export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<any> {
   const key = `${signed ? "i" : "u"}${size}` as const;
-  return {
-    u8,
-    i8,
-    u16,
-    i16,
-    u32,
-    i32,
-    u64,
-    i64,
-    u128,
-    i128,
-    u256,
-    i256,
-  }[key];
+  return { u8, i8, u16, i16, u32, i32, u64, i64, u128, i128, u256, i256 }[key];
 }

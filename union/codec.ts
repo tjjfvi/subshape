@@ -7,6 +7,7 @@ export function union<Members extends Codec<any>[]>(
   ...$members: [...Members]
 ): Codec<NativeUnion<Members>> {
   return createCodec({
+    name: "union",
     _metadata: [union, discriminate, ...$members],
     _staticSize: 1 + Math.max(...$members.map((x) => x._staticSize)),
     _encode(buffer, value) {
