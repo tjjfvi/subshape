@@ -13,6 +13,7 @@ export * from "./never/codec.ts";
 export * from "./object/codec.ts";
 export * from "./option/codec.ts";
 export * from "./option/optionBool/codec.ts";
+export * from "./promise/codec.ts";
 export * from "./result/codec.ts";
 export * from "./spread/codec.ts";
 export * from "./str/codec.ts";

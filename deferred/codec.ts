@@ -20,6 +20,10 @@ export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
       $codec ??= getCodec();
       return $codec.encode(value);
     },
+    encodeAsync(value) {
+      $codec ??= getCodec();
+      return $codec.encodeAsync(value);
+    },
     decode(buffer) {
       $codec ??= getCodec();
       return $codec.decode(buffer);
