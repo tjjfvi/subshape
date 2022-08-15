@@ -9,10 +9,20 @@ const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map
 );
 export const files = { lipsum: lipsum!, words: words!, cargoLock: cargoLock! };
 
-export function testCodec<T>(name: string, codec: Codec<T>, values: NoInfer<T>[] | Record<string, NoInfer<T>>): void;
-export function testCodec<T>(name: string, codec: Codec<T>, values: T[] | Record<string, T>) {
+export function testCodec<T>(
+  name: string,
+  codec: Codec<T>,
+  values: NoInfer<T>[] | Record<string, NoInfer<T> | (() => NoInfer<T>)>,
+  async?: boolean,
+): void;
+export function testCodec<T>(
+  name: string,
+  codec: Codec<T>,
+  values: T[] | Record<string, T | (() => T)>,
+  async = false,
+) {
   for (const key in values) {
-    const value = values[key as never] as T;
+    let value = values[key as never] as T | (() => T);
     const label = values instanceof Array
       ? Deno.inspect(value, {
         depth: Infinity,
@@ -22,7 +32,10 @@ export function testCodec<T>(name: string, codec: Codec<T>, values: T[] | Record
       })
       : key;
     Deno.test(`${name} ${label}`, async (t) => {
-      const encoded = codec.encode(value);
+      if (typeof value === "function") {
+        value = (value as () => T)();
+      }
+      const encoded = async ? await codec.encodeAsync(value) : codec.encode(value);
       await assertSnapshot(t, encoded, { serializer: serializeU8A });
       const decoded = codec.decode(encoded);
       assertEquals(decoded, value);
