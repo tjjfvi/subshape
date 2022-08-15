@@ -1,4 +1,4 @@
-import { Codec, createCodec, Native } from "../common.ts";
+import { Codec, createCodec, Narrow, Native } from "../common.ts";
 import { Field, NativeObject, object } from "../object/codec.ts";
 
 /**
@@ -12,12 +12,10 @@ export function instance<
       [K in keyof Fields]: Native<Extract<Fields[K], Field>[1]>;
     }
   ) => NativeObject<Fields>,
-  Fields extends Field<EntryKey, EntryValueCodec>[],
-  EntryKey extends PropertyKey,
-  EntryValueCodec extends Codec<any>,
+  Fields extends Field[],
 >(
   ctor: Ctor,
-  ...fields: Fields
+  ...fields: Narrow<Fields>
 ): Codec<InstanceType<Ctor>> {
   const $object = object(...fields);
   return createCodec({
@@ -26,7 +24,7 @@ export function instance<
     _decode(buffer) {
       const arr = Array(fields.length);
       for (let i = 0; i < arr.length; i++) {
-        arr[i] = fields[i]![1]._decode(buffer);
+        arr[i] = (fields as Fields)[i]![1]._decode(buffer);
       }
       return new ctor(...arr as any) as any;
     },
