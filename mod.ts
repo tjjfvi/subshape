@@ -20,5 +20,3 @@ export * from "./str/codec.ts";
 export * from "./transform/codec.ts";
 export * from "./tuple/codec.ts";
 export * from "./union/codec.ts";
-export * from "./union/key/codec.ts";
-export * from "./union/tagged/codec.ts";

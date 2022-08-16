@@ -238,6 +238,10 @@ export class DecodeBuffer {
 
 export type Expand<T> = T extends T ? { [K in keyof T]: T[K] } : never;
 export type U2I<U> = (U extends U ? (u: U) => 0 : never) extends (i: infer I) => 0 ? Extract<I, U> : never;
+export type Narrow<T> =
+  | (T extends infer U ? U : never)
+  | Extract<T, number | string | boolean | bigint | symbol | null | undefined | []>
+  | ([T] extends [[]] ? [] : { [K in keyof T]: Narrow<T[K]> });
 
 export class CodecVisitor<R> {
   #fallback?: <T>(codec: Codec<T>) => R;
