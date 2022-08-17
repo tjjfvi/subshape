@@ -144,32 +144,65 @@ export class EncodeBuffer {
    * Creates a sub-buffer that can be written into asynchronously.
    * The buffer passed to the callback should not be used after the returned promise resolves.
    */
-  async writeAsync(length: number, fn: (buffer: EncodeBuffer) => Promise<void>) {
-    this._commitWritten();
-    const buf = new EncodeBuffer(this.array.subarray(this.index, this.index + length));
-    this._setArray(this.array.subarray(this.index + length));
-    this.finishedArrays.push(buf);
+  writeAsync(length: number, fn: (buffer: EncodeBuffer) => Promise<void>) {
+    this.waitFor(async () => {
+      const cursor = this.createCursor(length);
+      await fn(cursor);
+      cursor.close();
+    });
+  }
 
+  /**
+   * Creates a sub-buffer that can be written into later to insert data into the middle of the array.
+   * `.close()` must be called after the cursor is done being written into.
+   * The cursor should not be used after `.close()` is called.
+   * If the cursor will be written into asynchronously, the buffer must be held open with `.waitFor()`.
+   */
+  createCursor(length: number): EncodeBuffer & { close(): void } {
+    this._commitWritten();
+    const cursor = Object.assign(
+      new EncodeBuffer(this.array.subarray(this.index, this.index + length)),
+      {
+        close: () => {
+          if (cursor.asyncCount) {
+            this.waitFor(async () => {
+              await cursor.asyncPromise;
+              cursor._commitWritten();
+              this.finishedSize += cursor.finishedSize;
+            });
+          } else {
+            cursor._commitWritten();
+            this.finishedSize += cursor.finishedSize;
+          }
+        },
+      },
+    );
+    this._setArray(this.array.subarray(this.index + length));
+    this.finishedArrays.push(cursor);
+
+    return cursor;
+  }
+
+  /**
+   * Immediately invokes the callback, and holds the buffer open until the
+   * returned promise resolves.
+   */
+  waitFor(fn: () => Promise<void>) {
     if (!this.asyncCount) {
       this.asyncPromise = new Promise((resolve) => this.asyncResolve = resolve);
     }
     this.asyncCount++;
 
-    try {
-      await fn(buf);
-      await buf.asyncPromise;
-    } catch (e) {
-      this.asyncResolve(Promise.reject(e));
-      return;
-    }
-
-    buf._commitWritten();
-    this.finishedSize += buf.finishedSize;
-
-    this.asyncCount--;
-    if (!this.asyncCount) {
-      this.asyncResolve();
-    }
+    fn()
+      .then(() => {
+        this.asyncCount--;
+        if (!this.asyncCount) {
+          this.asyncResolve();
+        }
+      })
+      .catch((e) => {
+        this.asyncResolve(Promise.reject(e));
+      });
   }
 
   /**
