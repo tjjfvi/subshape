@@ -138,18 +138,26 @@ $.i256; // Codec<bigint>
 $.compact; // Codec<number | bigint>
 
 $.str; // Codec<string>
+
+$.dummy(foo); // Codec<typeof foo> // (encodes 0 bytes)
+
+$.never; // Codec<never> // (throws if reached)
 ```
 
 ### Arrays
 
 ```ts
-$.sizedArray($.u8, 2); // Codec<[number, number]>
-
 $.array($.u8); // Codec<number[]>
+
+$.sizedArray($.u8, 2); // Codec<[number, number]>
 
 $.uint8array; // Codec<Uint8Array>
 
+$.sizedUint8array(12); // Codec<Uint8Array>
+
 $.tuple($.bool, $.u8, $.str); // Codec<[boolean, number, string]>
+
+$.bitSequence; // Codec<BitSequence> // (like boolean[] but backed by an ArrayBuffer)
 ```
 
 ### Objects
@@ -168,20 +176,30 @@ $person; /* Codec<{
 }> */
 ```
 
-### Iterables
+### Combined Objects
+
+```ts
+const $foo = $.taggedUnion("_tag", [
+  ["a"],
+  ["b", ["x", $.u8]],
+]);
+
+const $bar = $.object(["bar", $.u8]);
+
+const $foobar = $.spread($foo, $bar);
+
+$foobar; /* Codec<
+  | { _tag: "a"; bar: number }
+  | { _tag: "b"; x: number; bar: number }
+> */
+```
+
+### Collections
 
 ```ts
 $.set($.u8); // Codec<Set<number>>
 
 $.map($.str, $.u8); // Codec<Map<string, number>>
-
-const $manualSetU8 = $.iterable<number, Set<number>>({
-  $el: $.u8,
-  calcLength: (set) => set.size,
-  rehydrate: (values) => new Set(values),
-});
-
-$manualSetU8; // Codec<Set<number>>
 ```
 
 ### Options
@@ -192,8 +210,6 @@ $.optionBool; // Codec<boolean | undefined> (stores as single byte; see OptionBo
 ```
 
 ### Unions
-
-#### Explicitly Discriminated
 
 ```ts
 const $strOrNum = $.union(
@@ -206,21 +222,22 @@ const $strOrNum = $.union(
       throw new Error("Unreachable");
     }
   },
-  $.str, // Member 0
-  $.u8, // Member 1
+  [
+    $.str, // Member 0
+    $.u8, // Member 1
+  ],
 );
 
 $strOrNum; // Codec<string | number>
 ```
 
-#### Tagged Unions
+### Tagged Unions
 
 ```ts
-const $pet = $.taggedUnion(
-  "_tag",
+const $pet = $.taggedUnion("_tag", [
   ["dog", ["bark", $.str]],
   ["cat", ["purr", $.str]],
-);
+]);
 
 $pet; /* Codec<
   | { _tag: "dog"; bark: string }
@@ -228,7 +245,17 @@ $pet; /* Codec<
 > */
 ```
 
-#### Key Literals (aka., Native TypeScript Enums)
+### String Unions
+
+```ts
+const $dinosaur = $.stringUnion([
+  "Liopleurodon",
+  "Kosmoceratops",
+  "Psittacosaurus",
+]);
+
+$dinosaur; // Codec<"Liopleurodon" | "Kosmoceratops" | "Psittacosaurus">
+```
 
 ```ts
 enum Dinosaur {
@@ -237,16 +264,16 @@ enum Dinosaur {
   Psittacosaurus = "Psittacosaurus",
 }
 
-const $dinosaur = $.keyLiteralUnion(
+const $dinosaur = $.stringUnion([
   Dinosaur.Liopleurodon,
   Dinosaur.Kosmoceratops,
   Dinosaur.Psittacosaurus,
-);
+]);
 
 $dinosaur; // Codec<Dinosaur>
 ```
 
-#### Numeric Enums
+### Numeric Enums
 
 ```ts
 enum Dinosaur {
@@ -310,4 +337,102 @@ const $myError = $.instance(MyError, ["message", $.str]);
 const $myResult = $.result($.str, $myError);
 
 $myResult; // Codec<string | MyError>
+```
+
+### Recursive Codecs
+
+You can use `$.deferred` to write recursive codecs:
+
+```ts
+type LinkedList = {
+  value: number;
+  next: LinkedList;
+} | undefined;
+
+const $linkedList: $.Codec<LinkedList> = $.option($.object(
+  ["value", $.u8],
+  ["next", $.option($.deferred(() => $linkedList))],
+));
+```
+
+Note that you must explicitly type the codec, as TS cannot generally infer recursive types.
+
+### Custom Codecs
+
+If your encoding/decoding logic is more complicated, you can create custom codecs with `createCodec`:
+
+```ts
+const $foo = createCodec<Foo>({
+  name: "foo",
+  _metadata: null, // see jsdoc
+
+  // A static estimation of the encoded size, in bytes.
+  // This can be either an under- or over- estimate.
+  _staticSize: 123,
+  _encode(buffer, value) {
+    // Encode `value` into `buffer.array`, starting at `buffer.index`.
+    // A `DataView` is also supplied as `buffer.view`.
+    // At first, you may only write at most as many bytes as `_staticSize`.
+    // After you write bytes, you must update `buffer.index` to be the first unwritten byte.
+
+    // If you need to write more bytes, call `buffer.pushAlloc(size)`.
+    // If you do this, you can then write at most `size` bytes,
+    // and then you must call `buffer.popAlloc()`.
+
+    // You can also call `buffer.insertArray()` to insert an array without consuming any bytes.
+
+    // You can delegate to another codec by calling `$bar._encode(buffer, bar)`.
+    // Before doing so, you must ensure that `$bar._staticSize` bytes are free,
+    // either by including it in `_staticSize` or by calling `buffer.pushAlloc()`.
+    // Note that you should use `_encode` and not `encode`.
+
+    // ...
+  },
+
+  _decode(buffer) {
+    // Decode `value` from `buffer.array`, starting at `buffer.index`.
+    // A `DataView` is also supplied as `buffer.view`.
+    // After you read bytes, you must update `buffer.index` to be the first unread byte.
+
+    // You can delegate to another codec by calling `$bar._decode(buffer)`.
+    // Note that you should use `_decode` and not `decode`.
+
+    // ...
+    return value;
+  },
+});
+```
+
+## Asynchronous Encoding
+
+Some codecs require asynchronous encoding -- namely `$.promise` and any custom codecs created with `createAsyncCodec`. Calling `.encode()` on a codec will throw if it or another codec it calls is asynchronous -- in this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any codec -- if it is a synchronous codec, it will simply resolve immediately.
+
+Asynchronous decoding is not supported.
+
+## Metadata
+
+Codecs keep metadata recording their construction. You can use a `CodecVisitor` to consume this metadata:
+
+```ts
+const visitor = new $.CodecVisitor<string>();
+
+// you can pass a plain codec:
+visitor.add($.u8, () => "$.u8");
+
+// or a codec factory:
+visitor.add($.int, (_codec, signed, size) => `$.int(${signed}, ${size})`);
+//                          ^^^^^^^^^^^^
+//          the arguments that were passed to the factory
+
+// you can handle generic factories like so:
+visitor.generic(<T>() => {
+  visitor.add($.array<T>, (_, $el) => `$.array(${visitor.visit($el)})`);
+});
+
+// if none of the other visitors match:
+visitor.fallback((_codec) => "?");
+
+visitor.visit($.array($.u8)); // "$.array($.u8)"
+visitor.visit($.u16); // "$.int(false, 16)"
+visitor.visit($.array($.str)); // "$.array(?)"
 ```

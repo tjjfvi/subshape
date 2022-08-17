@@ -1,6 +1,6 @@
-import { Codec, createCodec } from "../common.ts";
+import { Codec, createCodec, Expand } from "../common.ts";
 
-export function spread<A, B>($a: Codec<A>, $b: Codec<B>): Codec<A & B> {
+export function spread<A, B>($a: Codec<A>, $b: Codec<B>): Codec<Expand<A & B>> {
   return createCodec({
     name: "spread",
     _metadata: [spread, $a, $b],
@@ -10,7 +10,7 @@ export function spread<A, B>($a: Codec<A>, $b: Codec<B>): Codec<A & B> {
       $b._encode(buffer, value);
     },
     _decode(buffer) {
-      return { ...$a._decode(buffer), ...$b._decode(buffer) };
+      return { ...$a._decode(buffer), ...$b._decode(buffer) } as Expand<A & B>;
     },
   });
 }

@@ -268,17 +268,16 @@ export class CodecVisitor<R> {
   }
 
   /**
-   * Once Deno releases with TS 4.7, this can be used like so:
    * ```ts
-   * visitor.generic((visitor) => <T>() =>
+   * visitor.generic(<T>() =>
    *   visitor.add($.array<T>, (codec, $el) => {
    *     ...
    *   })
    * )
    * ```
    */
-  generic(fn: (visitor: this) => () => void): this {
-    fn(this)();
+  generic(fn: (visitor: this) => void): this {
+    fn(this);
     return this;
   }
 
