@@ -282,7 +282,7 @@ enum Dinosaur {
   Psittacosaurus,
 }
 
-const $dinosaur = $.u8 as Codec<Dinosaur>;
+const $dinosaur = $.u8 as $.Codec<Dinosaur>;
 
 $dinosaur; // Codec<Dinosaur>
 ```
