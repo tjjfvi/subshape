@@ -164,16 +164,10 @@ export class EncodeBuffer {
       new EncodeBuffer(this.array.subarray(this.index, this.index + length)),
       {
         close: () => {
-          if (cursor.asyncCount) {
-            this.waitFor(async () => {
-              await cursor.asyncPromise;
-              cursor._commitWritten();
-              this.finishedSize += cursor.finishedSize;
-            });
-          } else {
+          this.waitForBuffer(cursor, () => {
             cursor._commitWritten();
             this.finishedSize += cursor.finishedSize;
-          }
+          });
         },
       },
     );
@@ -203,6 +197,21 @@ export class EncodeBuffer {
       .catch((e) => {
         this.asyncResolve(Promise.reject(e));
       });
+  }
+
+  /**
+   * Invokes the callback once buffer's async tasks finish, and holds this
+   * buffer open until the callback returns.
+   */
+  waitForBuffer(buffer: EncodeBuffer, fn: () => void) {
+    if (buffer.asyncCount) {
+      this.waitFor(async () => {
+        await buffer.asyncPromise;
+        fn();
+      });
+    } else {
+      fn();
+    }
   }
 
   /**
