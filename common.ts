@@ -159,25 +159,17 @@ export class EncodeBuffer {
    * If the cursor will be written into asynchronously, the buffer must be held open with `.waitFor()`.
    */
   createCursor(length: number): EncodeBuffer & { close(): void } {
-    this._commitWritten();
     const cursor = Object.assign(
-      new EncodeBuffer(this.array.subarray(this.index, this.index + length)),
+      new EncodeBuffer(this.stealAlloc(length)),
       {
         close: () => {
-          if (cursor.asyncCount) {
-            this.waitFor(async () => {
-              await cursor.asyncPromise;
-              cursor._commitWritten();
-              this.finishedSize += cursor.finishedSize;
-            });
-          } else {
+          this.waitForBuffer(cursor, () => {
             cursor._commitWritten();
             this.finishedSize += cursor.finishedSize;
-          }
+          });
         },
       },
     );
-    this._setArray(this.array.subarray(this.index + length));
     this.finishedArrays.push(cursor);
 
     return cursor;
@@ -203,6 +195,34 @@ export class EncodeBuffer {
       .catch((e) => {
         this.asyncResolve(Promise.reject(e));
       });
+  }
+
+  /**
+   * Consumes `length` allocated bytes without writing anything, and returns the skipped subarray.
+   * Anything written into the returned array will not affect the buffer,
+   * except if it is later reincorporated e.g. via `.insertArray()`.
+   * Rather niche.
+   */
+  stealAlloc(length: number): Uint8Array {
+    this._commitWritten();
+    const array = this.array.subarray(this.index, this.index + length);
+    this._setArray(this.array.subarray(this.index + length));
+    return array;
+  }
+
+  /**
+   * Invokes the callback once buffer's async tasks finish, and holds this
+   * buffer open until the callback returns.
+   */
+  waitForBuffer(buffer: EncodeBuffer, fn: () => void) {
+    if (buffer.asyncCount) {
+      this.waitFor(async () => {
+        await buffer.asyncPromise;
+        fn();
+      });
+    } else {
+      fn();
+    }
   }
 
   /**
