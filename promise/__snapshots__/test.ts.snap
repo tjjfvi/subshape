@@ -533,7 +533,7 @@ e6
 f3
 `;
 
-snapshot[`promise(array(promise(compact))) times13 1`] = `
+snapshot[`promise(array(promise(compactU32))) times13 1`] = `
 01
 04
 00

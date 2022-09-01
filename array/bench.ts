@@ -7,12 +7,12 @@ function arr<T>(length: number, el: (i: number) => T): T[] {
 
 benchCodec("bool[0]", $.array($.bool), []);
 benchCodec("u128[0]", $.array($.u128), []);
-benchCodec("compact[0]", $.array($.compact), []);
+benchCodec("compactU256[0]", $.array($.compactU256), []);
 
 benchCodec("bool[128]", $.array($.bool), arr(128, (i) => i % 2 === 0));
 benchCodec("u128[128]", $.array($.u128), arr(128, (i) => 2n ** BigInt(i % 100) + BigInt(i)));
-benchCodec("compact[128]", $.array($.compact), arr(128, (i) => 2n ** BigInt(i % 100) + BigInt(i)));
+benchCodec("compactU256[128]", $.array($.compactU256), arr(128, (i) => 2n ** BigInt(i % 100) + BigInt(i)));
 
 benchCodec("bool[16384]", $.array($.bool), arr(16384, (i) => i % 2 === 0));
 benchCodec("u128[16384]", $.array($.u128), arr(16384, (i) => 2n ** BigInt(i % 100) + BigInt(i)));
-benchCodec("compact[16384]", $.array($.compact), arr(16384, (i) => 2n ** BigInt(i % 100) + BigInt(i)));
+benchCodec("compactU256[16384]", $.array($.compactU256), arr(16384, (i) => 2n ** BigInt(i % 100) + BigInt(i)));

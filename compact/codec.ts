@@ -1,82 +1,93 @@
 import { Codec, createCodec } from "../common.ts";
-import { u16, u32, u8 } from "../int/codec.ts";
+import { u16, u32 } from "../int/codec.ts";
 
-const MAX_U8 = 2 ** (8 - 2) - 1;
-const MAX_U16 = 2 ** (16 - 2) - 1;
-const MAX_U32 = 2 ** (32 - 2) - 1;
+const MAX_U6 = 0b00111111;
+const MAX_U14 = 0b00111111_11111111;
+const MAX_U30 = 0b00111111_11111111_11111111_11111111;
 
-export const compact: Codec<number | bigint> = createCodec({
-  name: "compact",
+const compactNumber: Codec<number> = createCodec({
+  name: "compactNumber",
   _metadata: null,
-  _staticSize: 4,
+  _staticSize: 5,
   _encode(buffer, value) {
-    if (value <= MAX_U8) {
-      u8._encode(buffer, Number(value) << 2);
+    if (value <= MAX_U6) {
+      buffer.array[buffer.index++] = value << 2;
+    } else if (value <= MAX_U14) {
+      u16._encode(buffer, (value << 2) | 0b01);
+    } else if (value <= MAX_U30) {
+      // Because JS bitwise ops use *signed* 32-bit ints, this operation
+      // produces negative values when `value >= 2 ** 29`. However, this is ok,
+      // as `setUint32` correctly casts these negative values back to unsigned
+      // 32-bit ints.
+      u32._encode(buffer, (value << 2) | 0b10);
+    } else {
+      buffer.array[buffer.index++] = 0b11;
+      u32._encode(buffer, value);
+    }
+  },
+  _decode(buffer) {
+    switch (buffer.array[buffer.index]! & 0b11) {
+      case 0:
+        return buffer.array[buffer.index++]! >> 2;
+      case 1:
+        return u16._decode(buffer) >> 2;
+      case 2:
+        // Because JS bitwise ops use *signed* 32-bit ints, the `>> 2` here
+        // produces negative values when `value >= 2 ** 29`. By &-ing with
+        // `MAX_U30`, we mask out the two extraneous 1 bits created by the
+        // signed shift.
+        return (u32._decode(buffer) >> 2) & MAX_U30;
+      default:
+        if (buffer.array[buffer.index++]! !== 3) throw new Error("Out of range for U32");
+        return u32._decode(buffer);
+    }
+  },
+});
+
+export const compactU8 = compactNumber;
+export const compactU16 = compactNumber;
+export const compactU32 = compactNumber;
+
+const compactBigInt: Codec<bigint> = createCodec({
+  name: "compactBigInt",
+  _metadata: null,
+  _staticSize: 5,
+  _encode(buffer, value) {
+    if (value <= 0xff_ff_ff_ff) {
+      compactNumber._encode(buffer, Number(value));
       return;
     }
-    if (value <= MAX_U16) {
-      u16._encode(buffer, Number((BigInt(value) << 2n) + 0b01n));
-      return;
-    }
-    if (value <= MAX_U32) {
-      u32._encode(buffer, Number((BigInt(value) << 2n) + 0b10n));
-      return;
-    }
-    let bytesLength = 0;
-    let _value = BigInt(value);
+    let extraBytes = 0;
+    let _value = value >> 32n;
     while (_value > 0n) {
       _value >>= 8n;
-      bytesLength++;
+      extraBytes++;
     }
-    _value = BigInt(value);
-    buffer.array[buffer.index++] = ((bytesLength - 4) << 2) + 0b11;
-    for (let i = 0; i < bytesLength; i++) {
-      if (i === 3) {
-        buffer.pushAlloc(bytesLength - 3);
-      }
+    buffer.array[buffer.index++] = (extraBytes << 2) | 0b11;
+    u32._encode(buffer, Number(value & 0xff_ff_ff_ffn));
+    _value = value >> 32n;
+    buffer.pushAlloc(extraBytes);
+    for (let i = 0; i < extraBytes; i++) {
       buffer.array[buffer.index++] = Number(_value & 0xffn);
       _value >>= 8n;
     }
     buffer.popAlloc();
   },
   _decode(buffer) {
-    const b = u8._decode(buffer);
-    switch ((b & 3) as 0 | 1 | 2 | 3) {
-      case 0: {
-        return b >> 2;
-      }
-      case 1: {
-        return (b >> 2) + u8._decode(buffer) * 2 ** 6;
-      }
-      case 2: {
-        return (b >> 2) + u8._decode(buffer) * 2 ** 6 + u8._decode(buffer) * 2 ** 14
-          + u8._decode(buffer) * 2 ** 22;
-      }
-      case 3: {
-        const decodedU32 = u32._decode(buffer);
-        let len = b >> 2;
-        switch (len) {
-          case 0: {
-            return decodedU32;
-          }
-          case 1: {
-            return decodedU32 + u8._decode(buffer) * 2 ** 32;
-          }
-          case 2: {
-            return decodedU32 + u8._decode(buffer) * 2 ** 32 + u8._decode(buffer) * 2 ** 40;
-          }
-        }
-        let decodedU32AsBigint = BigInt(decodedU32);
-        let base = 32n;
-        while (len--) {
-          decodedU32AsBigint += BigInt(u8._decode(buffer)) << base;
-          base += 8n;
-        }
-        return decodedU32AsBigint;
-      }
+    const b = buffer.array[buffer.index]!;
+    if ((b & 0b11) < 3 || b === 3) {
+      return BigInt(compactNumber._decode(buffer));
     }
+    const extraBytes = b >> 2;
+    buffer.index++;
+    let value = BigInt(u32._decode(buffer));
+    for (let i = 0; i < extraBytes; i++) {
+      value |= BigInt(buffer.array[buffer.index++]!) << BigInt(32 + i * 8);
+    }
+    return value;
   },
 });
 
-// TODO: finesse
-export const nCompact = compact as any as Codec<number>;
+export const compactU64 = compactBigInt;
+export const compactU128 = compactBigInt;
+export const compactU256 = compactBigInt;

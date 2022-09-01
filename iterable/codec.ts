@@ -1,5 +1,5 @@
 import { Codec, createCodec } from "../common.ts";
-import { compact } from "../compact/codec.ts";
+import { compactU32 } from "../compact/codec.ts";
 import { tuple } from "../mod.ts";
 
 export function iterable<T, I extends Iterable<T>>(
@@ -12,10 +12,10 @@ export function iterable<T, I extends Iterable<T>>(
   return createCodec({
     name: "iterable",
     _metadata: [iterable, { $el, calcLength, rehydrate }],
-    _staticSize: compact._staticSize,
+    _staticSize: compactU32._staticSize,
     _encode(buffer, value) {
       const length = calcLength(value);
-      compact._encode(buffer, length);
+      compactU32._encode(buffer, length);
       buffer.pushAlloc(length * $el._staticSize);
       let i = 0;
       for (const el of value) {
@@ -26,7 +26,7 @@ export function iterable<T, I extends Iterable<T>>(
       buffer.popAlloc();
     },
     _decode(buffer) {
-      const length = compact._decode(buffer);
+      const length = compactU32._decode(buffer);
       let done = false;
       const value = rehydrate(function*() {
         for (let i = 0; i < length; i++) {
