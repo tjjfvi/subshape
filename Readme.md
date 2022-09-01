@@ -135,7 +135,12 @@ $.u256; // Codec<bigint>
 $.i256; // Codec<bigint>
 
 // https://docs.substrate.io/v3/advanced/scale-codec/#compactgeneral-integers
-$.compact; // Codec<number | bigint>
+$.compactU8; // Codec<number>
+$.compactU16; // Codec<number>
+$.compactU32; // Codec<number>
+$.compactU64; // Codec<bigint>
+$.compactU128; // Codec<bigint>
+$.compactU256; // Codec<bigint>
 
 $.str; // Codec<string>
 
