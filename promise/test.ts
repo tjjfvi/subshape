@@ -13,7 +13,7 @@ testCodec("array(promise(u8))", $.array($.promise($.u8)), {
   times13: () => Array.from({ length: 256 }, (_, i) => prom(i * 13 % 256)),
 }, true);
 
-testCodec("promise(array(promise(compact)))", $.promise($.array($.promise($.compact))), {
+testCodec("promise(array(promise(compactU32)))", $.promise($.array($.promise($.compactU32))), {
   times13: () => Promise.resolve(Array.from({ length: 256 }, (_, i) => prom(i * 13 % 256))),
 }, true);
 

@@ -1,5 +1,5 @@
 import { Codec, createCodec } from "../common.ts";
-import { nCompact } from "../compact/codec.ts";
+import { compactU32 } from "../compact/codec.ts";
 
 export class BitSequence {
   readonly data;
@@ -66,13 +66,13 @@ Object.setPrototypeOf(
 export const bitSequence: Codec<BitSequence> = createCodec({
   name: "bitSequence",
   _metadata: null,
-  _staticSize: nCompact._staticSize,
+  _staticSize: compactU32._staticSize,
   _encode(buffer, value) {
-    nCompact._encode(buffer, value.length);
+    compactU32._encode(buffer, value.length);
     buffer.insertArray(value.data);
   },
   _decode(buffer) {
-    const length = nCompact._decode(buffer);
+    const length = compactU32._decode(buffer);
     const byteLength = Math.ceil(length / 8);
     return new BitSequence(length, buffer.array.subarray(buffer.index, buffer.index += byteLength));
   },

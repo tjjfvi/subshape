@@ -1,18 +1,17 @@
 import { Codec, createCodec } from "../common.ts";
-import { compact } from "../compact/codec.ts";
+import { compactU32 } from "../compact/codec.ts";
 
 export const str: Codec<string> = createCodec({
   name: "str",
   _metadata: null,
-  _staticSize: compact._staticSize,
+  _staticSize: compactU32._staticSize,
   _encode(buffer, value) {
     const array = new TextEncoder().encode(value);
-    compact._encode(buffer, array.length);
+    compactU32._encode(buffer, array.length);
     buffer.insertArray(array);
   },
   _decode(buffer) {
-    // TODO: do we like this conversion? Safeguard.
-    const len = Number(compact._decode(buffer));
+    const len = compactU32._decode(buffer);
     if (buffer.array.length < buffer.index + len) {
       throw new Error("Attempting to `str`-decode beyond bounds of input bytes");
     }
