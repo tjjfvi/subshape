@@ -23,5 +23,6 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - run: deno task star
       - run: deno task test
       - run: deno task test-rust
