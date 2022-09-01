@@ -1,20 +1,24 @@
 import { Codec, createCodec } from "../common.ts";
 import { u16, u32 } from "../int/codec.ts";
 
-const MAX_U8 = 0b00111111;
-const MAX_U16 = 0b00111111_11111111;
-const MAX_U32 = 0b00111111_11111111_11111111_11111111;
+const MAX_U6 = 0b00111111;
+const MAX_U14 = 0b00111111_11111111;
+const MAX_U30 = 0b00111111_11111111_11111111_11111111;
 
 const compactNumber: Codec<number> = createCodec({
   name: "compactNumber",
   _metadata: null,
   _staticSize: 5,
   _encode(buffer, value) {
-    if (value <= MAX_U8) {
+    if (value <= MAX_U6) {
       buffer.array[buffer.index++] = value << 2;
-    } else if (value <= MAX_U16) {
+    } else if (value <= MAX_U14) {
       u16._encode(buffer, (value << 2) | 0b01);
-    } else if (value <= MAX_U32) {
+    } else if (value <= MAX_U30) {
+      // Because JS bitwise ops use *signed* 32-bit ints, this operation
+      // produces negative values when `value >= 2 ** 29`. However, this is ok,
+      // as `setUint32` correctly casts these negative values back to unsigned
+      // 32-bit ints.
       u32._encode(buffer, (value << 2) | 0b10);
     } else {
       buffer.array[buffer.index++] = 0b11;
@@ -28,7 +32,11 @@ const compactNumber: Codec<number> = createCodec({
       case 1:
         return u16._decode(buffer) >> 2;
       case 2:
-        return (u32._decode(buffer) - 2) / 4;
+        // Because JS bitwise ops use *signed* 32-bit ints, the `>> 2` here
+        // produces negative values when `value >= 2 ** 29`. By &-ing with
+        // `MAX_U30`, we mask out the two extraneous 1 bits created by the
+        // signed shift.
+        return (u32._decode(buffer) >> 2) & MAX_U30;
       default:
         if (buffer.array[buffer.index++]! !== 3) throw new Error("Out of range for U32");
         return u32._decode(buffer);
