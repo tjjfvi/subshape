@@ -48,7 +48,7 @@ export type NativeTaggedUnionMember<
 export type NativeTaggedUnionMembers<
   TK extends PropertyKey,
   M extends Record<number, TaggedUnionMember>,
-> = { [K in keyof M]: NativeTaggedUnionMember<TK, Extract<M[K], TaggedUnionMember>> }[number];
+> = [{ [K in keyof M]: NativeTaggedUnionMember<TK, Extract<M[K], TaggedUnionMember>> }[keyof M & number]][0];
 
 export function taggedUnion<
   TK extends PropertyKey,
