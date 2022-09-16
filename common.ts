@@ -21,6 +21,8 @@ export interface Codec<T> {
   _metadata?: [Function, ...unknown[]];
 }
 
+export type AnyCodec = Codec<any> | Codec<never>;
+
 export function createCodec<T, A extends unknown[]>(
   _codec: Pick<Codec<T>, "_encode" | "_decode" | "_staticSize" | "name"> & {
     /**
@@ -89,7 +91,7 @@ export function createAsyncCodec<T, A extends unknown[]>(
   };
 }
 
-export type Native<T extends Codec<any>> = T extends Codec<infer U> ? U : never;
+export type Native<T extends AnyCodec> = T extends Codec<infer U> ? U : never;
 
 export class EncodeBuffer {
   finishedArrays: (Uint8Array | EncodeBuffer)[] = [];

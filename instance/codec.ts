@@ -1,5 +1,5 @@
 import { Codec, createCodec, Narrow, Native } from "../common.ts";
-import { Field, NativeObject, object } from "../object/codec.ts";
+import { AnyField, NativeObject, object } from "../object/codec.ts";
 
 /**
  * @param ctor The constructor with which to instantiate the instance / from whose instance to encode
@@ -9,10 +9,10 @@ import { Field, NativeObject, object } from "../object/codec.ts";
 export function instance<
   Ctor extends new(
     ...args: {
-      [K in keyof Fields]: Native<Extract<Fields[K], Field>[1]>;
+      [K in keyof Fields]: Native<Extract<Fields[K], AnyField>[1]>;
     }
   ) => NativeObject<Fields>,
-  Fields extends Field[],
+  Fields extends AnyField[],
 >(
   ctor: Ctor,
   ...fields: Narrow<Fields>

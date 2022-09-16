@@ -1,12 +1,12 @@
-import { Codec, createCodec, Expand, Narrow, Native } from "../common.ts";
+import { AnyCodec, Codec, createCodec, Expand, Narrow, Native } from "../common.ts";
 import { dummy } from "../dummy/codec.ts";
-import { Field, NativeObject, object } from "../object/codec.ts";
+import { AnyField, NativeObject, object } from "../object/codec.ts";
 
-export function union<T extends Record<number, Codec<any>>>(
+export function union<T extends Record<number, AnyCodec>>(
   getIndex: (value: Native<T[number]>) => keyof T & number,
   $members: Narrow<T>,
 ): Codec<Native<T[keyof T & number]>>;
-export function union<T extends Record<number, Codec<any>>>(
+export function union<T extends Record<number, AnyCodec>>(
   getIndex: (value: Native<T[number]>) => keyof T & number,
   $members: T,
 ): Codec<Native<T[keyof T & number]>> {
@@ -18,7 +18,7 @@ export function union<T extends Record<number, Codec<any>>>(
       const discriminant = getIndex(value);
       const $member = $members[discriminant]!;
       buffer.array[buffer.index++] = discriminant;
-      $member._encode(buffer, value);
+      $member._encode(buffer, value as never);
     },
     _decode(buffer) {
       const discriminant = buffer.array[buffer.index++]!;
@@ -31,28 +31,24 @@ export function union<T extends Record<number, Codec<any>>>(
   });
 }
 
-export type TaggedUnionMember<
-  T extends string = string,
-  K extends keyof any = keyof any,
-  V = any,
-> = [tag: T, ...fields: Field<K, V>[]];
+export type AnyTaggedUnionMember = [tag: string, ...fields: AnyField[]];
 
 export type NativeTaggedUnionMember<
   TK extends PropertyKey,
-  M extends TaggedUnionMember,
+  M extends AnyTaggedUnionMember,
 > = Expand<
   & Record<TK, M[0]>
-  & (M extends [any, ...infer R] ? R extends Field[] ? NativeObject<R> : {} : never)
+  & (M extends [any, ...infer R] ? R extends AnyField[] ? NativeObject<R> : {} : never)
 >;
 
 export type NativeTaggedUnionMembers<
   TK extends PropertyKey,
-  M extends Record<number, TaggedUnionMember>,
-> = [{ [K in keyof M]: NativeTaggedUnionMember<TK, Extract<M[K], TaggedUnionMember>> }[keyof M & number]][0];
+  M extends Record<number, AnyTaggedUnionMember>,
+> = [{ [K in keyof M]: NativeTaggedUnionMember<TK, Extract<M[K], AnyTaggedUnionMember>> }[keyof M & number]][0];
 
 export function taggedUnion<
   TK extends PropertyKey,
-  M extends Record<number, TaggedUnionMember>,
+  M extends Record<number, AnyTaggedUnionMember>,
 >(
   tagKey: TK,
   members: Narrow<M>,
