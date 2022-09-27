@@ -9,6 +9,7 @@ export type NativeObject<O extends AnyField[]> = Expand<
   U2I<
     | {}
     | {
+      // @ts-ignore passes deno but failing dnt
       [K in keyof O]: Record<O[K][0], Native<O[K][1]>>;
     }[number]
   >
