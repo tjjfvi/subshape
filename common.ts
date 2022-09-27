@@ -287,7 +287,7 @@ export class DecodeBuffer {
   view;
   index = 0;
   constructor(public array: Uint8Array) {
-    this.view = new DataView(array.buffer);
+    this.view = new DataView(array.buffer, array.byteOffset, array.byteLength);
   }
 }
 
