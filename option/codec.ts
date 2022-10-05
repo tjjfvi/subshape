@@ -1,4 +1,4 @@
-import { Codec, createCodec } from "../common.ts";
+import { Codec, createCodec, DecodeError } from "../common.ts";
 
 export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
   return createCodec({
@@ -20,7 +20,7 @@ export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
           return $some._decode(buffer);
         }
         default: {
-          throw new Error("Could not decode Option as `Some(_)` nor `None`");
+          throw new DecodeError($some, buffer, "Could not decode Option as `Some(_)` nor `None`");
         }
       }
     },

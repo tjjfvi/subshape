@@ -1,4 +1,4 @@
-import { Codec, createCodec } from "../common.ts";
+import { Codec, createCodec, DecodeError, EncodeError } from "../common.ts";
 
 export function constantPattern<T>(value: T, codec: Pick<Codec<T>, "encode">): Codec<T>;
 export function constantPattern<T>(value: T, pattern: Uint8Array): Codec<T>;
@@ -13,7 +13,7 @@ export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8
     _staticSize: 0,
     _encode(buffer, got) {
       if (got !== value) {
-        throw new Error(`Invalid value; expected ${value}, got ${got}`);
+        throw new EncodeError(this, got, `Invalid value; expected ${value}, got ${got}`);
       }
       buffer.insertArray(pattern);
     },
@@ -21,7 +21,7 @@ export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8
       const got = buffer.array.subarray(buffer.index, buffer.index += pattern.length);
       for (let i = 0; i < pattern.length; i++) {
         if (pattern[i] !== got[i]) {
-          throw new Error(`Invalid pattern; expected ${hex(pattern)}, got ${hex(got)}`);
+          throw new DecodeError(this, buffer, `Invalid pattern; expected ${hex(pattern)}, got ${hex(got)}`);
         }
       }
       return value;
