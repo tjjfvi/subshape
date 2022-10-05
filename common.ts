@@ -106,7 +106,7 @@ export class EncodeBuffer {
   asyncResolve: (value: void | Promise<void>) => void = () => {};
 
   /** Creates a new EncodeBuffer with a specified initial size/buffer */
-  constructor(init: number | Uint8Array) {
+  constructor(init: number | Uint8Array, public context = new Context()) {
     this._setArray(typeof init === "number" ? new Uint8Array(init) : init);
   }
 
@@ -162,7 +162,7 @@ export class EncodeBuffer {
    */
   createCursor(length: number): EncodeBuffer & { close(): void } {
     const cursor = Object.assign(
-      new EncodeBuffer(this.stealAlloc(length)),
+      new EncodeBuffer(this.stealAlloc(length), this.context),
       {
         close: () => {
           this.waitForBuffer(cursor, () => {
@@ -286,8 +286,21 @@ export class EncodeBuffer {
 export class DecodeBuffer {
   view;
   index = 0;
+  context = new Context();
   constructor(public array: Uint8Array) {
     this.view = new DataView(array.buffer, array.byteOffset, array.byteLength);
+  }
+}
+
+export class Context {
+  private map = new Map<new() => any, any>();
+  get<T>(T: new() => T): T {
+    let value = this.map.get(T);
+    if (!value) {
+      value = new T();
+      this.map.set(T, value);
+    }
+    return value;
   }
 }
 
