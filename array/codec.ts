@@ -55,8 +55,8 @@ export function array<T>($el: Codec<T>): Codec<T[]> {
   });
 }
 
-export const uint8array: Codec<Uint8Array> = createCodec({
-  name: "uint8array",
+export const uint8Array: Codec<Uint8Array> = createCodec({
+  name: "uint8Array",
   _metadata: null,
   _staticSize: compactU32._staticSize,
   _encode(buffer, value) {
@@ -71,10 +71,10 @@ export const uint8array: Codec<Uint8Array> = createCodec({
   },
 });
 
-export function sizedUint8array(length: number): Codec<Uint8Array> {
+export function sizedUint8Array(length: number): Codec<Uint8Array> {
   return createCodec({
-    name: "sizedUint8array",
-    _metadata: [sizedUint8array, length],
+    name: "sizedUint8Array",
+    _metadata: [sizedUint8Array, length],
     // We could set `_staticSize` to `length`, but in this case it will usually
     // more efficient to insert the array dynamically, rather than manually copy
     // the bytes.
@@ -90,3 +90,9 @@ export function sizedUint8array(length: number): Codec<Uint8Array> {
     },
   });
 }
+
+/** @deprecated Use `$.uint8Array` instead */
+export const uint8array = uint8Array;
+
+/** @deprecated Use `$.sizedUint8Array` instead */
+export const sizedUint8array = sizedUint8Array;

@@ -156,9 +156,9 @@ $.array($.u8); // Codec<number[]>
 
 $.sizedArray($.u8, 2); // Codec<[number, number]>
 
-$.uint8array; // Codec<Uint8Array>
+$.uint8Array; // Codec<Uint8Array>
 
-$.sizedUint8array(12); // Codec<Uint8Array>
+$.sizedUint8Array(12); // Codec<Uint8Array>
 
 $.tuple($.bool, $.u8, $.str); // Codec<[boolean, number, string]>
 
