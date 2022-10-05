@@ -1,4 +1,4 @@
-import { Codec, createCodec } from "../common.ts";
+import { Codec, createCodec, EncodeError } from "../common.ts";
 import { compactU32 } from "../compact/codec.ts";
 
 type ArrayOfLength<
@@ -80,7 +80,9 @@ export function sizedUint8array(length: number): Codec<Uint8Array> {
     // the bytes.
     _staticSize: 0,
     _encode(buffer, value) {
-      if (value.length !== length) throw new Error(`Expected an array of size ${length}, got ${value.length}`);
+      if (value.length !== length) {
+        throw new EncodeError(this, value, `Expected an array of size ${length}, got ${value.length}`);
+      }
       buffer.insertArray(value); // the contents of this will eventually be cloned by buffer
     },
     _decode(buffer) {

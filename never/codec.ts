@@ -1,13 +1,13 @@
-import { Codec, createCodec } from "../common.ts";
+import { Codec, createCodec, DecodeError, EncodeError } from "../common.ts";
 
 export const never: Codec<never> = createCodec({
   name: "never",
   _metadata: null,
   _staticSize: 0,
-  _encode() {
-    throw new Error("Cannot encode $.never");
+  _encode(value) {
+    throw new EncodeError(this, value, "Cannot encode $.never");
   },
-  _decode() {
-    throw new Error("Cannot decode $.never");
+  _decode(buffer) {
+    throw new DecodeError(this, buffer, "Cannot decode $.never");
   },
 });

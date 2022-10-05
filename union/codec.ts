@@ -1,4 +1,4 @@
-import { AnyCodec, Codec, createCodec, Expand, Narrow, Native } from "../common.ts";
+import { AnyCodec, Codec, createCodec, DecodeError, Expand, Narrow, Native } from "../common.ts";
 import { dummy } from "../dummy/codec.ts";
 import { AnyField, NativeObject, object } from "../object/codec.ts";
 
@@ -24,7 +24,7 @@ export function union<T extends Record<number, AnyCodec>>(
       const discriminant = buffer.array[buffer.index++]!;
       const $member = $members[discriminant];
       if (!$member) {
-        throw new Error(`No such member codec matching the discriminant \`${discriminant}\``);
+        throw new DecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
       }
       return $member._decode(buffer);
     },

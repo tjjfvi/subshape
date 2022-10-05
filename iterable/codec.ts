@@ -1,4 +1,4 @@
-import { Codec, createCodec } from "../common.ts";
+import { Codec, createCodec, DecodeError, EncodeError } from "../common.ts";
 import { compactU32 } from "../compact/codec.ts";
 import { tuple } from "../mod.ts";
 
@@ -22,7 +22,7 @@ export function iterable<T, I extends Iterable<T>>(
         $el._encode(buffer, el);
         i++;
       }
-      if (i !== length) throw new Error("Incorrect length returned by calcLength");
+      if (i !== length) throw new EncodeError(this, value, "Incorrect length returned by calcLength");
       buffer.popAlloc();
     },
     _decode(buffer) {
@@ -34,7 +34,7 @@ export function iterable<T, I extends Iterable<T>>(
         }
         done = true;
       }());
-      if (!done) throw new Error("Iterable passed to rehydrate must be immediately exhausted");
+      if (!done) throw new DecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted");
       return value;
     },
   });

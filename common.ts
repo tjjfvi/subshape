@@ -24,7 +24,7 @@ export interface Codec<T> {
 export type AnyCodec = Codec<any> | Codec<never>;
 
 export function createCodec<T, A extends unknown[]>(
-  _codec: Pick<Codec<T>, "_encode" | "_decode" | "_staticSize" | "name"> & {
+  _codec: ThisType<Codec<T>> & Pick<Codec<T>, "_encode" | "_decode" | "_staticSize" | "name"> & {
     /**
      * If non-null, the function calling `createCodec` and the corresponding arguments.
      * `null` indicates that this codec is atomic (e.g. `$.str`).
@@ -33,7 +33,7 @@ export function createCodec<T, A extends unknown[]>(
   },
 ): Codec<T> {
   const { _staticSize, _encode, _decode, _metadata, name } = _codec;
-  return {
+  const codec: Codec<T> = {
     name,
     _staticSize,
     _encode,
@@ -41,24 +41,25 @@ export function createCodec<T, A extends unknown[]>(
     ..._metadata && { _metadata },
     encode(value) {
       const buf = new EncodeBuffer(_staticSize);
-      _encode(buf, value);
-      if (buf.asyncCount) throw new Error("Attempted to synchronously encode an async codec");
+      _encode.call(codec, buf, value);
+      if (buf.asyncCount) throw new EncodeError(codec, value, "Attempted to synchronously encode an async codec");
       return buf.finish();
     },
     async encodeAsync(value) {
       const buf = new EncodeBuffer(_staticSize);
-      _encode(buf, value);
+      _encode.call(codec, buf, value);
       return buf.finishAsync();
     },
     decode(array) {
       const buf = new DecodeBuffer(array);
-      return _decode(buf);
+      return _decode.call(codec, buf);
     },
   };
+  return codec;
 }
 
 export function createAsyncCodec<T, A extends unknown[]>(
-  _codec: Pick<Codec<T>, "_decode" | "_staticSize" | "name"> & {
+  _codec: ThisType<Codec<T>> & Pick<Codec<T>, "_decode" | "_staticSize" | "name"> & {
     _encodeAsync: (buffer: EncodeBuffer, value: T) => Promise<void>;
     /**
      * If non-null, the function calling `createCodec` and the corresponding arguments.
@@ -68,7 +69,7 @@ export function createAsyncCodec<T, A extends unknown[]>(
   },
 ): Codec<T> {
   const { _staticSize, _encodeAsync, _decode, _metadata, name } = _codec;
-  return {
+  const codec: Codec<T> = {
     name,
     _staticSize,
     _encode(buffer, value) {
@@ -76,19 +77,20 @@ export function createAsyncCodec<T, A extends unknown[]>(
     },
     _decode,
     ..._metadata && { _metadata },
-    encode(_value) {
-      throw new Error("Attempted to synchronously encode an async codec");
+    encode(value) {
+      throw new EncodeError(codec, value, "Attempted to synchronously encode an async codec");
     },
     async encodeAsync(value) {
       const buf = new EncodeBuffer(_staticSize);
-      await _encodeAsync(buf, value);
+      await _encodeAsync.call(codec, buf, value);
       return buf.finishAsync();
     },
     decode(array) {
       const buf = new DecodeBuffer(array);
-      return _decode(buf);
+      return _decode.call(codec, buf);
     },
   };
+  return codec;
 }
 
 export type Native<T extends AnyCodec> = T extends Codec<infer U> ? U : never;
@@ -347,5 +349,25 @@ export class CodecVisitor<R> {
       return this.#fallback(codec);
     }
     throw new Error("Unrecognized codec");
+  }
+}
+
+export class CodecError extends Error {
+  constructor(readonly codec: AnyCodec, message: string) {
+    super(message);
+  }
+}
+
+export class EncodeError extends CodecError {
+  name = "EncodeError";
+  constructor(codec: AnyCodec, readonly value: unknown, message: string) {
+    super(codec, message);
+  }
+}
+
+export class DecodeError extends CodecError {
+  name = "DecodeError";
+  constructor(codec: AnyCodec, readonly buffer: DecodeBuffer, message: string) {
+    super(codec, message);
   }
 }

@@ -1,4 +1,4 @@
-import { Codec, createCodec } from "../common.ts";
+import { Codec, createCodec, DecodeError } from "../common.ts";
 import { u16, u32 } from "../int/codec.ts";
 
 const MAX_U6 = 0b00111111;
@@ -38,7 +38,7 @@ const compactNumber: Codec<number> = createCodec({
         // signed shift.
         return (u32._decode(buffer) >> 2) & MAX_U30;
       default:
-        if (buffer.array[buffer.index++]! !== 3) throw new Error("Out of range for U32");
+        if (buffer.array[buffer.index++]! !== 3) throw new DecodeError(this, buffer, "Out of range for U32");
         return u32._decode(buffer);
     }
   },
