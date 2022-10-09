@@ -32,11 +32,9 @@ const compactNumber: Codec<number> = createCodec({
       case 1:
         return u16._decode(buffer) >> 2;
       case 2:
-        // Because JS bitwise ops use *signed* 32-bit ints, the `>> 2` here
-        // produces negative values when `value >= 2 ** 29`. By &-ing with
-        // `MAX_U30`, we mask out the two extraneous 1 bits created by the
-        // signed shift.
-        return (u32._decode(buffer) >> 2) & MAX_U30;
+        // We use an unsigned right shift, as the default shift operator
+        // uses signed 32-bit ints, which would yield invalid values.
+        return u32._decode(buffer) >>> 2;
       default:
         if (buffer.array[buffer.index++]! !== 3) throw new DecodeError(this, buffer, "Out of range for U32");
         return u32._decode(buffer);
