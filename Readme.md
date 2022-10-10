@@ -1,6 +1,6 @@
 # SCALE Codecs for JavaScript and TypeScript
 
-A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/v3/advanced/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
+A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/reference/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
 
 ## Setup
 
@@ -134,7 +134,7 @@ $.i128; // Codec<bigint>
 $.u256; // Codec<bigint>
 $.i256; // Codec<bigint>
 
-// https://docs.substrate.io/v3/advanced/scale-codec/#compactgeneral-integers
+// https://docs.substrate.io/reference/scale-codec/#fnref-1
 $.compactU8; // Codec<number>
 $.compactU16; // Codec<number>
 $.compactU32; // Codec<number>
