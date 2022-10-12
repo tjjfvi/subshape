@@ -21,6 +21,9 @@ pub mod int_fixtures;
 #[path = "./iterable/fixtures.rs"]
 pub mod iterable_fixtures;
 
+#[path = "./lenPrefixed/fixtures.rs"]
+pub mod len_prefixed_fixtures;
+
 #[path = "./never/fixtures.rs"]
 pub mod never_fixtures;
 
