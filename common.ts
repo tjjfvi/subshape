@@ -93,6 +93,13 @@ export function createAsyncCodec<T, A extends unknown[]>(
   return codec;
 }
 
+export function withMetadata<T, A extends unknown[]>(
+  codec: Codec<T>,
+  metadata: [(...args: A) => Codec<T>, ...A],
+): Codec<T> {
+  return { ...codec, _metadata: metadata };
+}
+
 export type Native<T extends AnyCodec> = T extends Codec<infer U> ? U : never;
 
 export class EncodeBuffer {

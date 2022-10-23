@@ -1,4 +1,4 @@
-import { AnyCodec, Codec, createCodec, DecodeError, Expand, Narrow, Native } from "../common.ts";
+import { AnyCodec, Codec, createCodec, DecodeError, Expand, Narrow, Native, withMetadata } from "../common.ts";
 import { dummy } from "../dummy/codec.ts";
 import { AnyField, NativeObject, object } from "../object/codec.ts";
 
@@ -65,14 +65,12 @@ export function taggedUnion<
       ...fields,
     );
   }
-  return Object.assign(
+  return withMetadata(
     union(
       (value) => tagToDiscriminant[value[tagKey]]!,
       discriminantToMember,
     ),
-    {
-      metadata: [taggedUnion, tagKey, members],
-    },
+    [taggedUnion, tagKey, members],
   );
 }
 
