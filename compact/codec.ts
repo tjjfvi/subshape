@@ -1,9 +1,18 @@
-import { Codec, createCodec, DecodeError } from "../common.ts";
-import { u16, u32 } from "../int/codec.ts";
+import { _createWalkEntry } from "https://deno.land/std@0.139.0/fs/walk.ts";
+import { Codec, CodecVisitor, createCodec, DecodeError, withMetadata } from "../common.ts";
+import { dummy } from "../dummy/codec.ts";
+import { u128, u16, u256, u32, u64, u8 } from "../int/codec.ts";
+import { object, tuple } from "../mod.ts";
 
 const MAX_U6 = 0b00111111;
 const MAX_U14 = 0b00111111_11111111;
 const MAX_U30 = 0b00111111_11111111_11111111_11111111;
+
+export const compactVisitor = new CodecVisitor<Codec<any>>();
+
+export function compact<T>(codec: Codec<T>): Codec<T> {
+  return compactVisitor.visit(codec);
+}
 
 const compactNumber: Codec<number> = createCodec({
   name: "$.compactNumber",
@@ -42,9 +51,13 @@ const compactNumber: Codec<number> = createCodec({
   },
 });
 
-export const compactU8 = compactNumber;
-export const compactU16 = compactNumber;
-export const compactU32 = compactNumber;
+const compactU8 = withMetadata("$.compact", [compact, u8], compactNumber);
+const compactU16 = withMetadata("$.compact", [compact, u16], compactNumber);
+const compactU32 = withMetadata("$.compact", [compact, u32], compactNumber);
+
+compactVisitor.add(u8, () => compactU8);
+compactVisitor.add(u16, () => compactU16);
+compactVisitor.add(u32, () => compactU32);
 
 const compactBigInt: Codec<bigint> = createCodec({
   name: "$.compactBigInt",
@@ -86,6 +99,24 @@ const compactBigInt: Codec<bigint> = createCodec({
   },
 });
 
-export const compactU64 = compactBigInt;
-export const compactU128 = compactBigInt;
-export const compactU256 = compactBigInt;
+const compactU64 = withMetadata("$.compact", [compact, u64], compactBigInt);
+const compactU128 = withMetadata("$.compact", [compact, u128], compactBigInt);
+const compactU256 = withMetadata("$.compact", [compact, u256], compactBigInt);
+
+compactVisitor.add(u64, () => compactU64);
+compactVisitor.add(u128, () => compactU128);
+compactVisitor.add(u256, () => compactU256);
+
+compactVisitor.add(dummy, (codec) => codec);
+
+compactVisitor.add(tuple<any[]>, (codec, ...entries) => {
+  if (entries.length === 0) return codec;
+  if (entries.length > 1) throw new Error("Cannot derive compact codec for tuples with more than one field");
+  return withMetadata("$.compact", [compact, codec], tuple<any[]>(compact(entries[0]!)));
+});
+
+compactVisitor.add(object<any[]>, (codec, ...entries) => {
+  if (entries.length === 0) return codec;
+  if (entries.length > 1) throw new Error("Cannot derive compact codec for objects with more than one field");
+  return withMetadata("$.compact", [compact, codec], object<any[]>([entries[0][0], compact(entries[0][1])]));
+});

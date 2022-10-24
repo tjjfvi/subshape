@@ -1,6 +1,9 @@
 import { Codec, createCodec, DecodeError, EncodeError, withMetadata } from "../common.ts";
-import { compactU32 } from "../compact/codec.ts";
+import { compact } from "../compact/codec.ts";
+import { u32 } from "../int/codec.ts";
 import { tuple } from "../mod.ts";
+
+const compactU32 = compact(u32);
 
 export function iterable<T, I extends Iterable<T>>(
   { $el, calcLength, rehydrate }: {

@@ -16,7 +16,7 @@ snapshot[`\$.option(\$.u8) 1 1`] = `
 01
 `;
 
-snapshot[`\$.option(\$.int) 4294967295 1`] = `
+snapshot[`\$.option(\$.u32) 4294967295 1`] = `
 01
 ff
 ff

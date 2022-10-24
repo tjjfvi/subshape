@@ -23,24 +23,25 @@ class GraphDecodeCtx {
   memo: Graph[] = [];
 }
 
+const $compactU32 = $.compact($.u32);
 const $graph: $.Codec<Graph> = $.createCodec({
   name: "$graph",
   _metadata: null,
-  _staticSize: $.compactU32._staticSize * 2 + $.str._staticSize,
+  _staticSize: $compactU32._staticSize * 2 + $.str._staticSize,
   _encode(buffer, value) {
     const ctx = buffer.context.get(GraphEncodeCtx);
     const key = ctx.memo.get(value);
     if (key != null) {
-      return $.compactU32._encode(buffer, key);
+      return $compactU32._encode(buffer, key);
     }
-    $.compactU32._encode(buffer, ctx.memo.size);
+    $compactU32._encode(buffer, ctx.memo.size);
     ctx.memo.set(value, ctx.memo.size);
     $.str._encode(buffer, value.label);
     $.array($graph)._encode(buffer, value.to);
   },
   _decode(buffer) {
     const ctx = buffer.context.get(GraphDecodeCtx);
-    const key = $.compactU32._decode(buffer);
+    const key = $compactU32._decode(buffer);
     if (key < ctx.memo.length) {
       return ctx.memo[key]!;
     }

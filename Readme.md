@@ -135,12 +135,12 @@ $.u256; // Codec<bigint>
 $.i256; // Codec<bigint>
 
 // https://docs.substrate.io/reference/scale-codec/#fnref-1
-$.compactU8; // Codec<number>
-$.compactU16; // Codec<number>
-$.compactU32; // Codec<number>
-$.compactU64; // Codec<bigint>
-$.compactU128; // Codec<bigint>
-$.compactU256; // Codec<bigint>
+$.compact($.u8); // Codec<number>
+$.compact($.u16); // Codec<number>
+$.compact($.u32); // Codec<number>
+$.compact($.u64); // Codec<bigint>
+$.compact($.u128); // Codec<bigint>
+$.compact($.u256); // Codec<bigint>
 
 $.str; // Codec<string>
 
