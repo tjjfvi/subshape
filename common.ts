@@ -411,7 +411,7 @@ const codecInspectCtx = new Map<Codec<any>, number | null>();
 let codecInspectIdN = 0;
 const nodeCustomInspect = Symbol.for("nodejs.util.inspect.custom");
 const denoCustomInspect = Symbol.for("Deno.customInspect");
-export abstract class Codec<T> {
+abstract class _Codec<T> {
   [nodeCustomInspect](_0: unknown, _1: unknown, inspect: (value: unknown) => string) {
     return this._inspect!(inspect);
   }
@@ -421,7 +421,8 @@ export abstract class Codec<T> {
   }
 
   // Properly handles circular codecs in the case of $.deferred
-  _inspect?(inspect: (value: unknown) => string): string {
+  _inspect?(inspect: (value: unknown) => string): string;
+  _inspect?(this: Codec<T>, inspect: (value: unknown) => string): string {
     let id = codecInspectCtx.get(this);
     if (id !== undefined) {
       if (id === null) {
@@ -441,3 +442,4 @@ export abstract class Codec<T> {
     }
   }
 }
+export abstract class Codec<T> extends _Codec<T> {}
