@@ -6,7 +6,7 @@ const MAX_U14 = 0b00111111_11111111;
 const MAX_U30 = 0b00111111_11111111_11111111_11111111;
 
 const compactNumber: Codec<number> = createCodec({
-  name: "compactNumber",
+  name: "$.compactNumber",
   _metadata: null,
   _staticSize: 5,
   _encode(buffer, value) {
@@ -47,7 +47,7 @@ export const compactU16 = compactNumber;
 export const compactU32 = compactNumber;
 
 const compactBigInt: Codec<bigint> = createCodec({
-  name: "compactBigInt",
+  name: "$.compactBigInt",
   _metadata: null,
   _staticSize: 5,
   _encode(buffer, value) {

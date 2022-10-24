@@ -2,7 +2,7 @@ import { Codec, createCodec, DecodeError } from "../common.ts";
 import { compactU32 } from "../compact/codec.ts";
 
 export const str: Codec<string> = createCodec({
-  name: "str",
+  name: "$.str",
   _metadata: null,
   _staticSize: compactU32._staticSize,
   _encode(buffer, value) {

@@ -3,6 +3,7 @@ import { compactU32 } from "../compact/codec.ts";
 
 export function lenPrefixed<T>($inner: Codec<T>): Codec<T> {
   return createCodec({
+    name: "$.lenPrefixed",
     _metadata: [lenPrefixed, $inner],
     _staticSize: compactU32._staticSize + $inner._staticSize,
     _encode(buffer, extrinsic) {

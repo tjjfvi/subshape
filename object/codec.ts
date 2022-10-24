@@ -18,7 +18,7 @@ export type NativeObject<O extends AnyField[]> = Expand<
 export function object<O extends AnyField[]>(...fields: Narrow<O>): Codec<NativeObject<O>>;
 export function object<O extends AnyField[]>(...fields: O): Codec<NativeObject<O>> {
   return createCodec({
-    name: "object",
+    name: "$.object",
     _metadata: [object, ...fields] as any,
     _staticSize: fields.map((x) => x[1]._staticSize).reduce((a, b) => a + b, 0),
     _encode(buffer, value) {

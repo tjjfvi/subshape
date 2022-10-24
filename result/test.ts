@@ -8,7 +8,7 @@ class StrErr extends Error {
   }
 }
 
-testCodec("result", $.result($.str, $.instance(StrErr, ["str", $.str])), [
+testCodec($.result($.str, $.instance(StrErr, ["str", $.str])), [
   "ok",
   new StrErr("err"),
 ]);

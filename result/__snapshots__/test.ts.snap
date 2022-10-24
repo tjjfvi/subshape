@@ -1,13 +1,13 @@
 export const snapshot = {};
 
-snapshot[`result "ok" 1`] = `
+snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], [ "str", \$.str ])) "ok" 1`] = `
 00
 08
 6f
 6b
 `;
 
-snapshot[`result StrErr: err 1`] = `
+snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], [ "str", \$.str ])) StrErr: err 1`] = `
 01
 0c
 65

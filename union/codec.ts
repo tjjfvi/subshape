@@ -11,7 +11,7 @@ export function union<T extends Record<number, AnyCodec>>(
   $members: T,
 ): Codec<Native<T[keyof T & number]>> {
   return createCodec({
-    name: "union",
+    name: "$.union",
     _metadata: [union, getIndex, $members as Narrow<T>],
     _staticSize: 1 + Math.max(...Object.values($members).map((x) => x._staticSize)),
     _encode(buffer, value) {
@@ -66,11 +66,12 @@ export function taggedUnion<
     );
   }
   return withMetadata(
+    "$.taggedUnion",
+    [taggedUnion, tagKey, members],
     union(
       (value) => tagToDiscriminant[value[tagKey]]!,
       discriminantToMember,
     ),
-    [taggedUnion, tagKey, members],
   );
 }
 
@@ -83,7 +84,7 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
     keyToDiscriminant[key] = discriminant;
   }
   return createCodec({
-    name: "stringUnion",
+    name: "$.stringUnion",
     _metadata: [stringUnion, members],
     _staticSize: 1,
     _encode(buffer, value) {

@@ -2,7 +2,7 @@ export const snapshot = {};
 
 snapshot[`CodecVisitor 1`] = `"Unrecognized codec"`;
 
-snapshot[`graph a 1`] = `
+snapshot[`\$graph a 1`] = `
 00
 04
 61
@@ -39,7 +39,7 @@ snapshot[`graph a 1`] = `
 14
 `;
 
-snapshot[`graph b 1`] = `
+snapshot[`\$graph b 1`] = `
 00
 04
 62
@@ -76,7 +76,7 @@ snapshot[`graph b 1`] = `
 14
 `;
 
-snapshot[`graph c 1`] = `
+snapshot[`\$graph c 1`] = `
 00
 04
 63
@@ -113,7 +113,7 @@ snapshot[`graph c 1`] = `
 14
 `;
 
-snapshot[`graph d 1`] = `
+snapshot[`\$graph d 1`] = `
 00
 04
 64
@@ -150,7 +150,7 @@ snapshot[`graph d 1`] = `
 14
 `;
 
-snapshot[`graph e 1`] = `
+snapshot[`\$graph e 1`] = `
 00
 04
 65
@@ -187,7 +187,7 @@ snapshot[`graph e 1`] = `
 14
 `;
 
-snapshot[`graph f 1`] = `
+snapshot[`\$graph f 1`] = `
 00
 04
 66

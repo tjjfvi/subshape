@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`constantPattern 1635018093 1`] = `
+snapshot[`\$.constantPattern(1635018093, Uint8Array(4) [ 109, 101, 116, 97 ]) 1635018093 1`] = `
 6d
 65
 74

@@ -20,6 +20,7 @@ export function instance<
   const $object = object(...fields);
   return createCodec({
     ...$object as Codec<any>,
+    name: "$.instance",
     _metadata: [instance, ctor, ...fields] as any,
     _decode(buffer) {
       const arr = Array(fields.length);

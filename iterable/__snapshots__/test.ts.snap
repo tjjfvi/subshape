@@ -1,8 +1,8 @@
 export const snapshot = {};
 
-snapshot[`set(u8) Set {} 1`] = `00`;
+snapshot[`\$.set(\$.u8) Set {} 1`] = `00`;
 
-snapshot[`set(u8) Set { 0, 2, 4, 8 } 1`] = `
+snapshot[`\$.set(\$.u8) Set { 0, 2, 4, 8 } 1`] = `
 10
 00
 02
@@ -10,7 +10,7 @@ snapshot[`set(u8) Set { 0, 2, 4, 8 } 1`] = `
 08
 `;
 
-snapshot[`set(u8) Set { 2, 3, 5, 7 } 1`] = `
+snapshot[`\$.set(\$.u8) Set { 2, 3, 5, 7 } 1`] = `
 10
 02
 03
@@ -18,9 +18,9 @@ snapshot[`set(u8) Set { 2, 3, 5, 7 } 1`] = `
 07
 `;
 
-snapshot[`map(str, u8) Map {} 1`] = `00`;
+snapshot[`\$.map(\$.str, \$.u8) Map {} 1`] = `00`;
 
-snapshot[`map(str, u8) Map { "0" => 0, "1" => 1 } 1`] = `
+snapshot[`\$.map(\$.str, \$.u8) Map { "0" => 0, "1" => 1 } 1`] = `
 08
 04
 30
@@ -30,7 +30,7 @@ snapshot[`map(str, u8) Map { "0" => 0, "1" => 1 } 1`] = `
 01
 `;
 
-snapshot[`map(str, u8) Map { "2^0" => 0, "2^1" => 2, "2^2" => 4, "2^3" => 8, "2^4" => 16 } 1`] = `
+snapshot[`\$.map(\$.str, \$.u8) Map { "2^0" => 0, "2^1" => 2, "2^2" => 4, "2^3" => 8, "2^4" => 16 } 1`] = `
 14
 0c
 32
@@ -59,9 +59,9 @@ snapshot[`map(str, u8) Map { "2^0" => 0, "2^1" => 2, "2^2" => 4, "2^3" => 8, "2^
 10
 `;
 
-snapshot[`iterableArray [] 1`] = `00`;
+snapshot[`\$iterableArray [] 1`] = `00`;
 
-snapshot[`iterableArray [ 0, 2, 4, 8 ] 1`] = `
+snapshot[`\$iterableArray [ 0, 2, 4, 8 ] 1`] = `
 10
 00
 02
@@ -69,7 +69,7 @@ snapshot[`iterableArray [ 0, 2, 4, 8 ] 1`] = `
 08
 `;
 
-snapshot[`iterableArray [ 2, 3, 5, 7 ] 1`] = `
+snapshot[`\$iterableArray [ 2, 3, 5, 7 ] 1`] = `
 10
 02
 03

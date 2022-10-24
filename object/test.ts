@@ -1,14 +1,18 @@
 import * as $ from "../mod.ts";
 import { testCodec } from "../test-util.ts";
 
-const $person = $.object(
-  ["name", $.str],
-  ["nickName", $.str],
-  ["superPower", $.option($.str)],
-  ["luckyNumber", $.u8],
+const $person = $.withMetadata(
+  "$person",
+  null,
+  $.object(
+    ["name", $.str],
+    ["nickName", $.str],
+    ["superPower", $.option($.str)],
+    ["luckyNumber", $.u8],
+  ),
 );
 
-testCodec("object", $person, [
+testCodec($person, [
   {
     name: "Darrel",
     nickName: "The Durst",

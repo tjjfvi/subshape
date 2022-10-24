@@ -1,7 +1,7 @@
 import { Codec, createCodec } from "../common.ts";
 
 export const u8: Codec<number> = createCodec({
-  name: "u8",
+  name: "$.u8",
   _metadata: [int, false, 8] as any,
   _staticSize: 1,
   _encode(buffer, value) {
@@ -10,6 +10,7 @@ export const u8: Codec<number> = createCodec({
   _decode(buffer) {
     return buffer.array[buffer.index++]!;
   },
+  _inspect,
 });
 
 type NumMethodKeys = { [K in keyof DataView]: K extends `get${infer N}` ? N : never }[keyof DataView];
@@ -19,7 +20,7 @@ function _int<K extends NumMethodKeys>(size: number, key: K): Codec<NumMethodVal
   const getMethod = DataView.prototype["get" + key as never] as any;
   const setMethod = DataView.prototype["set" + key as never] as any;
   return createCodec({
-    name: `${key[0]!.toLowerCase}${size * 8}`,
+    name: "$.int",
     _metadata: [int, key.includes("Int"), size * 8] as any,
     _staticSize: size,
     _encode(buffer, value) {
@@ -31,6 +32,7 @@ function _int<K extends NumMethodKeys>(size: number, key: K): Codec<NumMethodVal
       buffer.index += size;
       return value;
     },
+    _inspect,
   });
 }
 
@@ -45,7 +47,7 @@ export const i64 = _int(8, "BigInt64");
 const _128 = (signed: boolean): Codec<bigint> => {
   const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
   return createCodec({
-    name: `${signed ? "i" : "u"}128`,
+    name: "$.int",
     _metadata: [int, signed, 128] as any,
     _staticSize: 16,
     _encode(buffer, value) {
@@ -59,6 +61,7 @@ const _128 = (signed: boolean): Codec<bigint> => {
       buffer.index += 16;
       return (a << 64n) | b;
     },
+    _inspect,
   });
 };
 
@@ -68,7 +71,7 @@ export const i128 = _128(true);
 const _256 = (signed: boolean): Codec<bigint> => {
   const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
   return createCodec({
-    name: `${signed ? "i" : "u"}256`,
+    name: "$.int",
     _metadata: [int, signed, 256] as any,
     _staticSize: 32,
     _encode(buffer, value) {
@@ -86,6 +89,7 @@ const _256 = (signed: boolean): Codec<bigint> => {
       buffer.index += 32;
       return (a << 192n) | (b << 128n) | (c << 64n) | d;
     },
+    _inspect,
   });
 };
 
@@ -99,4 +103,8 @@ export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<
 export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<any> {
   const key = `${signed ? "i" : "u"}${size}` as const;
   return { u8, i8, u16, i16, u32, i32, u64, i64, u128, i128, u256, i256 }[key];
+}
+
+function _inspect(this: Codec<any>) {
+  return this.name;
 }

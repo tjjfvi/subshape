@@ -10,13 +10,11 @@ const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map
 export const files = { lipsum: lipsum!, words: words!, cargoLock: cargoLock! };
 
 export function testCodec<T>(
-  name: string,
   codec: Codec<T>,
   values: NoInfer<T>[] | Record<string, NoInfer<T> | (() => NoInfer<T>)>,
   async?: boolean,
 ): void;
 export function testCodec<T>(
-  name: string,
   codec: Codec<T>,
   values: T[] | Record<string, T | (() => T)>,
   async = false,
@@ -31,7 +29,7 @@ export function testCodec<T>(
         iterableLimit: Infinity,
       })
       : key;
-    Deno.test(`${name} ${label}`, async (t) => {
+    Deno.test(`${Deno.inspect(codec)} ${label}`, async (t) => {
       if (typeof value === "function") {
         value = (value as () => T)();
       }

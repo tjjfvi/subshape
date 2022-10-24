@@ -10,7 +10,7 @@ export function iterable<T, I extends Iterable<T>>(
   },
 ): Codec<I> {
   return createCodec({
-    name: "iterable",
+    name: "$.iterable",
     _metadata: [iterable, { $el, calcLength, rehydrate }],
     _staticSize: compactU32._staticSize,
     _encode(buffer, value) {
@@ -42,22 +42,24 @@ export function iterable<T, I extends Iterable<T>>(
 
 export function set<T>($el: Codec<T>): Codec<Set<T>> {
   return withMetadata(
+    "$.set",
+    [set, $el],
     iterable({
       $el,
       calcLength: (set) => set.size,
       rehydrate: (values) => new Set(values),
     }),
-    [set, $el],
   );
 }
 
 export function map<K, V>($key: Codec<K>, $value: Codec<V>): Codec<Map<K, V>> {
   return withMetadata(
+    "$.map",
+    [map, $key, $value],
     iterable({
       $el: tuple($key, $value),
       calcLength: (map) => map.size,
       rehydrate: (values) => new Map(values),
     }),
-    [map, $key, $value],
   );
 }

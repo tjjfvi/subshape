@@ -3,7 +3,9 @@ import { Codec } from "../common.ts";
 export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
   let $codec: Codec<T>;
   return {
-    name: "deferred",
+    // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
+    __proto__: Codec.prototype,
+    name: "$.deferred",
     _metadata: [deferred, getCodec],
     _staticSize: 0,
     _encode(buffer, value) {
@@ -27,6 +29,10 @@ export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
     decode(buffer) {
       $codec ??= getCodec();
       return $codec.decode(buffer);
+    },
+    _inspect(inspect) {
+      // Use ._inspect manually so that Deno doesn't detect the circularity
+      return `$.deferred(() => ${getCodec()._inspect!(inspect)})`;
     },
   };
 }

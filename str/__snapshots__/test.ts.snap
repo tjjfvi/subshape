@@ -1,8 +1,8 @@
 export const snapshot = {};
 
-snapshot[`str "" 1`] = `00`;
+snapshot[`\$.str "" 1`] = `00`;
 
-snapshot[`str quickBrownFox 1`] = `
+snapshot[`\$.str quickBrownFox 1`] = `
 ac
 54
 68
@@ -49,7 +49,7 @@ ac
 67
 `;
 
-snapshot[`str lipsum 1`] = `
+snapshot[`\$.str lipsum 1`] = `
 f9
 06
 4c
@@ -500,7 +500,7 @@ f9
 0a
 `;
 
-snapshot[`str words 1`] = `
+snapshot[`\$.str words 1`] = `
 c5
 02
 62
@@ -682,7 +682,7 @@ c5
 0a
 `;
 
-snapshot[`str cargoLock 1`] = `
+snapshot[`\$.str cargoLock 1`] = `
 3d
 88
 23

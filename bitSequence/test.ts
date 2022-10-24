@@ -15,7 +15,7 @@ Deno.test("BitSequence", () => {
   assertEquals(sequence[121], undefined);
 });
 
-testCodec("bitSequence", $.bitSequence, [
+testCodec($.bitSequence, [
   $.BitSequence.from([]),
   $.BitSequence.from([0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1]),
 ]);
