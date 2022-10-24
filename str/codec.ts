@@ -1,5 +1,8 @@
 import { Codec, createCodec, DecodeError } from "../common.ts";
-import { compactU32 } from "../compact/codec.ts";
+import { compact } from "../compact/codec.ts";
+import { u32 } from "../int/codec.ts";
+
+const compactU32 = compact(u32);
 
 export const str: Codec<string> = createCodec({
   name: "$.str",

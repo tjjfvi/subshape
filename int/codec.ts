@@ -20,7 +20,7 @@ function _int<K extends NumMethodKeys>(size: number, key: K): Codec<NumMethodVal
   const getMethod = DataView.prototype["get" + key as never] as any;
   const setMethod = DataView.prototype["set" + key as never] as any;
   return createCodec({
-    name: "$.int",
+    name: `$.${key.includes("U") ? "u" : "i"}${size * 8}`,
     _metadata: [int, key.includes("Int"), size * 8] as any,
     _staticSize: size,
     _encode(buffer, value) {
@@ -47,7 +47,7 @@ export const i64 = _int(8, "BigInt64");
 const _128 = (signed: boolean): Codec<bigint> => {
   const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
   return createCodec({
-    name: "$.int",
+    name: `$.${signed ? "i" : "u"}128`,
     _metadata: [int, signed, 128] as any,
     _staticSize: 16,
     _encode(buffer, value) {
@@ -71,7 +71,7 @@ export const i128 = _128(true);
 const _256 = (signed: boolean): Codec<bigint> => {
   const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
   return createCodec({
-    name: "$.int",
+    name: `$.${signed ? "i" : "u"}256`,
     _metadata: [int, signed, 256] as any,
     _staticSize: 32,
     _encode(buffer, value) {

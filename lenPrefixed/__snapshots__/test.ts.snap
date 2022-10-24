@@ -2,12 +2,12 @@ export const snapshot = {};
 
 snapshot[`\$.lenPrefixed(\$.dummy(null)) null 1`] = `00`;
 
-snapshot[`\$.lenPrefixed(\$.array(\$.compactNumber)) empty 1`] = `
+snapshot[`\$.lenPrefixed(\$.array(\$.compact(\$.u32))) empty 1`] = `
 04
 00
 `;
 
-snapshot[`\$.lenPrefixed(\$.array(\$.compactNumber)) primes 1`] = `
+snapshot[`\$.lenPrefixed(\$.array(\$.compact(\$.u32))) primes 1`] = `
 28
 24
 08
@@ -21,7 +21,7 @@ snapshot[`\$.lenPrefixed(\$.array(\$.compactNumber)) primes 1`] = `
 74
 `;
 
-snapshot[`\$.lenPrefixed(\$.array(\$.compactNumber)) squares 1`] = `
+snapshot[`\$.lenPrefixed(\$.array(\$.compact(\$.u32))) squares 1`] = `
 69
 3a
 a1
@@ -3764,7 +3764,7 @@ e9
 00
 `;
 
-snapshot[`\$.lenPrefixed(\$.promise(\$.compactNumber)) 123 1`] = `
+snapshot[`\$.lenPrefixed(\$.promise(\$.compact(\$.u32))) 123 1`] = `
 08
 ed
 01

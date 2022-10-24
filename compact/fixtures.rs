@@ -1,10 +1,17 @@
-#[allow(unused_imports)]
-use parity_scale_codec::Compact;
+use parity_scale_codec::{Compact, CompactAs, Decode, Encode};
 
 macro_rules! n {
   ($x:literal $t:ty) => {
     Compact::<$t>((1 << ($x - 1)) - 1 + (1 << ($x - 1)))
   };
+}
+
+#[derive(Encode, Decode, CompactAs)]
+struct A(u32);
+
+#[derive(Encode, Decode, CompactAs)]
+struct B {
+  foo: u32,
 }
 
 crate::fixtures!(
@@ -26,4 +33,6 @@ crate::fixtures!(
   ((12 << 2) | 0b11u8, u64::MAX, u64::MAX),
   ((28 << 2) | 0b11u8, u128::MAX, u128::MAX),
   [u8::MAX; 68],
+  A(123),
+  B { foo: 456 },
 );
