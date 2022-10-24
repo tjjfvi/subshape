@@ -2,7 +2,7 @@ import { Codec, createCodec, DecodeError } from "../common.ts";
 
 export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
   return createCodec({
-    name: "option",
+    name: "$.option",
     _metadata: [option, $some],
     _staticSize: 1 + $some._staticSize,
     _encode(buffer, value) {

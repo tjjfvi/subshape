@@ -10,7 +10,7 @@ const $bar = $.object(["bar", $.u8]);
 
 const $foobar = $.spread($foo, $bar);
 
-testCodec("object", $foobar, [
+testCodec($foobar, [
   { _tag: "a", bar: 123 },
   { _tag: "b", x: 0, bar: 123 },
 ]);

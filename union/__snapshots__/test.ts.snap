@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`primitive "abc" 1`] = `
+snapshot[`\$primitive "abc" 1`] = `
 00
 0c
 61
@@ -8,7 +8,7 @@ snapshot[`primitive "abc" 1`] = `
 63
 `;
 
-snapshot[`primitive 1234567890n 1`] = `
+snapshot[`\$primitive 1234567890n 1`] = `
 02
 d2
 02
@@ -20,18 +20,18 @@ d2
 00
 `;
 
-snapshot[`primitive true 1`] = `
+snapshot[`\$primitive true 1`] = `
 03
 01
 `;
 
-snapshot[`primitive undefined 1`] = `04`;
+snapshot[`\$primitive undefined 1`] = `04`;
 
-snapshot[`primitive null 1`] = `06`;
+snapshot[`\$primitive null 1`] = `06`;
 
-snapshot[`abc { _tag: "A" } 1`] = `00`;
+snapshot[`\$abc { _tag: "A" } 1`] = `00`;
 
-snapshot[`abc { _tag: "B", B: "HELLO" } 1`] = `
+snapshot[`\$abc { _tag: "B", B: "HELLO" } 1`] = `
 01
 14
 48
@@ -41,7 +41,7 @@ snapshot[`abc { _tag: "B", B: "HELLO" } 1`] = `
 4f
 `;
 
-snapshot[`abc { _tag: "C", C: [ 255, 101010101n ] } 1`] = `
+snapshot[`\$abc { _tag: "C", C: [ 255, 101010101n ] } 1`] = `
 02
 ff
 00
@@ -57,7 +57,7 @@ b5
 00
 `;
 
-snapshot[`abc { _tag: "D", a: 101, b: 999n } 1`] = `
+snapshot[`\$abc { _tag: "D", a: 101, b: 999n } 1`] = `
 03
 65
 00
@@ -73,30 +73,30 @@ e7
 00
 `;
 
-snapshot[`names "Ross" 1`] = `00`;
+snapshot[`\$.stringUnion(names) "Ross" 1`] = `00`;
 
-snapshot[`names "Alisa" 1`] = `01`;
+snapshot[`\$.stringUnion(names) "Alisa" 1`] = `01`;
 
-snapshot[`names "Stefan" 1`] = `02`;
+snapshot[`\$.stringUnion(names) "Stefan" 1`] = `02`;
 
-snapshot[`names "Raoul" 1`] = `03`;
+snapshot[`\$.stringUnion(names) "Raoul" 1`] = `03`;
 
-snapshot[`names "James" 1`] = `04`;
+snapshot[`\$.stringUnion(names) "James" 1`] = `04`;
 
-snapshot[`names "David" 1`] = `05`;
+snapshot[`\$.stringUnion(names) "David" 1`] = `05`;
 
-snapshot[`names "Pierre" 1`] = `06`;
+snapshot[`\$.stringUnion(names) "Pierre" 1`] = `06`;
 
-snapshot[`interestingU8s "Min" 1`] = `00`;
+snapshot[`\$.stringUnion(interestingU8s) "Min" 1`] = `00`;
 
-snapshot[`interestingU8s "Unit" 1`] = `01`;
+snapshot[`\$.stringUnion(interestingU8s) "Unit" 1`] = `01`;
 
-snapshot[`interestingU8s "EvenPrime" 1`] = `02`;
+snapshot[`\$.stringUnion(interestingU8s) "EvenPrime" 1`] = `02`;
 
-snapshot[`interestingU8s "LargestPerfect" 1`] = `1c`;
+snapshot[`\$.stringUnion(interestingU8s) "LargestPerfect" 1`] = `1c`;
 
-snapshot[`interestingU8s "FirstUninteresting" 1`] = `81`;
+snapshot[`\$.stringUnion(interestingU8s) "FirstUninteresting" 1`] = `81`;
 
-snapshot[`interestingU8s "LargestSquare" 1`] = `e1`;
+snapshot[`\$.stringUnion(interestingU8s) "LargestSquare" 1`] = `e1`;
 
-snapshot[`interestingU8s "Max" 1`] = `ff`;
+snapshot[`\$.stringUnion(interestingU8s) "Max" 1`] = `ff`;

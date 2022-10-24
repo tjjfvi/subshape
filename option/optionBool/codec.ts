@@ -1,7 +1,7 @@
 import { Codec, createCodec } from "../../common.ts";
 
 export const optionBool: Codec<boolean | undefined> = createCodec({
-  name: "optionBool",
+  name: "$.optionBool",
   _metadata: null,
   _staticSize: 1,
   _encode(buffer, value) {

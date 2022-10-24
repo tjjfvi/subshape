@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`option(str) "HELLO!" 1`] = `
+snapshot[`\$.option(\$.str) "HELLO!" 1`] = `
 01
 18
 48
@@ -11,12 +11,12 @@ snapshot[`option(str) "HELLO!" 1`] = `
 21
 `;
 
-snapshot[`option(u8) 1 1`] = `
+snapshot[`\$.option(\$.u8) 1 1`] = `
 01
 01
 `;
 
-snapshot[`option(u32) 4294967295 1`] = `
+snapshot[`\$.option(\$.int) 4294967295 1`] = `
 01
 ff
 ff
@@ -24,14 +24,14 @@ ff
 ff
 `;
 
-snapshot[`option(bool) true 1`] = `
+snapshot[`\$.option(\$.bool) true 1`] = `
 01
 01
 `;
 
-snapshot[`option(bool) false 1`] = `
+snapshot[`\$.option(\$.bool) false 1`] = `
 01
 00
 `;
 
-snapshot[`option(bool) undefined 1`] = `00`;
+snapshot[`\$.option(\$.bool) undefined 1`] = `00`;

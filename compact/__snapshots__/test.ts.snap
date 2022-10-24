@@ -1,36 +1,36 @@
 export const snapshot = {};
 
-snapshot[`compactU32 0 1`] = `00`;
+snapshot[`\$.compactNumber 0 1`] = `00`;
 
-snapshot[`compactU32 1 1`] = `04`;
+snapshot[`\$.compactNumber 1 1`] = `04`;
 
-snapshot[`compactU32 63 1`] = `fc`;
+snapshot[`\$.compactNumber 63 1`] = `fc`;
 
-snapshot[`compactU32 255 1`] = `
+snapshot[`\$.compactNumber 255 1`] = `
 fd
 03
 `;
 
-snapshot[`compactU32 16383 1`] = `
+snapshot[`\$.compactNumber 16383 1`] = `
 fd
 ff
 `;
 
-snapshot[`compactU32 65535 1`] = `
+snapshot[`\$.compactNumber 65535 1`] = `
 fe
 ff
 03
 00
 `;
 
-snapshot[`compactU32 1073741823 1`] = `
+snapshot[`\$.compactNumber 1073741823 1`] = `
 fe
 ff
 ff
 ff
 `;
 
-snapshot[`compactU32 4294967295 1`] = `
+snapshot[`\$.compactNumber 4294967295 1`] = `
 03
 ff
 ff
@@ -38,23 +38,23 @@ ff
 ff
 `;
 
-snapshot[`compactU256 0n 1`] = `00`;
+snapshot[`\$.compactBigInt 0n 1`] = `00`;
 
-snapshot[`compactU256 63n 1`] = `fc`;
+snapshot[`\$.compactBigInt 63n 1`] = `fc`;
 
-snapshot[`compactU256 16383n 1`] = `
+snapshot[`\$.compactBigInt 16383n 1`] = `
 fd
 ff
 `;
 
-snapshot[`compactU256 1073741823n 1`] = `
+snapshot[`\$.compactBigInt 1073741823n 1`] = `
 fe
 ff
 ff
 ff
 `;
 
-snapshot[`compactU256 1099511627775n 1`] = `
+snapshot[`\$.compactBigInt 1099511627775n 1`] = `
 07
 ff
 ff
@@ -63,7 +63,7 @@ ff
 ff
 `;
 
-snapshot[`compactU256 18446744073709551615n 1`] = `
+snapshot[`\$.compactBigInt 18446744073709551615n 1`] = `
 13
 ff
 ff
@@ -75,7 +75,7 @@ ff
 ff
 `;
 
-snapshot[`compactU256 340282366920938463463374607431768211455n 1`] = `
+snapshot[`\$.compactBigInt 340282366920938463463374607431768211455n 1`] = `
 33
 ff
 ff
@@ -95,7 +95,7 @@ ff
 ff
 `;
 
-snapshot[`compactU256 340282366920938463463374607431768211455n 2`] = `
+snapshot[`\$.compactBigInt 340282366920938463463374607431768211455n 2`] = `
 33
 ff
 ff
@@ -115,7 +115,7 @@ ff
 ff
 `;
 
-snapshot[`compactU256 115792089237316195423570985008687907853269984665640564039457584007913129639935n 1`] = `
+snapshot[`\$.compactBigInt 115792089237316195423570985008687907853269984665640564039457584007913129639935n 1`] = `
 73
 ff
 ff
@@ -151,7 +151,7 @@ ff
 ff
 `;
 
-snapshot[`compactU256 224945689727159819140526925384299092943484855915095831655037778630591879033574393515952034305194542857496045531676044756160413302774714984450425759043258192756735n 1`] = `
+snapshot[`\$.compactBigInt 224945689727159819140526925384299092943484855915095831655037778630591879033574393515952034305194542857496045531676044756160413302774714984450425759043258192756735n 1`] = `
 ff
 ff
 ff

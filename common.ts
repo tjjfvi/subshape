@@ -1,5 +1,5 @@
 export interface Codec<T> {
-  name?: string;
+  name: string;
   /** Encodes a value into a new Uint8Array (throws if async) */
   encode: (value: T) => Uint8Array;
   /** Asynchronously encodes a value into a new Uint8Array */
@@ -24,7 +24,7 @@ export interface Codec<T> {
 export type AnyCodec = Codec<any> | Codec<never>;
 
 export function createCodec<T, A extends unknown[]>(
-  _codec: ThisType<Codec<T>> & Pick<Codec<T>, "_encode" | "_decode" | "_staticSize" | "name"> & {
+  _codec: ThisType<Codec<T>> & Pick<Codec<T>, "_encode" | "_decode" | "_staticSize" | "name" | "_inspect"> & {
     /**
      * If non-null, the function calling `createCodec` and the corresponding arguments.
      * `null` indicates that this codec is atomic (e.g. `$.str`).
@@ -32,8 +32,10 @@ export function createCodec<T, A extends unknown[]>(
     _metadata: [(...args: A) => Codec<T>, ...A] | null;
   },
 ): Codec<T> {
-  const { _staticSize, _encode, _decode, _metadata, name } = _codec;
+  const { _staticSize, _encode, _decode, _metadata, name, _inspect } = _codec;
   const codec: Codec<T> = {
+    // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
+    __proto__: Codec.prototype,
     name,
     _staticSize,
     _encode,
@@ -54,12 +56,13 @@ export function createCodec<T, A extends unknown[]>(
       const buf = new DecodeBuffer(array);
       return _decode.call(codec, buf);
     },
+    ..._inspect && { _inspect },
   };
   return codec;
 }
 
 export function createAsyncCodec<T, A extends unknown[]>(
-  _codec: ThisType<Codec<T>> & Pick<Codec<T>, "_decode" | "_staticSize" | "name"> & {
+  _codec: ThisType<Codec<T>> & Pick<Codec<T>, "_decode" | "_staticSize" | "name" | "_inspect"> & {
     _encodeAsync: (buffer: EncodeBuffer, value: T) => Promise<void>;
     /**
      * If non-null, the function calling `createCodec` and the corresponding arguments.
@@ -68,8 +71,10 @@ export function createAsyncCodec<T, A extends unknown[]>(
     _metadata: [(...args: A) => Codec<T>, ...A] | null;
   },
 ): Codec<T> {
-  const { _staticSize, _encodeAsync, _decode, _metadata, name } = _codec;
+  const { _staticSize, _encodeAsync, _decode, _metadata, name, _inspect } = _codec;
   const codec: Codec<T> = {
+    // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
+    __proto__: Codec.prototype,
     name,
     _staticSize,
     _encode(buffer, value) {
@@ -89,15 +94,25 @@ export function createAsyncCodec<T, A extends unknown[]>(
       const buf = new DecodeBuffer(array);
       return _decode.call(codec, buf);
     },
+    ..._inspect && { _inspect },
   };
   return codec;
 }
 
 export function withMetadata<T, A extends unknown[]>(
+  name: string,
+  _metadata: [(...args: A) => Codec<T>, ...A] | null,
   codec: Codec<T>,
-  metadata: [(...args: A) => Codec<T>, ...A],
 ): Codec<T> {
-  return { ...codec, _metadata: metadata };
+  const result: Codec<T> = {
+    // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
+    __proto__: Codec.prototype,
+    ...codec,
+    name,
+    ..._metadata && { _metadata },
+  };
+  if (!_metadata) delete result._metadata;
+  return result;
 }
 
 export type Native<T extends AnyCodec> = T extends Codec<infer U> ? U : never;
@@ -389,5 +404,40 @@ export class DecodeError extends CodecError {
   name = "DecodeError";
   constructor(codec: AnyCodec, readonly buffer: DecodeBuffer, message: string) {
     super(codec, message);
+  }
+}
+
+const codecInspectCtx = new Map<Codec<any>, number | null>();
+let codecInspectIdN = 0;
+const nodeCustomInspect = Symbol.for("nodejs.util.inspect.custom");
+const denoCustomInspect = Symbol.for("Deno.customInspect");
+export abstract class Codec<T> {
+  [nodeCustomInspect](_0: unknown, _1: unknown, inspect: (value: unknown) => string) {
+    return this._inspect!(inspect);
+  }
+
+  [denoCustomInspect](inspect: (value: unknown, opts: unknown) => string, opts: unknown) {
+    return this._inspect!((x) => inspect(x, opts));
+  }
+
+  // Properly handles circular codecs in the case of $.deferred
+  _inspect?(inspect: (value: unknown) => string): string {
+    let id = codecInspectCtx.get(this);
+    if (id !== undefined) {
+      if (id === null) {
+        codecInspectCtx.set(this, id = codecInspectIdN++);
+      }
+      return `$${id}`;
+    }
+    try {
+      codecInspectCtx.set(this, null);
+      const content = this.name
+        + (this._metadata ? `(${inspect(this._metadata.slice(1)).replace(/^\[(?: (.+) |(.+))\]$/s, "$1$2")})` : "");
+      id = codecInspectCtx.get(this);
+      return id !== null ? `$${id} = ${content}` : content;
+    } finally {
+      codecInspectCtx.delete(this);
+      if (codecInspectCtx.size === 0) codecInspectIdN = 0;
+    }
   }
 }

@@ -1,17 +1,17 @@
 export const snapshot = {};
 
-snapshot[`promise(u8) 0 1`] = `00`;
+snapshot[`\$.promise(\$.u8) 0 1`] = `00`;
 
-snapshot[`promise(u8) 255 1`] = `ff`;
+snapshot[`\$.promise(\$.u8) 255 1`] = `ff`;
 
-snapshot[`array(promise(u8)) empty 1`] = `00`;
+snapshot[`\$.array(\$.promise(\$.u8)) empty 1`] = `00`;
 
-snapshot[`array(promise(u8)) single 1`] = `
+snapshot[`\$.array(\$.promise(\$.u8)) single 1`] = `
 04
 00
 `;
 
-snapshot[`array(promise(u8)) sequential 1`] = `
+snapshot[`\$.array(\$.promise(\$.u8)) sequential 1`] = `
 01
 04
 00
@@ -272,7 +272,7 @@ fe
 ff
 `;
 
-snapshot[`array(promise(u8)) times13 1`] = `
+snapshot[`\$.array(\$.promise(\$.u8)) times13 1`] = `
 01
 04
 00
@@ -533,7 +533,7 @@ e6
 f3
 `;
 
-snapshot[`promise(array(promise(compactU32))) times13 1`] = `
+snapshot[`\$.promise(\$.array(\$.promise(\$.compactNumber))) times13 1`] = `
 01
 04
 00

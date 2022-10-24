@@ -24,7 +24,7 @@ class GraphDecodeCtx {
 }
 
 const $graph: $.Codec<Graph> = $.createCodec({
-  name: "graph",
+  name: "$graph",
   _metadata: null,
   _staticSize: $.compactU32._staticSize * 2 + $.str._staticSize,
   _encode(buffer, value) {
@@ -67,4 +67,8 @@ c.to = [a, e];
 e.to = [a, c, f];
 f.to = [a, b, c, d, e, f];
 
-testCodec("graph", $graph, { a, b, c, d, e, f });
+testCodec($graph, { a, b, c, d, e, f });
+
+Deno.test("inspect", () => {
+  assertEquals(Deno.inspect($.array($.tuple($.u8, $.str))), "$.array($.tuple($.u8, $.str))");
+});

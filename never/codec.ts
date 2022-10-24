@@ -1,7 +1,7 @@
 import { Codec, createCodec, DecodeError, EncodeError } from "../common.ts";
 
 export const never: Codec<never> = createCodec({
-  name: "never",
+  name: "$.never",
   _metadata: null,
   _staticSize: 0,
   _encode(value) {

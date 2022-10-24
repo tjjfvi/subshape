@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`u8[] [ 1, 2, 3, 4, 5 ] 1`] = `
+snapshot[`\$.array(\$.u8) [ 1, 2, 3, 4, 5 ] 1`] = `
 14
 01
 02
@@ -9,7 +9,7 @@ snapshot[`u8[] [ 1, 2, 3, 4, 5 ] 1`] = `
 05
 `;
 
-snapshot[`u8[] [ 6, 7, 8, 9, 10 ] 1`] = `
+snapshot[`\$.array(\$.u8) [ 6, 7, 8, 9, 10 ] 1`] = `
 14
 06
 07
@@ -18,7 +18,7 @@ snapshot[`u8[] [ 6, 7, 8, 9, 10 ] 1`] = `
 0a
 `;
 
-snapshot[`u8[] [ 11, 12, 13, 14, 15 ] 1`] = `
+snapshot[`\$.array(\$.u8) [ 11, 12, 13, 14, 15 ] 1`] = `
 14
 0b
 0c
@@ -27,7 +27,7 @@ snapshot[`u8[] [ 11, 12, 13, 14, 15 ] 1`] = `
 0f
 `;
 
-snapshot[`u8[] [ 16, 17, 18, 19, 20, 21 ] 1`] = `
+snapshot[`\$.array(\$.u8) [ 16, 17, 18, 19, 20, 21 ] 1`] = `
 18
 10
 11
@@ -37,14 +37,14 @@ snapshot[`u8[] [ 16, 17, 18, 19, 20, 21 ] 1`] = `
 15
 `;
 
-snapshot[`[u8; 1] [ 1 ] 1`] = `01`;
+snapshot[`\$.sizedArray(\$.u8, 1) [ 1 ] 1`] = `01`;
 
-snapshot[`[u8; 2] [ 1, 1 ] 1`] = `
+snapshot[`\$.sizedArray(\$.u8, 2) [ 1, 1 ] 1`] = `
 01
 01
 `;
 
-snapshot[`[u8; 100] [
+snapshot[`\$.sizedArray(\$.u8, 100) [
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -155,7 +155,7 @@ snapshot[`[u8; 100] [
 01
 `;
 
-snapshot[`uint8Array Uint8Array(5) [ 1, 2, 3, 4, 5 ] 1`] = `
+snapshot[`\$.uint8Array Uint8Array(5) [ 1, 2, 3, 4, 5 ] 1`] = `
 14
 01
 02
@@ -164,7 +164,7 @@ snapshot[`uint8Array Uint8Array(5) [ 1, 2, 3, 4, 5 ] 1`] = `
 05
 `;
 
-snapshot[`uint8Array Uint8Array(5) [ 6, 7, 8, 9, 10 ] 1`] = `
+snapshot[`\$.uint8Array Uint8Array(5) [ 6, 7, 8, 9, 10 ] 1`] = `
 14
 06
 07
@@ -173,7 +173,7 @@ snapshot[`uint8Array Uint8Array(5) [ 6, 7, 8, 9, 10 ] 1`] = `
 0a
 `;
 
-snapshot[`uint8Array Uint8Array(5) [ 11, 12, 13, 14, 15 ] 1`] = `
+snapshot[`\$.uint8Array Uint8Array(5) [ 11, 12, 13, 14, 15 ] 1`] = `
 14
 0b
 0c
@@ -182,7 +182,7 @@ snapshot[`uint8Array Uint8Array(5) [ 11, 12, 13, 14, 15 ] 1`] = `
 0f
 `;
 
-snapshot[`uint8Array Uint8Array(6) [ 16, 17, 18, 19, 20, 21 ] 1`] = `
+snapshot[`\$.uint8Array Uint8Array(6) [ 16, 17, 18, 19, 20, 21 ] 1`] = `
 18
 10
 11
@@ -192,14 +192,14 @@ snapshot[`uint8Array Uint8Array(6) [ 16, 17, 18, 19, 20, 21 ] 1`] = `
 15
 `;
 
-snapshot[`sizedUint8Array Uint8Array(4) [ 0, 0, 0, 0 ] 1`] = `
+snapshot[`\$.sizedUint8Array(4) Uint8Array(4) [ 0, 0, 0, 0 ] 1`] = `
 00
 00
 00
 00
 `;
 
-snapshot[`sizedUint8Array Uint8Array(4) [ 1, 2, 3, 4 ] 1`] = `
+snapshot[`\$.sizedUint8Array(4) Uint8Array(4) [ 1, 2, 3, 4 ] 1`] = `
 01
 02
 03

@@ -1,14 +1,13 @@
-import { Codec } from "../common.ts";
+import { Codec, withMetadata } from "../common.ts";
 import { union } from "../union/codec.ts";
 
 export function result<Ok, Err extends Error>(
   $ok: Codec<Ok>,
   $err: Codec<Err>,
-) {
-  return Object.assign(
+): Codec<Ok | Err> {
+  return withMetadata(
+    "$.result",
+    [result, $ok, $err],
     union((value) => value instanceof Error ? 1 : 0, [$ok, $err]),
-    {
-      _metadata: [result, $ok, $err],
-    },
   );
 }

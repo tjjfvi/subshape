@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`object { name: "Darrel", nickName: "The Durst", superPower: "telekinesis", luckyNumber: 9 } 1`] = `
+snapshot[`\$person { name: "Darrel", nickName: "The Durst", superPower: "telekinesis", luckyNumber: 9 } 1`] = `
 18
 44
 61
@@ -34,7 +34,7 @@ snapshot[`object { name: "Darrel", nickName: "The Durst", superPower: "telekines
 09
 `;
 
-snapshot[`object { name: "Michael", nickName: "Mike", superPower: undefined, luckyNumber: 7 } 1`] = `
+snapshot[`\$person { name: "Michael", nickName: "Mike", superPower: undefined, luckyNumber: 7 } 1`] = `
 1c
 4d
 69
