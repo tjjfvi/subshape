@@ -227,7 +227,7 @@ ed
 01
 `;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) { foo: 345 } 1`] = `
-65
-05
+snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) { foo: 456 } 1`] = `
+21
+07
 `;
