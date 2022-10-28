@@ -1,8 +1,8 @@
 /// <reference lib="deno.unstable"/>
 
-import { assertEquals } from "std/testing/asserts.ts";
-import { assertSnapshot } from "std/testing/snapshot.ts";
-import { Codec } from "./common.ts";
+import { assertEquals } from "https://deno.land/std@0.161.0/testing/asserts.ts";
+import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts";
+import { Codec } from "./common/mod.ts";
 
 const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
   () => Deno.readTextFile(fileName)
@@ -65,3 +65,5 @@ export async function assertThrowsSnapshot(t: Deno.TestContext, fn: () => unknow
   }
   throw new Error("Expected function to throw");
 }
+
+export { assertEquals, assertSnapshot };

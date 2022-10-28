@@ -1,0 +1,14 @@
+import { Codec, createCodec } from "../common/mod.ts";
+
+export const optionBool: Codec<boolean | undefined> = createCodec({
+  name: "$.optionBool",
+  _metadata: null,
+  _staticSize: 1,
+  _encode(buffer, value) {
+    buffer.array[buffer.index++] = value === undefined ? 0 : 1 + +!value;
+  },
+  _decode(buffer) {
+    const byte = buffer.array[buffer.index++]!;
+    return byte === 0 ? undefined : !(byte - 1);
+  },
+});
