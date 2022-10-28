@@ -4,8 +4,6 @@ export class CodecVisitor<R> {
   #fallback?: <T>(codec: Codec<T>) => R;
   #visitors = new Map<Codec<any> | Function, (codec: Codec<any>, ...args: any[]) => R>();
 
-  constructor() {}
-
   add<T, A extends unknown[]>(codec: (...args: A) => Codec<T>, fn: (codec: Codec<T>, ...args: A) => R): this;
   add<T>(codec: Codec<T>, fn: (codec: Codec<T>) => R): this;
   add(codec: Codec<any> | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
