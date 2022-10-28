@@ -1,6 +1,6 @@
 /// <reference lib="deno.unstable"/>
 
-import { assertEquals } from "https://deno.land/std@0.161.0/testing/asserts.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testing/asserts.ts";
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts";
 import { Codec } from "./common/mod.ts";
 
@@ -66,4 +66,4 @@ export async function assertThrowsSnapshot(t: Deno.TestContext, fn: () => unknow
   throw new Error("Expected function to throw");
 }
 
-export { assertEquals, assertSnapshot };
+export { assertEquals, assertSnapshot, assertThrows };
