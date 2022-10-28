@@ -1,5 +1,5 @@
-import { emptyDir } from "std/fs/mod.ts";
-import { build } from "x/dnt/mod.ts";
+import { emptyDir } from "https://deno.land/std@0.161.0/fs/mod.ts";
+import { build } from "https://deno.land/x/dnt@0.31.0/mod.ts";
 
 await emptyDir("target/npm_pkg");
 

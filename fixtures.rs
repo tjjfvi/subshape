@@ -3,55 +3,55 @@
 use itertools::Itertools;
 use std::{fs, path::Path};
 
-#[path = "./array/fixtures.rs"]
+#[path = "./codecs/fixtures/array.rs"]
 pub mod array_fixtures;
 
-#[path = "./bool/fixtures.rs"]
+#[path = "./codecs/fixtures/bool.rs"]
 pub mod bool_fixtures;
 
-#[path = "./compact/fixtures.rs"]
+#[path = "./codecs/fixtures/compact.rs"]
 pub mod compact_fixtures;
 
-#[path = "./deferred/fixtures.rs"]
+#[path = "./codecs/fixtures/deferred.rs"]
 pub mod deferred_fixtures;
 
-#[path = "./int/fixtures.rs"]
+#[path = "./codecs/fixtures/int.rs"]
 pub mod int_fixtures;
 
-#[path = "./iterable/fixtures.rs"]
+#[path = "./codecs/fixtures/iterable.rs"]
 pub mod iterable_fixtures;
 
-#[path = "./lenPrefixed/fixtures.rs"]
+#[path = "./codecs/fixtures/lenPrefixed.rs"]
 pub mod len_prefixed_fixtures;
 
-#[path = "./never/fixtures.rs"]
+#[path = "./codecs/fixtures/never.rs"]
 pub mod never_fixtures;
 
-#[path = "./option/fixtures.rs"]
+#[path = "./codecs/fixtures/option.rs"]
 pub mod option_fixtures;
 
-#[path = "./option/optionBool/fixtures.rs"]
+#[path = "./codecs/fixtures/optionBool.rs"]
 pub mod option_bool_fixtures;
 
-#[path = "./object/fixtures.rs"]
+#[path = "./codecs/fixtures/object.rs"]
 pub mod object_fixtures;
 
-#[path = "./result/fixtures.rs"]
+#[path = "./codecs/fixtures/result.rs"]
 pub mod result_fixtures;
 
-#[path = "./spread/fixtures.rs"]
+#[path = "./codecs/fixtures/spread.rs"]
 pub mod spread_fixtures;
 
-#[path = "./str/fixtures.rs"]
+#[path = "./codecs/fixtures/str.rs"]
 pub mod str_fixtures;
 
-#[path = "./tuple/fixtures.rs"]
+#[path = "./codecs/fixtures/tuple.rs"]
 pub mod tuple_fixtures;
 
-#[path = "./union/fixtures.rs"]
+#[path = "./codecs/fixtures/union.rs"]
 pub mod union_fixtures;
 
-#[path = "./bitSequence/fixtures.rs"]
+#[path = "./codecs/fixtures/bitSequence.rs"]
 pub mod bit_sequence;
 
 pub(crate) const LIPSUM: &'static str = include_str!("lipsum.txt");
@@ -76,11 +76,21 @@ pub(crate) fn test_fixtures(
   path: &'static str,
   values: Vec<(&'static str, Vec<u8>)>,
 ) {
+  let name = Path::new(path)
+    .file_name()
+    .unwrap()
+    .to_str()
+    .unwrap()
+    .split(".")
+    .next()
+    .unwrap();
   let snapshot = fs::read_to_string(
     Path::new(path)
       .parent()
       .unwrap()
-      .join("./__snapshots__/test.ts.snap"),
+      .parent()
+      .unwrap()
+      .join("./test/__snapshots__/".to_string() + name + ".test.ts.snap"),
   )
   .unwrap();
   let entries: Vec<(&str, Vec<u8>)> = snapshot
