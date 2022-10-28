@@ -15,7 +15,7 @@ testCodec($.result($.str, $strError), [
   new StrErr("err"),
 ]);
 
-Deno.test("option roundtrip error", async () => {
+Deno.test("result roundtrip error", async () => {
   assertThrows(() => $.result($.result($.u8, $strError), $strError));
   assertThrows(
     () =>
