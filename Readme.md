@@ -1,10 +1,10 @@
 # SCALE Codecs for JavaScript and TypeScript
 
-A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/reference/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. These types are described [below](#types).
+A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/reference/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety.
 
 ## Setup
 
-If you're using [Deno](https://deno.land/), simply import via the `denoland/x` specifier.
+If you're using [Deno](https://deno.land/), simply import via the `deno.land/x` specifier.
 
 ```ts
 import * as $ from "https://deno.land/x/scale/mod.ts";
@@ -33,20 +33,20 @@ import * as $ from "parity-scale-codec";
 ```ts
 import * as $ from "https://deno.land/x/scale/mod.ts";
 
-const $person = $.object(
-  ["name", $.str],
-  ["nickName", $.str],
-  ["superPower", $.option($.str)],
+const $superhero = $.object(
+  ["pseudonym", $.str],
+  ["secretIdentity", $.option($.str)],
+  ["superpowers", $.array($.str)],
 );
 
 const valueToEncode = {
-  name: "Magdalena",
-  nickName: "Magz",
-  superPower: "Hydrokinesis",
+  pseudonym: "Spider-Man",
+  secretIdentity: "Peter Parker",
+  superpowers: ["does whatever a spider can"],
 };
 
-const encodedBytes: Uint8Array = $person.encode(valueToEncode);
-const decodedValue: Person = $person.decode(encodedBytes);
+const encodedBytes: Uint8Array = $superhero.encode(valueToEncode);
+const decodedValue: Superhero = $superhero.decode(encodedBytes);
 
 assertEquals(decodedValue, valueToEncode);
 ```
@@ -54,52 +54,44 @@ assertEquals(decodedValue, valueToEncode);
 To extract the JS-native TypeScript type from a given codec, use the `Native` utility type.
 
 ```ts
-type Person = $.Native<typeof $person>;
-/* {
-  name: string;
-  nickName: string;
-  superPower: string | undefined;
-} */
+type Superhero = $.Native<typeof $superhero>;
+// {
+//   pseudonym: string;
+//   secretIdentity: string | undefined;
+//   superpowers: string[];
+// }
 ```
 
-In cases where codecs are exceptionally large, we may want to spare the TS checker of extra work.
+You can also explicitly type the codec, which will validate that the inferred type aligns with the expected.
 
 ```ts
-interface Person {
-  name: string;
-  nickName: string;
-  superPower: string | undefined;
+interface Superhero {
+  pseudonym: string;
+  secretIdentity: string | undefined;
+  superpowers: string[];
 }
 
-const $person: Codec<Person> = $.object(
-  ["name", $.str],
-  ["nickName", $.str],
-  ["superPower", $.option($.str)],
+const $superhero: Codec<Superhero> = $.object(
+  ["pseudonym", $.str],
+  ["secretIdentity", $.option($.str)],
+  ["superpowers", $.array($.str)],
+);
+
+// @ts-expect-error
+//   Type 'Codec<{ pseudonym: string; secretIdentity: string | undefined; }>' is not assignable to type 'Codec<Superhero>'.
+//     The types returned by 'decode(...)' are incompatible between these types.
+//       Type '{ pseudonym: string; secretIdentity: string | undefined; }' is not assignable to type 'Superhero'.
+const $plebeianHero: Codec<Superhero> = $.object(
+  ["pseudonym", $.str],
+  ["secretIdentity", $.option($.str)],
 );
 ```
 
-This has the added benefit of producing type errors if the codec does not directly mirror the TS type.
-
-```ts
-const $person: Codec<Person> = $.object(
-  //  ~~~~~~~
-  //  ^ error (message below)
-  ["nickName", $.str],
-  ["superPower", $.option($.str)],
-);
-```
-
-Hovering over the error squigglies will reveal the following diagnostic.
-
-```
-Type 'Codec<{ nickName: string; superPower: string | undefined; }>' is not assignable to type 'Codec<Person>'.
-  The types returned by 'decode(...)' are incompatible between these types.
-    Type '{ nickName: string; superPower: string | undefined; }' is not assignable to type 'Person'.
-```
+Further examples can be found in the [`examples`](https://github.com/paritytech/parity-scale-codec-ts/tree/main/examples) directory.
 
 ## Codec Naming
 
-This library adopts a convention of denoting codecs with a `$` – `$.foo` for built-in codec, and `$foo` for user-defined codecs. This makes codecs easily distinguishable from other values, and makes it easier to have codecs in scope with other variables:
+This library adopts a convention of denoting codecs with a `$` – `$.foo` for built-in codecs, and `$foo` for user-defined codecs. This makes codecs easily distinguishable from other values, and makes it easier to have codecs in scope with other variables:
 
 ```ts
 interface Person { ... }
@@ -113,262 +105,19 @@ The main other library this could possibly clash with is jQuery, and its usage h
 
 While we recommend following this convention for consistency, you can, of course, adopt an alternative convention if the `$` is problematic – `$.foo` can easily become `s.foo` or `scale.foo` with an alternate import name.
 
-## Types
+## Asynchronous Encoding
 
-### Primitives
+Some codecs require asynchronous encoding – namely `$.promise` and any custom codecs created with `createAsyncCodec`. Calling `.encode()` on a codec will throw if it or another codec it calls is asynchronous. In this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any codec; if it is a synchronous codec, it will simply resolve immediately.
 
-```ts
-$.bool; // Codec<boolean>
+Asynchronous decoding is not supported.
 
-$.u8; // Codec<number>
-$.i8; // Codec<number>
-$.u16; // Codec<number>
-$.i16; // Codec<number>
-$.u32; // Codec<number>
-$.i32; // Codec<number>
-
-$.u64; // Codec<bigint>
-$.i64; // Codec<bigint>
-$.u128; // Codec<bigint>
-$.i128; // Codec<bigint>
-$.u256; // Codec<bigint>
-$.i256; // Codec<bigint>
-
-// https://docs.substrate.io/reference/scale-codec/#fnref-1
-$.compact($.u8); // Codec<number>
-$.compact($.u16); // Codec<number>
-$.compact($.u32); // Codec<number>
-$.compact($.u64); // Codec<bigint>
-$.compact($.u128); // Codec<bigint>
-$.compact($.u256); // Codec<bigint>
-
-$.str; // Codec<string>
-
-$.dummy(foo); // Codec<typeof foo> // (encodes 0 bytes)
-
-$.never; // Codec<never> // (throws if reached)
-```
-
-### Arrays
-
-```ts
-$.array($.u8); // Codec<number[]>
-
-$.sizedArray($.u8, 2); // Codec<[number, number]>
-
-$.uint8Array; // Codec<Uint8Array>
-
-$.sizedUint8Array(12); // Codec<Uint8Array>
-
-$.tuple($.bool, $.u8, $.str); // Codec<[boolean, number, string]>
-
-$.bitSequence; // Codec<BitSequence> // (like boolean[] but backed by an ArrayBuffer)
-```
-
-### Objects
-
-```ts
-const $person = $.object(
-  ["name", $.str],
-  ["nickName", $.str],
-  ["superPower", $.option($.str)],
-);
-
-$person; /* Codec<{
-  name: string;
-  nickName: string;
-  superPower: string | undefined;
-}> */
-```
-
-### Combined Objects
-
-```ts
-const $foo = $.taggedUnion("_tag", [
-  ["a"],
-  ["b", ["x", $.u8]],
-]);
-
-const $bar = $.object(["bar", $.u8]);
-
-const $foobar = $.spread($foo, $bar);
-
-$foobar; /* Codec<
-  | { _tag: "a"; bar: number }
-  | { _tag: "b"; x: number; bar: number }
-> */
-```
-
-### Collections
-
-```ts
-$.set($.u8); // Codec<Set<number>>
-
-$.map($.str, $.u8); // Codec<Map<string, number>>
-```
-
-### Options
-
-```ts
-$.option($.u8); // Codec<number | undefined>
-$.optionBool; // Codec<boolean | undefined> (stores as single byte; see OptionBool in Rust impl)
-```
-
-### Unions
-
-```ts
-const $strOrNum = $.union(
-  (value) => { // Discriminate
-    if (typeof value === "string") {
-      return 0;
-    } else if (typeof value === "number") {
-      return 1;
-    } else {
-      throw new Error("Unreachable");
-    }
-  },
-  [
-    $.str, // Member 0
-    $.u8, // Member 1
-  ],
-);
-
-$strOrNum; // Codec<string | number>
-```
-
-### Tagged Unions
-
-```ts
-const $pet = $.taggedUnion("_tag", [
-  ["dog", ["bark", $.str]],
-  ["cat", ["purr", $.str]],
-]);
-
-$pet; /* Codec<
-  | { _tag: "dog"; bark: string }
-  | { _tag: "cat"; purr: string }
-> */
-```
-
-### String Unions
-
-```ts
-const $dinosaur = $.stringUnion([
-  "Liopleurodon",
-  "Kosmoceratops",
-  "Psittacosaurus",
-]);
-
-$dinosaur; // Codec<"Liopleurodon" | "Kosmoceratops" | "Psittacosaurus">
-```
-
-```ts
-enum Dinosaur {
-  Liopleurodon = "Liopleurodon",
-  Kosmoceratops = "Kosmoceratops",
-  Psittacosaurus = "Psittacosaurus",
-}
-
-const $dinosaur = $.stringUnion([
-  Dinosaur.Liopleurodon,
-  Dinosaur.Kosmoceratops,
-  Dinosaur.Psittacosaurus,
-]);
-
-$dinosaur; // Codec<Dinosaur>
-```
-
-### Numeric Enums
-
-```ts
-enum Dinosaur {
-  Liopleurodon,
-  Kosmoceratops,
-  Psittacosaurus,
-}
-
-const $dinosaur = $.u8 as $.Codec<Dinosaur>;
-
-$dinosaur; // Codec<Dinosaur>
-```
-
-### Instance
-
-Sometimes, you may want to instantiate a class with the decoded data / encode data from a class instance. In these situations, we can leverage the `instance` codec factory. A common use case for `instance` codecs is `Error` subtypes.
-
-```ts
-class MyError extends Error {
-  constructor(
-    readonly code: number,
-    readonly message: string,
-    readonly payload: {
-      a: string;
-      b: number;
-      c: boolean;
-    },
-  ) {
-    super();
-  }
-}
-
-const $myError = $.instance(
-  MyError,
-  ["code", $.u8],
-  ["message", $.str],
-  [
-    "payload",
-    $.object(
-      ["a", $.str],
-      ["b", $.u8],
-      ["c", $.bool],
-    ),
-  ],
-);
-
-$myError; // Codec<MyError>
-```
-
-### Results
-
-`Result`s are initialized with an `Ok` codec and an `Error` instance codec.
-
-```ts
-class MyError {
-  constructor(readonly message: string) {}
-}
-
-const $myError = $.instance(MyError, ["message", $.str]);
-
-const $myResult = $.result($.str, $myError);
-
-$myResult; // Codec<string | MyError>
-```
-
-### Recursive Codecs
-
-You can use `$.deferred` to write recursive codecs:
-
-```ts
-type LinkedList = {
-  value: number;
-  next: LinkedList;
-} | undefined;
-
-const $linkedList: $.Codec<LinkedList> = $.option($.object(
-  ["value", $.u8],
-  ["next", $.option($.deferred(() => $linkedList))],
-));
-```
-
-Note that you must explicitly type the codec, as TS cannot generally infer recursive types.
-
-### Custom Codecs
+## Custom Codecs
 
 If your encoding/decoding logic is more complicated, you can create custom codecs with `createCodec`:
 
 ```ts
 const $foo = createCodec<Foo>({
-  name: "foo",
+  name: "$foo",
   _metadata: null, // see jsdoc
 
   // A static estimation of the encoded size, in bytes.
@@ -391,6 +140,8 @@ const $foo = createCodec<Foo>({
     // either by including it in `_staticSize` or by calling `buffer.pushAlloc()`.
     // Note that you should use `_encode` and not `encode`.
 
+    // See the `EncodeBuffer` class for information on other methods.
+
     // ...
   },
 
@@ -406,38 +157,4 @@ const $foo = createCodec<Foo>({
     return value;
   },
 });
-```
-
-## Asynchronous Encoding
-
-Some codecs require asynchronous encoding -- namely `$.promise` and any custom codecs created with `createAsyncCodec`. Calling `.encode()` on a codec will throw if it or another codec it calls is asynchronous -- in this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any codec -- if it is a synchronous codec, it will simply resolve immediately.
-
-Asynchronous decoding is not supported.
-
-## Metadata
-
-Codecs keep metadata recording their construction. You can use a `CodecVisitor` to consume this metadata:
-
-```ts
-const visitor = new $.CodecVisitor<string>();
-
-// you can pass a plain codec:
-visitor.add($.u8, () => "$.u8");
-
-// or a codec factory:
-visitor.add($.int, (_codec, signed, size) => `$.int(${signed}, ${size})`);
-//                          ^^^^^^^^^^^^
-//          the arguments that were passed to the factory
-
-// you can handle generic factories like so:
-visitor.generic(<T>() => {
-  visitor.add($.array<T>, (_, $el) => `$.array(${visitor.visit($el)})`);
-});
-
-// if none of the other visitors match:
-visitor.fallback((_codec) => "?");
-
-visitor.visit($.array($.u8)); // "$.array($.u8)"
-visitor.visit($.u16); // "$.int(false, 16)"
-visitor.visit($.array($.str)); // "$.array(?)"
 ```
