@@ -9,8 +9,7 @@ await build({
   entryPoints: ["mod.ts"],
   outDir: "target/npm_pkg",
   package: {
-    // TODO: rename if/when we get access to `scale` package name
-    name: "parity-scale-codec",
+    name: "scale-codec",
     version: Deno.args[0]!,
     description: DESCRIPTION,
     sideEffects: false,

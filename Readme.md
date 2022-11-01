@@ -13,13 +13,13 @@ import * as $ from "https://deno.land/x/scale/mod.ts";
 If you're using [Node](https://nodejs.org/), install as follows.
 
 ```
-npm install parity-scale-codec
+npm install scale-codec
 ```
 
 Then import as follows.
 
 ```ts
-import * as $ from "parity-scale-codec";
+import * as $ from "scale-codec";
 ```
 
 ## Usage
