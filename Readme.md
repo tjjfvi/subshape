@@ -87,7 +87,7 @@ const $plebeianHero: Codec<Superhero> = $.object(
 );
 ```
 
-Further examples can be found in the [`examples`](https://github.com/paritytech/parity-scale-codec-ts/tree/main/examples) directory.
+Further examples can be found in the [`examples`](https://github.com/paritytech/scale-ts/tree/main/examples) directory.
 
 ## Codec Naming
 
