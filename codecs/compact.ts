@@ -1,4 +1,3 @@
-import { _createWalkEntry } from "https://deno.land/std@0.139.0/fs/walk.ts";
 import { Codec, CodecVisitor, createCodec, DecodeError, withMetadata } from "../common/mod.ts";
 import { dummy } from "./dummy.ts";
 import { u128, u16, u256, u32, u64, u8 } from "./int.ts";
@@ -108,7 +107,7 @@ compactVisitor.add(u64, () => compactU64);
 compactVisitor.add(u128, () => compactU128);
 compactVisitor.add(u256, () => compactU256);
 
-compactVisitor.add(dummy, (codec) => codec);
+compactVisitor.add(dummy<any>, (codec) => codec);
 
 compactVisitor.add(tuple<any[]>, (codec, ...entries) => {
   if (entries.length === 0) return codec;

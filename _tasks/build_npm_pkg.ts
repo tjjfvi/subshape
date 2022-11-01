@@ -24,8 +24,8 @@ await build({
   compilerOptions: {
     sourceMap: true,
     target: "ES2021",
+    lib: ["es2021", "dom"], // https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/60038
   },
-  importMap: "import_map.json",
   test: false,
 });
 
