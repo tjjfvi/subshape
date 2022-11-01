@@ -14,7 +14,7 @@ await build({
     version: Deno.args[0]!,
     description: DESCRIPTION,
     sideEffects: false,
-    repository: "github:paritytech/parity-scale-codec-ts",
+    repository: "github:paritytech/scale-ts",
   },
   shims: {
     deno: {
