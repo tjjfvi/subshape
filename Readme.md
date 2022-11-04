@@ -116,9 +116,8 @@ Asynchronous decoding is not supported.
 If your encoding/decoding logic is more complicated, you can create custom codecs with `createCodec`:
 
 ```ts
-const $foo = createCodec<Foo>({
-  name: "$foo",
-  _metadata: null, // see jsdoc
+const $foo = $.createCodec<Foo>({
+  _metadata: $.metadata("$foo"),
 
   // A static estimation of the encoded size, in bytes.
   // This can be either an under- or over- estimate.

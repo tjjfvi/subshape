@@ -1,13 +1,12 @@
-import { AnyCodec, Codec, createCodec } from "../common/mod.ts";
+import { AnyCodec, Codec, createCodec, metadata } from "../common/mod.ts";
 
 export type NativeTuple<ElCodecs extends AnyCodec[]> = {
   [I in keyof ElCodecs]: ElCodecs[I] extends Codec<infer T> ? T : never;
 };
 
 export function tuple<T extends AnyCodec[]>(...codecs: [...T]): Codec<NativeTuple<T>> {
-  return createCodec<NativeTuple<T>, [...T]>({
-    name: "$.tuple",
-    _metadata: [tuple, ...codecs],
+  return createCodec({
+    _metadata: metadata("$.tuple", tuple<T>, ...codecs),
     _staticSize: codecs.map((x) => x._staticSize).reduce((a, b) => a + b, 0),
     _encode(buffer, value) {
       for (let i = 0; i < codecs.length; i++) {

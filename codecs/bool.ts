@@ -1,8 +1,7 @@
-import { Codec, createCodec } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 
 export const bool: Codec<boolean> = createCodec({
-  name: "$.bool",
-  _metadata: null,
+  _metadata: metadata("$.bool"),
   _staticSize: 1,
   _encode(buffer, value) {
     buffer.array[buffer.index++] = +value;

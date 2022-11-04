@@ -1,12 +1,11 @@
-import { Codec, createCodec, DecodeError } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, metadata } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
 const compactU32 = compact(u32);
 
 export const str: Codec<string> = createCodec({
-  name: "$.str",
-  _metadata: null,
+  _metadata: metadata("$.str"),
   _staticSize: compactU32._staticSize,
   _encode(buffer, value) {
     const array = new TextEncoder().encode(value);

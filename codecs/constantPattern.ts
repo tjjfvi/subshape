@@ -1,12 +1,11 @@
-import { Codec, createCodec, DecodeError, EncodeError } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, EncodeError, metadata } from "../common/mod.ts";
 
 export function constantPattern<T>(value: T, codec: Pick<Codec<T>, "encode">): Codec<T>;
 export function constantPattern<T>(value: T, pattern: Uint8Array): Codec<T>;
 export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8Array): Codec<T> {
   const pattern = c instanceof Uint8Array ? c : c.encode(value);
   return createCodec({
-    name: "$.constantPattern",
-    _metadata: [constantPattern as never, value, pattern],
+    _metadata: metadata("$.constantPattern", constantPattern<T>, value, pattern),
     // We could set `_staticSize` to `pattern.length`, but in this case it will
     // usually more efficient to insert `pattern` dynamically, rather than
     // manually copy the bytes.

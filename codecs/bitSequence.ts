@@ -1,4 +1,4 @@
-import { Codec, createCodec } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -67,8 +67,7 @@ Object.setPrototypeOf(
 );
 
 export const bitSequence: Codec<BitSequence> = createCodec({
-  name: "$.bitSequence",
-  _metadata: null,
+  _metadata: metadata("$.bitSequence"),
   _staticSize: compactU32._staticSize,
   _encode(buffer, value) {
     compactU32._encode(buffer, value.length);

@@ -1,9 +1,9 @@
 import * as $ from "../../mod.ts";
+import { metadata } from "../../mod.ts";
 import { testCodec } from "../../test-util.ts";
 
 const $primitive = $.withMetadata(
-  "$primitive",
-  null,
+  metadata("$primitive"),
   $.union(
     (value) => {
       return typeof value === "string"
@@ -29,8 +29,7 @@ const $primitive = $.withMetadata(
 );
 
 const $abc = $.withMetadata(
-  "$abc",
-  null,
+  metadata("$abc"),
   $.taggedUnion("_tag", [
     ["A"],
     ["B", ["B", $.str]],
@@ -49,7 +48,7 @@ const interestingU8s = {
   255: "Max",
 } as const;
 
-const $interestingU8s = $.withMetadata("$.stringUnion(interestingU8s)", null, $.stringUnion(interestingU8s));
+const $interestingU8s = $.withMetadata(metadata("$.stringUnion(interestingU8s)"), $.stringUnion(interestingU8s));
 
 const names = [
   "Ross",
@@ -61,7 +60,7 @@ const names = [
   "Pierre",
 ] as const;
 
-const $names = $.withMetadata("$.stringUnion(names)", null, $.stringUnion(names));
+const $names = $.withMetadata(metadata("$.stringUnion(names)"), $.stringUnion(names));
 
 testCodec($primitive, [
   "abc",

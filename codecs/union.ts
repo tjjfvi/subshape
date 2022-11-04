@@ -1,4 +1,14 @@
-import { AnyCodec, Codec, createCodec, DecodeError, Expand, Narrow, Native, withMetadata } from "../common/mod.ts";
+import {
+  AnyCodec,
+  Codec,
+  createCodec,
+  DecodeError,
+  Expand,
+  metadata,
+  Narrow,
+  Native,
+  withMetadata,
+} from "../common/mod.ts";
 import { dummy } from "./dummy.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
@@ -11,8 +21,7 @@ export function union<T extends Record<number, AnyCodec>>(
   $members: T,
 ): Codec<Native<T[keyof T & number]>> {
   return createCodec({
-    name: "$.union",
-    _metadata: [union, getIndex, $members as Narrow<T>],
+    _metadata: metadata("$.union", union, getIndex, $members as Narrow<T>),
     _staticSize: 1 + Math.max(...Object.values($members).map((x) => x._staticSize)),
     _encode(buffer, value) {
       const discriminant = getIndex(value);
@@ -66,8 +75,7 @@ export function taggedUnion<
     );
   }
   return withMetadata(
-    "$.taggedUnion",
-    [taggedUnion, tagKey, members],
+    metadata("$.taggedUnion", taggedUnion, tagKey, members),
     union(
       (value) => tagToDiscriminant[value[tagKey]]!,
       discriminantToMember,
@@ -84,8 +92,7 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
     keyToDiscriminant[key] = discriminant;
   }
   return createCodec({
-    name: "$.stringUnion",
-    _metadata: [stringUnion, members],
+    _metadata: metadata("$.stringUnion", stringUnion, members),
     _staticSize: 1,
     _encode(buffer, value) {
       const discriminant = keyToDiscriminant[value]!;

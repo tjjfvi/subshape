@@ -1,9 +1,8 @@
-import { Codec, createCodec, Expand } from "../common/mod.ts";
+import { Codec, createCodec, Expand, metadata } from "../common/mod.ts";
 
 export function spread<A, B>($a: Codec<A>, $b: Codec<B>): Codec<Expand<A & B>> {
   return createCodec({
-    name: "$.spread",
-    _metadata: [spread, $a, $b],
+    _metadata: metadata("$.spread", spread, $a, $b),
     _staticSize: $a._staticSize + $b._staticSize,
     _encode(buffer, value) {
       $a._encode(buffer, value);

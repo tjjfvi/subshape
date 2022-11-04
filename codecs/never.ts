@@ -1,8 +1,7 @@
-import { Codec, createCodec, DecodeError, EncodeError } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, EncodeError, metadata } from "../common/mod.ts";
 
 export const never: Codec<never> = createCodec({
-  name: "$.never",
-  _metadata: null,
+  _metadata: metadata("$.never"),
   _staticSize: 0,
   _encode(value) {
     throw new EncodeError(this, value, "Cannot encode $.never");

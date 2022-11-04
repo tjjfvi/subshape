@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, EncodeError, withMetadata } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, EncodeError, metadata, withMetadata } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 import { tuple } from "./tuple.ts";
@@ -13,8 +13,7 @@ export function iterable<T, I extends Iterable<T>>(
   },
 ): Codec<I> {
   return createCodec({
-    name: "$.iterable",
-    _metadata: [iterable, { $el, calcLength, rehydrate }],
+    _metadata: metadata("$.iterable", iterable, { $el, calcLength, rehydrate }),
     _staticSize: compactU32._staticSize,
     _encode(buffer, value) {
       const length = calcLength(value);
@@ -45,8 +44,7 @@ export function iterable<T, I extends Iterable<T>>(
 
 export function set<T>($el: Codec<T>): Codec<Set<T>> {
   return withMetadata(
-    "$.set",
-    [set, $el],
+    metadata("$.set", set, $el),
     iterable({
       $el,
       calcLength: (set) => set.size,
@@ -57,8 +55,7 @@ export function set<T>($el: Codec<T>): Codec<Set<T>> {
 
 export function map<K, V>($key: Codec<K>, $value: Codec<V>): Codec<Map<K, V>> {
   return withMetadata(
-    "$.map",
-    [map, $key, $value],
+    metadata("$.map", map, $key, $value),
     iterable({
       $el: tuple($key, $value),
       calcLength: (map) => map.size,

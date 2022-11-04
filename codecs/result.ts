@@ -1,15 +1,14 @@
-import { Codec, createCodec, DecodeError } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, metadata } from "../common/mod.ts";
 
 export function result<Ok, Err extends Error>(
   $ok: Codec<Ok>,
   $err: Codec<Err>,
 ): Codec<Ok | Err> {
-  if ($ok._metadata?.[0] === result) {
+  if ($ok._metadata.some((x) => x.factory === result)) {
     throw new Error("Nested result codec will not roundtrip correctly");
   }
   return createCodec({
-    name: "$.result",
-    _metadata: [result, $ok, $err],
+    _metadata: metadata("$.result", result, $ok, $err),
     _staticSize: 1 + Math.max($ok._staticSize, $err._staticSize),
     _encode(buffer, value) {
       if ((buffer.array[buffer.index++] = +(value instanceof Error))) {

@@ -1,9 +1,8 @@
-import { Codec, createCodec } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 
 export function promise<T>($value: Codec<T>): Codec<Promise<T>> {
   return createCodec({
-    name: "$.promise",
-    _metadata: [promise, $value],
+    _metadata: metadata("$.promise", promise, $value),
     _staticSize: $value._staticSize,
     _encode(buffer, value) {
       buffer.writeAsync($value._staticSize, async (buffer) => {
