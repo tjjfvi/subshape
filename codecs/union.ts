@@ -1,44 +1,6 @@
-import {
-  AnyCodec,
-  Codec,
-  createCodec,
-  DecodeError,
-  Expand,
-  metadata,
-  Narrow,
-  Native,
-  withMetadata,
-} from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, Expand, metadata, Narrow } from "../common/mod.ts";
 import { dummy } from "./dummy.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
-
-export function union<T extends Record<number, AnyCodec>>(
-  getIndex: (value: Native<T[number]>) => keyof T & number,
-  $members: Narrow<T>,
-): Codec<Native<T[keyof T & number]>>;
-export function union<T extends Record<number, AnyCodec>>(
-  getIndex: (value: Native<T[number]>) => keyof T & number,
-  $members: T,
-): Codec<Native<T[keyof T & number]>> {
-  return createCodec({
-    _metadata: metadata("$.union", union, getIndex, $members as Narrow<T>),
-    _staticSize: 1 + Math.max(...Object.values($members).map((x) => x._staticSize)),
-    _encode(buffer, value) {
-      const discriminant = getIndex(value);
-      const $member = $members[discriminant]!;
-      buffer.array[buffer.index++] = discriminant;
-      $member._encode(buffer, value as never);
-    },
-    _decode(buffer) {
-      const discriminant = buffer.array[buffer.index++]!;
-      const $member = $members[discriminant];
-      if (!$member) {
-        throw new DecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
-      }
-      return $member._decode(buffer);
-    },
-  });
-}
 
 export type AnyTaggedUnionMember = [tag: string, ...fields: AnyField[]];
 
@@ -74,13 +36,24 @@ export function taggedUnion<
       ...fields,
     );
   }
-  return withMetadata(
-    metadata("$.taggedUnion", taggedUnion, tagKey, members),
-    union(
-      (value) => tagToDiscriminant[value[tagKey]]!,
-      discriminantToMember,
-    ),
-  );
+  return createCodec({
+    _metadata: metadata("$.taggedUnion", taggedUnion, tagKey, members),
+    _staticSize: 1 + Math.max(...Object.values(discriminantToMember).map((x) => x._staticSize)),
+    _encode(buffer, value) {
+      const discriminant = tagToDiscriminant[value[tagKey]]!;
+      const $member = discriminantToMember[discriminant]!;
+      buffer.array[buffer.index++] = discriminant;
+      $member._encode(buffer, value as never);
+    },
+    _decode(buffer) {
+      const discriminant = buffer.array[buffer.index++]!;
+      const $member = discriminantToMember[discriminant];
+      if (!$member) {
+        throw new DecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
+      }
+      return $member._decode(buffer);
+    },
+  });
 }
 
 export function stringUnion<T extends string>(members: Record<number, T>): Codec<T> {

@@ -1,34 +1,5 @@
 export const snapshot = {};
 
-snapshot[`\$primitive "abc" 1`] = `
-00
-0c
-61
-62
-63
-`;
-
-snapshot[`\$primitive 1234567890n 1`] = `
-02
-d2
-02
-96
-49
-00
-00
-00
-00
-`;
-
-snapshot[`\$primitive true 1`] = `
-03
-01
-`;
-
-snapshot[`\$primitive undefined 1`] = `04`;
-
-snapshot[`\$primitive null 1`] = `06`;
-
 snapshot[`\$abc { _tag: "A" } 1`] = `00`;
 
 snapshot[`\$abc { _tag: "B", B: "HELLO" } 1`] = `

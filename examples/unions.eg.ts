@@ -9,24 +9,6 @@ export const $myResult = $.result($.str, $myError);
 
 $myResult; // Codec<string | MyError>
 
-export const $strOrNum = $.union(
-  (value) => { // Discriminate
-    if (typeof value === "string") {
-      return 0;
-    } else if (typeof value === "number") {
-      return 1;
-    } else {
-      throw new Error("invalid");
-    }
-  },
-  [
-    $.str, // Member 0
-    $.u32, // Member 1
-  ],
-);
-
-$strOrNum; // Codec<string | number>
-
 export const $animal = $.taggedUnion("type", [
   ["dog", ["bark", $.str]],
   ["cat", ["purr", $.str]],
