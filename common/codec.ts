@@ -65,44 +65,6 @@ export function createCodec<T, A extends unknown[]>(
   return codec;
 }
 
-export function createAsyncCodec<T, A extends unknown[]>(
-  _codec: ThisType<Codec<T>> & Pick<Codec<T>, "_decode" | "_staticSize" | "name" | "_inspect"> & {
-    _encodeAsync: (buffer: EncodeBuffer, value: T) => Promise<void>;
-    /**
-     * If non-null, the function calling `createCodec` and the corresponding arguments.
-     * `null` indicates that this codec is atomic (e.g. `$.str`).
-     */
-    _metadata: [(...args: A) => Codec<T>, ...A] | null;
-  },
-): Codec<T> {
-  const { _staticSize, _encodeAsync, _decode, _metadata, name, _inspect } = _codec;
-  const codec: Codec<T> = {
-    // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
-    __proto__: Codec.prototype,
-    name,
-    _staticSize,
-    _encode(buffer, value) {
-      buffer.writeAsync(_staticSize, (buf) => _encodeAsync(buf, value));
-    },
-    _decode,
-    ..._metadata && { _metadata },
-    encode(value) {
-      throw new EncodeError(codec, value, "Attempted to synchronously encode an async codec");
-    },
-    async encodeAsync(value) {
-      const buf = new EncodeBuffer(_staticSize);
-      await _encodeAsync.call(codec, buf, value);
-      return buf.finishAsync();
-    },
-    decode(array) {
-      const buf = new DecodeBuffer(array);
-      return _decode.call(codec, buf);
-    },
-    ..._inspect && { _inspect },
-  };
-  return codec;
-}
-
 export function withMetadata<T, A extends unknown[]>(
   name: string,
   _metadata: [(...args: A) => Codec<T>, ...A] | null,
