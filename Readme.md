@@ -107,7 +107,7 @@ While we recommend following this convention for consistency, you can, of course
 
 ## Asynchronous Encoding
 
-Some codecs require asynchronous encoding – namely `$.promise` and any custom codecs created with `createAsyncCodec`. Calling `.encode()` on a codec will throw if it or another codec it calls is asynchronous. In this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any codec; if it is a synchronous codec, it will simply resolve immediately.
+Some codecs require asynchronous encoding. Calling `.encode()` on a codec will throw if it or another codec it calls is asynchronous. In this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any codec; if it is a synchronous codec, it will simply resolve immediately.
 
 Asynchronous decoding is not supported.
 
