@@ -1,4 +1,14 @@
-import { AnyCodec, Codec, createCodec, Expand, metadata, Narrow, Native, U2I } from "../common/mod.ts";
+import {
+  AnyCodec,
+  Codec,
+  createCodec,
+  Expand,
+  metadata,
+  Narrow,
+  Native,
+  ScaleAssertError,
+  U2I,
+} from "../common/mod.ts";
 
 export type AnyField = [key: keyof any, value: AnyCodec];
 
@@ -32,6 +42,21 @@ export function object<O extends AnyField[]>(...fields: O): Codec<NativeObject<O
         obj[key as any] = field._decode(buffer);
       }
       return obj as any;
+    },
+    _assert(value) {
+      if (typeof value !== "object") {
+        throw new ScaleAssertError(this, value, `typeof value !== "object"`);
+      }
+      if (value === null) {
+        throw new ScaleAssertError(this, value, `value === null`);
+      }
+      for (let i = 0; i < fields.length; i++) {
+        const [key, field] = fields[i]!;
+        if (!(key in value)) {
+          throw new ScaleAssertError(this, value, `!(${JSON.stringify(key)} in value)`);
+        }
+        field._assert(value[key as never]);
+      }
     },
   });
 }

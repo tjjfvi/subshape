@@ -1,5 +1,5 @@
 import * as $ from "../../mod.ts";
-import { assertEquals, testCodec } from "../../test-util.ts";
+import { assertEquals, testCodec, testInvalid } from "../../test-util.ts";
 
 Deno.test("BitSequence", () => {
   const sequence = new $.BitSequence(100);
@@ -17,4 +17,13 @@ Deno.test("BitSequence", () => {
 testCodec($.bitSequence, [
   $.BitSequence.from([]),
   $.BitSequence.from([0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1]),
+]);
+
+testInvalid($.bitSequence, [
+  null,
+  undefined,
+  123,
+  [],
+  {},
+  [true, false],
 ]);

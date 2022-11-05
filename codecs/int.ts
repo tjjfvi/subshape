@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ScaleAssertError } from "../common/mod.ts";
 
 export const u8 = createCodec<number>({
   _metadata: intMetadata(false, 8),
@@ -9,84 +9,109 @@ export const u8 = createCodec<number>({
   _decode(buffer) {
     return buffer.array[buffer.index++]!;
   },
+  _assert(value) {
+    if (typeof value !== "number") {
+      throw new ScaleAssertError(this, value, `typeof value !== "number"`);
+    }
+    if (value !== (value | 0)) {
+      throw new ScaleAssertError(this, value, `invalid int`);
+    }
+    if (value < 0) {
+      throw new ScaleAssertError(this, value, `value < 0`);
+    }
+    if (value > 255) {
+      throw new ScaleAssertError(this, value, `value > 255`);
+    }
+  },
 });
 
-type NumMethodKeys = { [K in keyof DataView]: K extends `get${infer N}` ? N : never }[keyof DataView];
-type NumMethodVal<K extends NumMethodKeys> = ReturnType<DataView[`get${K}`]>;
-
-function _int<K extends NumMethodKeys>(size: number, key: K): Codec<NumMethodVal<K>> {
-  const getMethod = DataView.prototype["get" + key as never] as any;
-  const setMethod = DataView.prototype["set" + key as never] as any;
+function _intNumber(signed: boolean, size: 8 | 16 | 32): Codec<number> {
+  const byteSize = size / 8;
+  const key = `${(signed ? "Int" : "Uint")}${size}` as const;
+  const getMethod = DataView.prototype[`get${key}`];
+  const setMethod = DataView.prototype[`set${key}`];
+  const min = signed ? -(2 ** (size - 1)) : 0;
+  const max = (2 ** (size - +signed)) - 1;
   return createCodec({
-    _metadata: intMetadata(key.includes("Int"), size * 8),
-    _staticSize: size,
+    _metadata: intMetadata(signed, size),
+    _staticSize: byteSize,
     _encode(buffer, value) {
       setMethod.call(buffer.view, buffer.index, value, true);
-      buffer.index += size;
+      buffer.index += byteSize;
     },
     _decode(buffer) {
       const value = getMethod.call(buffer.view, buffer.index, true);
-      buffer.index += size;
+      buffer.index += byteSize;
       return value;
+    },
+    _assert(value) {
+      if (typeof value !== "number") {
+        throw new ScaleAssertError(this, value, `typeof value !== "number"`);
+      }
+      if (value !== (signed ? value | 0 : value >>> 0)) {
+        throw new ScaleAssertError(this, value, `invalid int`);
+      }
+      if (value < min) {
+        throw new ScaleAssertError(this, value, `value < ${min}`);
+      }
+      if (value > max) {
+        throw new ScaleAssertError(this, value, `value > ${max}`);
+      }
     },
   });
 }
 
-export const i8 = _int(1, "Int8");
-export const u16 = _int(2, "Uint16");
-export const i16 = _int(2, "Int16");
-export const u32 = _int(4, "Uint32");
-export const i32 = _int(4, "Int32");
-export const u64 = _int(8, "BigUint64");
-export const i64 = _int(8, "BigInt64");
+export const i8 = _intNumber(true, 8);
+export const u16 = _intNumber(false, 16);
+export const i16 = _intNumber(true, 16);
+export const u32 = _intNumber(false, 32);
+export const i32 = _intNumber(true, 32);
 
-const _128 = (signed: boolean): Codec<bigint> => {
+function _intBigInt(signed: boolean, size: 64 | 128 | 256): Codec<bigint> {
+  const byteSize = size / 8;
+  const chunks = size / 64;
   const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
+  const min = signed ? -(1n << BigInt(size - 1)) : 0n;
+  const max = (1n << BigInt(size - +signed)) - 1n;
   return createCodec({
-    _metadata: intMetadata(signed, 128),
-    _staticSize: 16,
+    _metadata: intMetadata(signed, size),
+    _staticSize: byteSize,
     _encode(buffer, value) {
-      buffer.view.setBigInt64(buffer.index, value, true);
-      buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
-      buffer.index += 16;
+      for (let i = 0; i < chunks; i++) {
+        buffer.view.setBigInt64(buffer.index, value, true);
+        value >>= 64n;
+        buffer.index += 8;
+      }
     },
     _decode(buffer) {
-      const b = buffer.view.getBigUint64(buffer.index, true);
-      const a = getMethod.call(buffer.view, buffer.index + 8, true);
-      buffer.index += 16;
-      return (a << 64n) | b;
+      let value = getMethod.call(buffer.view, buffer.index + (byteSize - 8), true);
+      for (let i = chunks - 2; i >= 0; i--) {
+        value <<= 64n;
+        value |= buffer.view.getBigUint64(buffer.index + (i * 8), true);
+      }
+      buffer.index += byteSize;
+      return value;
+    },
+    _assert(value) {
+      if (typeof value !== "bigint") {
+        throw new ScaleAssertError(this, value, `typeof value !== "bigint"`);
+      }
+      if (value < min) {
+        throw new ScaleAssertError(this, value, `value < ${min}`);
+      }
+      if (value > max) {
+        throw new ScaleAssertError(this, value, `value > ${max}`);
+      }
     },
   });
-};
+}
 
-export const u128 = _128(false);
-export const i128 = _128(true);
-
-const _256 = (signed: boolean): Codec<bigint> => {
-  const getMethod = DataView.prototype[signed ? "getBigInt64" : "getBigUint64"];
-  return createCodec({
-    _metadata: intMetadata(signed, 256),
-    _staticSize: 32,
-    _encode(buffer, value) {
-      buffer.view.setBigInt64(buffer.index, value, true);
-      buffer.view.setBigInt64(buffer.index + 8, value >> 64n, true);
-      buffer.view.setBigInt64(buffer.index + 16, value >> 128n, true);
-      buffer.view.setBigInt64(buffer.index + 24, value >> 192n, true);
-      buffer.index += 32;
-    },
-    _decode(buffer) {
-      const d = buffer.view.getBigUint64(buffer.index, true);
-      const c = buffer.view.getBigUint64(buffer.index + 8, true);
-      const b = buffer.view.getBigUint64(buffer.index + 16, true);
-      const a = getMethod.call(buffer.view, buffer.index + 24, true);
-      buffer.index += 32;
-      return (a << 192n) | (b << 128n) | (c << 64n) | d;
-    },
-  });
-};
-
-export const u256 = _256(false);
-export const i256 = _256(true);
+export const u64 = _intBigInt(false, 64);
+export const i64 = _intBigInt(true, 64);
+export const u128 = _intBigInt(false, 128);
+export const i128 = _intBigInt(true, 128);
+export const u256 = _intBigInt(false, 256);
+export const i256 = _intBigInt(true, 256);
 
 const intLookup = { u8, i8, u16, i16, u32, i32, u64, i64, u128, i128, u256, i256 };
 

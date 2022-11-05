@@ -23,5 +23,8 @@ export function lenPrefixed<T>($inner: Codec<T>): Codec<T> {
       const length = compactU32._decode(buffer);
       return $inner.decode(buffer.array.subarray(buffer.index, buffer.index += length));
     },
+    _assert(value) {
+      $inner._assert(value);
+    },
   });
 }

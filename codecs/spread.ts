@@ -11,5 +11,9 @@ export function spread<A, B>($a: Codec<A>, $b: Codec<B>): Codec<Expand<A & B>> {
     _decode(buffer) {
       return { ...$a._decode(buffer), ...$b._decode(buffer) } as Expand<A & B>;
     },
+    _assert(value) {
+      $a._assert(value);
+      $b._assert(value);
+    },
   });
 }

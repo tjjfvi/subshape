@@ -1,5 +1,5 @@
 import * as $ from "../../mod.ts";
-import { testCodec } from "../../test-util.ts";
+import { testCodec, testInvalid } from "../../test-util.ts";
 
 function generateIntTests(signed: boolean, size: number) {
   const s = BigInt(size);
@@ -35,3 +35,33 @@ testCodec($.i64, generateIntTests(true, 64).map(BigInt));
 testCodec($.i128, generateIntTests(true, 128).map(BigInt));
 testCodec($.i128, generateIntTests(true, 128).map(BigInt));
 testCodec($.i256, generateIntTests(true, 256).map(BigInt));
+
+function generateIntInvalids(signed: boolean, size: number, fn: typeof Number | typeof BigInt) {
+  const s = BigInt(size);
+  return [
+    null,
+    undefined,
+    {},
+    "abc",
+    NaN,
+    1.2,
+    fn === BigInt ? 0 : 0n,
+    signed ? fn(-1n * 2n ** (s - 1n) - 1n) : fn(-1n),
+    signed ? fn(2n ** (s - 1n)) : fn(2n ** s),
+  ];
+}
+
+testInvalid($.u8, generateIntInvalids(false, 8, Number));
+testInvalid($.u16, generateIntInvalids(false, 16, Number));
+testInvalid($.u32, generateIntInvalids(false, 32, Number));
+testInvalid($.u64, generateIntInvalids(false, 64, BigInt));
+testInvalid($.u128, generateIntInvalids(false, 128, BigInt));
+testInvalid($.u256, generateIntInvalids(false, 256, BigInt));
+
+testInvalid($.i8, generateIntInvalids(true, 8, Number));
+testInvalid($.i16, generateIntInvalids(true, 16, Number));
+testInvalid($.i32, generateIntInvalids(true, 32, Number));
+testInvalid($.i64, generateIntInvalids(true, 64, BigInt));
+testInvalid($.i128, generateIntInvalids(true, 128, BigInt));
+testInvalid($.i128, generateIntInvalids(true, 128, BigInt));
+testInvalid($.i256, generateIntInvalids(true, 256, BigInt));

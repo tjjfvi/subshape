@@ -1,10 +1,8 @@
-import { Codec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 
 export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
   let $codec: Codec<T>;
-  return {
-    // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
-    __proto__: Codec.prototype,
+  const codec = createCodec({
     _metadata: metadata("$.deferred", deferred, getCodec),
     _staticSize: 0,
     _encode(buffer, value) {
@@ -17,21 +15,14 @@ export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
       $codec ??= getCodec();
       return $codec._decode(buffer);
     },
-    encode(value) {
+    _assert(value) {
       $codec ??= getCodec();
-      return $codec.encode(value);
+      $codec._assert(value);
     },
-    encodeAsync(value) {
-      $codec ??= getCodec();
-      return $codec.encodeAsync(value);
-    },
-    decode(buffer) {
-      $codec ??= getCodec();
-      return $codec.decode(buffer);
-    },
-    _inspect(inspect) {
-      // Use ._inspect manually so that Deno doesn't detect the circularity
-      return `$.deferred(() => ${getCodec()._inspect!(inspect)})`;
-    },
+  });
+  codec["_inspect"] = (inspect) => {
+    // Use ._inspect manually so that Deno doesn't detect the circularity
+    return `$.deferred(() => ${getCodec()["_inspect"]!(inspect)})`;
   };
+  return codec;
 }

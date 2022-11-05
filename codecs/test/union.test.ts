@@ -1,6 +1,6 @@
 import * as $ from "../../mod.ts";
 import { metadata } from "../../mod.ts";
-import { testCodec } from "../../test-util.ts";
+import { testCodec, testInvalid } from "../../test-util.ts";
 
 const $abc = $.withMetadata(
   metadata("$abc"),
@@ -46,3 +46,15 @@ testCodec($abc, [
 testCodec($names, [...names]);
 
 testCodec($interestingU8s, Object.values(interestingU8s));
+
+testInvalid($abc, [
+  null,
+  { _tag: null },
+  { _tag: "" },
+  { _tag: "B" },
+  { _tag: "B", B: null },
+  { _tag: "D", a: 1 },
+  { _tag: "D", b: 1n },
+  { _tag: "D", a: -1, b: 1n },
+  { _tag: "D", a: 1, b: -1n },
+]);

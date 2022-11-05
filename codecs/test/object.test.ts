@@ -1,5 +1,5 @@
 import * as $ from "../../mod.ts";
-import { testCodec } from "../../test-util.ts";
+import { testCodec, testInvalid } from "../../test-util.ts";
 
 const $person = $.withMetadata(
   $.metadata("$person"),
@@ -24,4 +24,15 @@ testCodec($person, [
     superPower: undefined,
     luckyNumber: 7, // Cummon... be more predictable!
   },
+]);
+
+testInvalid($person, [
+  null,
+  undefined,
+  123,
+  () => {},
+  {},
+  { name: "", nickName: "", superPower: 0, luckyNumber: 0 },
+  { name: "", nickName: "", superPower: "", luckyNumber: -1 },
+  { name: "", nickName: "", superPower: "", unluckyNumber: 0 },
 ]);

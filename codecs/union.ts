@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, Expand, metadata, Narrow } from "../common/mod.ts";
+import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
 import { dummy } from "./dummy.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
@@ -24,8 +24,8 @@ export function taggedUnion<
   tagKey: TK,
   members: Narrow<M>,
 ): Codec<NativeTaggedUnionMembers<TK, M>> {
-  const tagToDiscriminant: Record<string, number> = {};
-  const discriminantToMember: Record<number, Codec<any>> = {};
+  const tagToDiscriminant: Record<string, number> = Object.create(null);
+  const discriminantToMember: Record<number, Codec<any>> = Object.create(null);
   for (const _discriminant in members) {
     const discriminant = +_discriminant;
     if (isNaN(discriminant)) continue;
@@ -49,15 +49,31 @@ export function taggedUnion<
       const discriminant = buffer.array[buffer.index++]!;
       const $member = discriminantToMember[discriminant];
       if (!$member) {
-        throw new DecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
+        throw new ScaleDecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
       }
       return $member._decode(buffer);
+    },
+    _assert(value) {
+      if (typeof value !== "object") {
+        throw new ScaleAssertError(this, value, `typeof value !== "object`);
+      }
+      if (value === null) {
+        throw new ScaleAssertError(this, value, `value === null`);
+      }
+      if (!(tagKey in value)) {
+        throw new ScaleAssertError(this, value, `!(${JSON.stringify(tagKey)} in value)`);
+      }
+      const tag = value[tagKey as never];
+      if (!(tag in tagToDiscriminant)) {
+        throw new ScaleAssertError(this, value, `invalid tag`);
+      }
+      (discriminantToMember[tagToDiscriminant[tag]!]!._assert as any)(value);
     },
   });
 }
 
 export function stringUnion<T extends string>(members: Record<number, T>): Codec<T> {
-  const keyToDiscriminant: Record<string, number> = {};
+  const keyToDiscriminant: Record<string, number> = Object.create(null);
   for (const _discriminant in members) {
     const discriminant = +_discriminant;
     if (isNaN(discriminant)) continue;
@@ -74,6 +90,14 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
     _decode(buffer) {
       const discriminant = buffer.array[buffer.index++]!;
       return members[discriminant]!;
+    },
+    _assert(value) {
+      if (typeof value !== "string") {
+        throw new ScaleAssertError(this, value, `typeof value !== "string"`);
+      }
+      if (!(value in keyToDiscriminant)) {
+        throw new ScaleAssertError(this, value, `invalid value`);
+      }
     },
   });
 }

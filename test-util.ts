@@ -2,7 +2,7 @@
 
 import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testing/asserts.ts";
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts";
-import { Codec } from "./common/mod.ts";
+import { AnyCodec, Codec, ScaleAssertError } from "./common/mod.ts";
 
 const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
   () => Deno.readTextFile(fileName)
@@ -33,10 +33,32 @@ export function testCodec<T>(
       if (typeof value === "function") {
         value = (value as () => T)();
       }
+      codec._assert(value);
       const encoded = async ? await codec.encodeAsync(value) : codec.encode(value);
       await assertSnapshot(t, encoded, { serializer: serializeU8A });
       const decoded = codec.decode(encoded);
       assertEquals(decoded, value);
+      codec._assert(value);
+    });
+  }
+}
+
+export function testInvalid(codec: AnyCodec, values: unknown[] | Record<string, unknown | (() => unknown)>) {
+  for (const key in values) {
+    let value: unknown = values[key as never];
+    const label = values instanceof Array
+      ? Deno.inspect(value, {
+        depth: Infinity,
+        trailingComma: true,
+        compact: true,
+        iterableLimit: Infinity,
+      })
+      : key;
+    Deno.test(`${Deno.inspect(codec)} invalid ${label}`, () => {
+      if (typeof value === "function") {
+        value = (value as () => unknown)();
+      }
+      assertThrows(() => codec._assert(value), ScaleAssertError);
     });
   }
 }

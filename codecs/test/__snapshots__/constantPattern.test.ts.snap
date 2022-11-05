@@ -7,6 +7,4 @@ snapshot[`\$.constantPattern(1635018093, Uint8Array(4) [ 109, 101, 116, 97 ]) 16
 61
 `;
 
-snapshot[`constantPattern.encode throws 1`] = `"Invalid value; expected 1635018093, got 123"`;
-
 snapshot[`constantPattern.decode throws 1`] = `"Invalid pattern; expected 0x6d657461, got 0x7b000000"`;

@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ScaleDecodeError } from "../common/mod.ts";
 
 export function result<Ok, Err extends Error>(
   $ok: Codec<Ok>,
@@ -22,7 +22,11 @@ export function result<Ok, Err extends Error>(
         case 0: {
           const value = $ok._decode(buffer);
           if (value instanceof Error) {
-            throw new DecodeError(this, buffer, "An ok value that is instanceof Error will not roundtrip correctly");
+            throw new ScaleDecodeError(
+              this,
+              buffer,
+              "An ok value that is instanceof Error will not roundtrip correctly",
+            );
           }
           return value;
         }
@@ -30,8 +34,15 @@ export function result<Ok, Err extends Error>(
           return $err._decode(buffer);
         }
         default: {
-          throw new DecodeError(this, buffer, "Result discriminant neither 0 nor 1");
+          throw new ScaleDecodeError(this, buffer, "Result discriminant neither 0 nor 1");
         }
+      }
+    },
+    _assert(value) {
+      if (value instanceof Error) {
+        $err._assert(value);
+      } else {
+        $ok._assert(value);
       }
     },
   });

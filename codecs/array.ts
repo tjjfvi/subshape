@@ -1,4 +1,4 @@
-import { Codec, createCodec, EncodeError, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ScaleAssertError } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -28,6 +28,17 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec
       }
       return value as ArrayOfLength<T, L>;
     },
+    _assert(value) {
+      if (!(value instanceof Array)) {
+        throw new ScaleAssertError(this, value, "!(value instanceof Array)");
+      }
+      if (value.length !== length) {
+        throw new ScaleAssertError(this, value, `value.length !== ${length}`);
+      }
+      for (let i = 0; i < value.length; i++) {
+        $el._assert(value[i]);
+      }
+    },
   });
 }
 
@@ -53,6 +64,14 @@ export function array<T>($el: Codec<T>): Codec<T[]> {
       }
       return value;
     },
+    _assert(value) {
+      if (!(value instanceof Array)) {
+        throw new ScaleAssertError(this, value, "!(value instanceof Array)");
+      }
+      for (let i = 0; i < value.length; i++) {
+        $el._assert(value[i]);
+      }
+    },
   });
 }
 
@@ -69,6 +88,11 @@ export const uint8Array: Codec<Uint8Array> = createCodec({
     buffer.index += length;
     return value;
   },
+  _assert(value) {
+    if (!(value instanceof Uint8Array)) {
+      throw new ScaleAssertError(this, value, "!(value instanceof Uint8Array)");
+    }
+  },
 });
 
 export function sizedUint8Array(length: number): Codec<Uint8Array> {
@@ -79,13 +103,18 @@ export function sizedUint8Array(length: number): Codec<Uint8Array> {
     // the bytes.
     _staticSize: 0,
     _encode(buffer, value) {
-      if (value.length !== length) {
-        throw new EncodeError(this, value, `Expected an array of size ${length}, got ${value.length}`);
-      }
       buffer.insertArray(value); // the contents of this will eventually be cloned by buffer
     },
     _decode(buffer) {
       return buffer.array.subarray(buffer.index, buffer.index += length);
+    },
+    _assert(value) {
+      if (!(value instanceof Uint8Array)) {
+        throw new ScaleAssertError(this, value, "!(value instanceof Uint8Array)");
+      }
+      if (value.length !== length) {
+        throw new ScaleAssertError(this, value, `value.length !== ${length}`);
+      }
     },
   });
 }

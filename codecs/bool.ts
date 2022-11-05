@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ScaleAssertError } from "../common/mod.ts";
 
 export const bool: Codec<boolean> = createCodec({
   _metadata: metadata("$.bool"),
@@ -8,5 +8,10 @@ export const bool: Codec<boolean> = createCodec({
   },
   _decode(buffer) {
     return !!buffer.array[buffer.index++]!;
+  },
+  _assert(value) {
+    if (typeof value !== "boolean") {
+      throw new ScaleAssertError(this, value, `typeof value !== "boolean"`);
+    }
   },
 });
