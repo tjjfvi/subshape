@@ -29,7 +29,7 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec
       return value as ArrayOfLength<T, L>;
     },
     _assert(value) {
-      if ((!(value instanceof Array))) {
+      if (!(value instanceof Array)) {
         throw new ScaleAssertError(this, value, "!(value instanceof Array)");
       }
       if (value.length !== length) {
@@ -65,7 +65,7 @@ export function array<T>($el: Codec<T>): Codec<T[]> {
       return value;
     },
     _assert(value) {
-      if ((!(value instanceof Array))) {
+      if (!(value instanceof Array)) {
         throw new ScaleAssertError(this, value, "!(value instanceof Array)");
       }
       for (let i = 0; i < value.length; i++) {
@@ -89,7 +89,7 @@ export const uint8Array: Codec<Uint8Array> = createCodec({
     return value;
   },
   _assert(value) {
-    if ((!(value instanceof Uint8Array))) {
+    if (!(value instanceof Uint8Array)) {
       throw new ScaleAssertError(this, value, "!(value instanceof Uint8Array)");
     }
   },
@@ -109,7 +109,7 @@ export function sizedUint8Array(length: number): Codec<Uint8Array> {
       return buffer.array.subarray(buffer.index, buffer.index += length);
     },
     _assert(value) {
-      if ((!(value instanceof Uint8Array))) {
+      if (!(value instanceof Uint8Array)) {
         throw new ScaleAssertError(this, value, "!(value instanceof Uint8Array)");
       }
       if (value.length !== length) {
