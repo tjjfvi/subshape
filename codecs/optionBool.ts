@@ -11,8 +11,8 @@ export const optionBool: Codec<boolean | undefined> = createCodec({
     const byte = buffer.array[buffer.index++]!;
     return byte === 0 ? undefined : !(byte - 1);
   },
-  _validate(value) {
+  _assert(value) {
     if (value === undefined) return;
-    bool._validate(value);
+    bool._assert(value);
   },
 });

@@ -5,7 +5,7 @@ export function transform<T, U>(
     $base: Codec<T>;
     encode: (value: U) => T;
     decode: (value: T) => U;
-    validate?: (this: Codec<U>, value: unknown) => asserts value is U;
+    assert?: (this: Codec<U>, value: unknown) => asserts value is U;
   },
 ): Codec<U> {
   return createCodec({
@@ -17,9 +17,9 @@ export function transform<T, U>(
     _decode(buffer) {
       return props.decode(props.$base._decode(buffer));
     },
-    _validate(value) {
-      props.validate?.call(this, value);
-      props.$base._validate(props.encode(value as U));
+    _assert(value) {
+      props.assert?.call(this, value);
+      props.$base._assert(props.encode(value as U));
     },
   });
 }

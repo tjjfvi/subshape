@@ -1,28 +1,28 @@
 import type { DecodeBuffer } from "./buffer.ts";
 import type { AnyCodec } from "./codec.ts";
 
-export class CodecError extends Error {
+export abstract class ScaleError extends Error {
   constructor(readonly codec: AnyCodec, message: string) {
     super(message);
   }
 }
 
-export class ValidateError extends CodecError {
-  name = "ValidateError";
+export class ScaleAssertError extends ScaleError {
+  name = "ScaleAssertError";
   constructor(codec: AnyCodec, readonly value: unknown, message: string) {
     super(codec, message);
   }
 }
 
-export class EncodeError extends CodecError {
-  name = "EncodeError";
+export class ScaleEncodeError extends ScaleError {
+  name = "ScaleEncodeError";
   constructor(codec: AnyCodec, readonly value: unknown, message: string) {
     super(codec, message);
   }
 }
 
-export class DecodeError extends CodecError {
-  name = "DecodeError";
+export class ScaleDecodeError extends ScaleError {
+  name = "ScaleDecodeError";
   constructor(codec: AnyCodec, readonly buffer: DecodeBuffer, message: string) {
     super(codec, message);
   }

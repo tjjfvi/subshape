@@ -39,7 +39,7 @@ const $iterableArray = $.withMetadata(
     $el: $.u8,
     calcLength: (arr) => arr.length,
     rehydrate: (iter) => [...iter],
-    validate() {},
+    assert() {},
   }),
 );
 

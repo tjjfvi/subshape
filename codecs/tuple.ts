@@ -1,4 +1,4 @@
-import { AnyCodec, Codec, createCodec, metadata, ValidateError } from "../common/mod.ts";
+import { AnyCodec, Codec, createCodec, metadata, ScaleAssertError } from "../common/mod.ts";
 
 export type NativeTuple<ElCodecs extends AnyCodec[]> = {
   [I in keyof ElCodecs]: ElCodecs[I] extends Codec<infer T> ? T : never;
@@ -20,15 +20,15 @@ export function tuple<T extends AnyCodec[]>(...codecs: [...T]): Codec<NativeTupl
       }
       return value as any;
     },
-    _validate(value) {
+    _assert(value) {
       if (!(value instanceof Array)) {
-        throw new ValidateError(this, value, `!(value instanceof Array)`);
+        throw new ScaleAssertError(this, value, `!(value instanceof Array)`);
       }
       if (value.length !== codecs.length) {
-        throw new ValidateError(this, value, `value.length !== ${codecs.length}`);
+        throw new ScaleAssertError(this, value, `value.length !== ${codecs.length}`);
       }
       for (let i = 0; i < codecs.length; i++) {
-        codecs[i]._validate(value[i]);
+        codecs[i]._assert(value[i]);
       }
     },
   });

@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, Expand, metadata, Narrow, ValidateError } from "../common/mod.ts";
+import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
 import { dummy } from "./dummy.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
@@ -49,25 +49,25 @@ export function taggedUnion<
       const discriminant = buffer.array[buffer.index++]!;
       const $member = discriminantToMember[discriminant];
       if (!$member) {
-        throw new DecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
+        throw new ScaleDecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
       }
       return $member._decode(buffer);
     },
-    _validate(value) {
+    _assert(value) {
       if (typeof value !== "object") {
-        throw new ValidateError(this, value, `typeof value !== "object`);
+        throw new ScaleAssertError(this, value, `typeof value !== "object`);
       }
       if (value === null) {
-        throw new ValidateError(this, value, `value === null`);
+        throw new ScaleAssertError(this, value, `value === null`);
       }
       if (!(tagKey in value)) {
-        throw new ValidateError(this, value, `!(${JSON.stringify(tagKey)} in value)`);
+        throw new ScaleAssertError(this, value, `!(${JSON.stringify(tagKey)} in value)`);
       }
       const tag = value[tagKey as never];
       if (!(tag in tagToDiscriminant)) {
-        throw new ValidateError(this, value, `invalid tag`);
+        throw new ScaleAssertError(this, value, `invalid tag`);
       }
-      (discriminantToMember[tagToDiscriminant[tag]!]!._validate as any)(value);
+      (discriminantToMember[tagToDiscriminant[tag]!]!._assert as any)(value);
     },
   });
 }
@@ -91,12 +91,12 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
       const discriminant = buffer.array[buffer.index++]!;
       return members[discriminant]!;
     },
-    _validate(value) {
+    _assert(value) {
       if (typeof value !== "string") {
-        throw new ValidateError(this, value, `typeof value !== "string"`);
+        throw new ScaleAssertError(this, value, `typeof value !== "string"`);
       }
       if (!(value in keyToDiscriminant)) {
-        throw new ValidateError(this, value, `invalid value`);
+        throw new ScaleAssertError(this, value, `invalid value`);
       }
     },
   });

@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, metadata, ValidateError } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -15,15 +15,15 @@ export const str: Codec<string> = createCodec({
   _decode(buffer) {
     const len = compactU32._decode(buffer);
     if (buffer.array.length < buffer.index + len) {
-      throw new DecodeError(this, buffer, "Attempting to `str`-decode beyond bounds of input bytes");
+      throw new ScaleDecodeError(this, buffer, "Attempting to `str`-decode beyond bounds of input bytes");
     }
     const slice = buffer.array.slice(buffer.index, buffer.index + len);
     buffer.index += len;
     return new TextDecoder().decode(slice);
   },
-  _validate(value) {
+  _assert(value) {
     if (typeof value !== "string") {
-      throw new ValidateError(this, value, `typeof value !== "string"`);
+      throw new ScaleAssertError(this, value, `typeof value !== "string"`);
     }
   },
 });

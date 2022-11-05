@@ -2,7 +2,7 @@
 
 import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testing/asserts.ts";
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts";
-import { AnyCodec, Codec, ValidateError } from "./common/mod.ts";
+import { AnyCodec, Codec, ScaleAssertError } from "./common/mod.ts";
 
 const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
   () => Deno.readTextFile(fileName)
@@ -33,12 +33,12 @@ export function testCodec<T>(
       if (typeof value === "function") {
         value = (value as () => T)();
       }
-      codec._validate(value);
+      codec._assert(value);
       const encoded = async ? await codec.encodeAsync(value) : codec.encode(value);
       await assertSnapshot(t, encoded, { serializer: serializeU8A });
       const decoded = codec.decode(encoded);
       assertEquals(decoded, value);
-      codec._validate(value);
+      codec._assert(value);
     });
   }
 }
@@ -58,7 +58,7 @@ export function testInvalid(codec: AnyCodec, values: unknown[] | Record<string, 
       if (typeof value === "function") {
         value = (value as () => unknown)();
       }
-      assertThrows(() => codec._validate(value), ValidateError);
+      assertThrows(() => codec._assert(value), ScaleAssertError);
     });
   }
 }

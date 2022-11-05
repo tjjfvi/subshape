@@ -7,7 +7,7 @@ const $boxU8 = $.withMetadata(
     $base: $.u8,
     encode: ({ value }: { value: number }) => value,
     decode: (value) => ({ value }),
-    validate() {},
+    assert() {},
   }),
 );
 

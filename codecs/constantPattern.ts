@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, metadata, ValidateError } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
 
 export function constantPattern<T>(value: T, codec: Pick<Codec<T>, "encode">): Codec<T>;
 export function constantPattern<T>(value: T, pattern: Uint8Array): Codec<T>;
@@ -17,14 +17,14 @@ export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8
       const got = buffer.array.subarray(buffer.index, buffer.index += pattern.length);
       for (let i = 0; i < pattern.length; i++) {
         if (pattern[i] !== got[i]) {
-          throw new DecodeError(this, buffer, `Invalid pattern; expected ${hex(pattern)}, got ${hex(got)}`);
+          throw new ScaleDecodeError(this, buffer, `Invalid pattern; expected ${hex(pattern)}, got ${hex(got)}`);
         }
       }
       return value;
     },
-    _validate(got) {
+    _assert(got) {
       if (got !== value) {
-        throw new ValidateError(this, got, `Invalid value; expected ${value}, got ${got}`);
+        throw new ScaleAssertError(this, got, `Invalid value; expected ${value}, got ${got}`);
       }
     },
   });

@@ -1,4 +1,12 @@
-import { Codec, createCodec, DecodeError, EncodeError, metadata, ValidateError, withMetadata } from "../common/mod.ts";
+import {
+  Codec,
+  createCodec,
+  metadata,
+  ScaleAssertError,
+  ScaleDecodeError,
+  ScaleEncodeError,
+  withMetadata,
+} from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 import { tuple } from "./tuple.ts";
@@ -10,7 +18,7 @@ export function iterable<T, I extends Iterable<T>>(
     $el: Codec<T>;
     calcLength: (iterable: I) => number;
     rehydrate: (iterable: Iterable<T>) => I;
-    validate: (this: Codec<I>, value: unknown) => asserts value is I;
+    assert: (this: Codec<I>, value: unknown) => asserts value is I;
   },
 ): Codec<I> {
   return createCodec({
@@ -25,7 +33,7 @@ export function iterable<T, I extends Iterable<T>>(
         props.$el._encode(buffer, el);
         i++;
       }
-      if (i !== length) throw new EncodeError(this, value, "Incorrect length returned by calcLength");
+      if (i !== length) throw new ScaleEncodeError(this, value, "Incorrect length returned by calcLength");
       buffer.popAlloc();
     },
     _decode(buffer) {
@@ -37,18 +45,18 @@ export function iterable<T, I extends Iterable<T>>(
         }
         done = true;
       }());
-      if (!done) throw new DecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted");
+      if (!done) throw new ScaleDecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted");
       return value;
     },
-    _validate(value) {
-      props.validate.call(this, value);
+    _assert(value) {
+      props.assert.call(this, value);
       const length = props.calcLength(value as I);
       let i = 0;
       for (const el of value as I) {
-        props.$el._validate(el);
+        props.$el._assert(el);
         i++;
       }
-      if (i !== length) throw new ValidateError(this, value, "Incorrect length returned by calcLength");
+      if (i !== length) throw new ScaleAssertError(this, value, "Incorrect length returned by calcLength");
     },
   });
 }
@@ -60,9 +68,9 @@ export function set<T>($el: Codec<T>): Codec<Set<T>> {
       $el,
       calcLength: (set) => set.size,
       rehydrate: (values) => new Set(values),
-      validate(value) {
+      assert(value) {
         if (!(value instanceof Set)) {
-          throw new ValidateError(this, value, "!(value instanceof Set)");
+          throw new ScaleAssertError(this, value, "!(value instanceof Set)");
         }
       },
     }),
@@ -76,9 +84,9 @@ export function map<K, V>($key: Codec<K>, $value: Codec<V>): Codec<Map<K, V>> {
       $el: tuple($key, $value),
       calcLength: (map) => map.size,
       rehydrate: (values) => new Map(values),
-      validate(value) {
+      assert(value) {
         if (!(value instanceof Map)) {
-          throw new ValidateError(this, value, "!(value instanceof Map)");
+          throw new ScaleAssertError(this, value, "!(value instanceof Map)");
         }
       },
     }),

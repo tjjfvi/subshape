@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ScaleDecodeError } from "../common/mod.ts";
 
 export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
   if ($some._metadata.some((x) => x.factory === option)) {
@@ -20,18 +20,18 @@ export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
         case 1: {
           const value = $some._decode(buffer);
           if (value === undefined) {
-            throw new DecodeError(this, buffer, "An undefined some value will not roundtrip correctly");
+            throw new ScaleDecodeError(this, buffer, "An undefined some value will not roundtrip correctly");
           }
           return value;
         }
         default: {
-          throw new DecodeError(this, buffer, "Option discriminant neither 0 nor 1");
+          throw new ScaleDecodeError(this, buffer, "Option discriminant neither 0 nor 1");
         }
       }
     },
-    _validate(value) {
+    _assert(value) {
       if (value === undefined) return;
-      $some._validate(value);
+      $some._assert(value);
     },
   });
 }

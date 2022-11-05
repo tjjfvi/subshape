@@ -1,4 +1,4 @@
-import { Codec, CodecVisitor, createCodec, DecodeError, metadata, withMetadata } from "../common/mod.ts";
+import { Codec, CodecVisitor, createCodec, metadata, ScaleDecodeError, withMetadata } from "../common/mod.ts";
 import { dummy } from "./dummy.ts";
 import { u128, u16, u256, u32, u64, u8 } from "./int.ts";
 import { object } from "./object.ts";
@@ -45,12 +45,12 @@ function compactNumber($base: Codec<number>): Codec<number> {
           // uses signed 32-bit ints, which would yield invalid values.
           return u32._decode(buffer) >>> 2;
         default:
-          if (buffer.array[buffer.index++]! !== 3) throw new DecodeError(this, buffer, "Out of range for U32");
+          if (buffer.array[buffer.index++]! !== 3) throw new ScaleDecodeError(this, buffer, "Out of range for U32");
           return u32._decode(buffer);
       }
     },
-    _validate(value) {
-      $base._validate(value);
+    _assert(value) {
+      $base._assert(value);
     },
   });
 }
@@ -101,8 +101,8 @@ function compactBigInt($base: Codec<bigint>): Codec<bigint> {
       }
       return value;
     },
-    _validate(value) {
-      $base._validate(value);
+    _assert(value) {
+      $base._assert(value);
     },
   });
 }
