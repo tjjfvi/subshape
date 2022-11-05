@@ -2,32 +2,6 @@ import * as $ from "../../mod.ts";
 import { metadata } from "../../mod.ts";
 import { testCodec } from "../../test-util.ts";
 
-const $primitive = $.withMetadata(
-  metadata("$primitive"),
-  $.union(
-    (value) => {
-      return typeof value === "string"
-        ? 0
-        : typeof value === "bigint"
-        ? 2
-        : typeof value === "boolean"
-        ? 3
-        : value === undefined
-        ? 4
-        : 6;
-    },
-    {
-      0: $.str,
-      /* skip number */
-      2: $.u64,
-      3: $.bool,
-      4: $.dummy(undefined),
-      /* skip symbol */
-      6: $.dummy(null),
-    },
-  ),
-);
-
 const $abc = $.withMetadata(
   metadata("$abc"),
   $.taggedUnion("_tag", [
@@ -61,14 +35,6 @@ const names = [
 ] as const;
 
 const $names = $.withMetadata(metadata("$.stringUnion(names)"), $.stringUnion(names));
-
-testCodec($primitive, [
-  "abc",
-  1234567890n,
-  true,
-  undefined,
-  null,
-]);
 
 testCodec($abc, [
   { _tag: "A" },

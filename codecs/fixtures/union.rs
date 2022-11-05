@@ -1,22 +1,6 @@
 use parity_scale_codec::Encode;
 
 #[derive(Encode)]
-enum Primitive {
-  #[codec(index = 0)]
-  String(String),
-  /* skip number */
-  #[codec(index = 2)]
-  BigInt(u64),
-  #[codec(index = 3)]
-  Boolean(bool),
-  #[codec(index = 4)]
-  Undefined,
-  /* skip symbol */
-  #[codec(index = 6)]
-  Null,
-}
-
-#[derive(Encode)]
 enum Abc {
   A,
   B(String),
@@ -54,11 +38,6 @@ enum InterestingU8s {
 }
 
 crate::fixtures!(
-  Primitive::String("abc".to_string()),
-  Primitive::BigInt(1234567890),
-  Primitive::Boolean(true),
-  Primitive::Undefined,
-  Primitive::Null,
   Abc::A,
   Abc::B("HELLO".to_string()),
   Abc::C(255, 101010101),
