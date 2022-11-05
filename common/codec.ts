@@ -38,21 +38,18 @@ let codecInspectIdN = 0;
 const nodeCustomInspect = Symbol.for("nodejs.util.inspect.custom");
 const denoCustomInspect = Symbol.for("Deno.customInspect");
 export abstract class Codec<T> {
-  /** [implementation] A static estimation of the size, which may be an under- or over-estimate */
+  /** A static estimation of the size, which may be an under- or over-estimate */
   abstract _staticSize: number;
-  /** [implementation] Encodes the value into the supplied buffer */
+  /** Encodes the value into the supplied buffer, which should have at least `_staticSize` free byte. */
   abstract _encode: (buffer: EncodeBuffer, value: T) => void;
-  /** [implementation] Decodes the value from the supplied buffer */
+  /** Decodes the value from the supplied buffer */
   abstract _decode: (buffer: DecodeBuffer) => T;
-
+  /** Asserts that the value is valid for this codec */
   abstract _assert: (value: unknown) => asserts value is T;
-
-  /**
-   * If present, a factory function and the corresponding arguments.
-   * `undefined` indicates that this codec is atomic (e.g. `$.str`).
-   */
+  /** An array with metadata representing the construction of this codec */
   abstract _metadata: Metadata<T>;
 
+  /** Encodes the value into a new Uint8Array (throws if async) */
   encode(value: T) {
     const buf = new EncodeBuffer(this._staticSize);
     this._encode(buf, value);
@@ -60,12 +57,14 @@ export abstract class Codec<T> {
     return buf.finish();
   }
 
+  /** Asynchronously encodes the value into a new Uint8Array */
   async encodeAsync(value: T) {
     const buf = new EncodeBuffer(this._staticSize);
     this._encode(buf, value);
     return buf.finishAsync();
   }
 
+  /** Decodes a value from the supplied Uint8Array */
   decode(array: Uint8Array) {
     const buf = new DecodeBuffer(array);
     return this._decode(buf);
