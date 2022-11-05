@@ -29,5 +29,9 @@ export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
         }
       }
     },
+    _validate(value) {
+      if (value === undefined) return;
+      $some._validate(value);
+    },
   });
 }

@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, EncodeError, metadata } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, EncodeError, metadata, ValidateError } from "../common/mod.ts";
 
 export const never: Codec<never> = createCodec({
   _metadata: metadata("$.never"),
@@ -8,5 +8,8 @@ export const never: Codec<never> = createCodec({
   },
   _decode(buffer) {
     throw new DecodeError(this, buffer, "Cannot decode $.never");
+  },
+  _validate(value) {
+    throw new ValidateError(this, value, "Cannot validate $.never");
   },
 });

@@ -34,5 +34,12 @@ export function result<Ok, Err extends Error>(
         }
       }
     },
+    _validate(value) {
+      if (value instanceof Error) {
+        $err._validate(value);
+      } else {
+        $ok._validate(value);
+      }
+    },
   });
 }

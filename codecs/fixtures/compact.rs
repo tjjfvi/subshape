@@ -32,7 +32,6 @@ crate::fixtures!(
   n!(128 u128),
   ((12 << 2) | 0b11u8, u64::MAX, u64::MAX),
   ((28 << 2) | 0b11u8, u128::MAX, u128::MAX),
-  [u8::MAX; 68],
   Compact(A(123)),
   Compact(B { foo: 456 }),
 );

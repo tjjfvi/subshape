@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata, Narrow, Native } from "../common/mod.ts";
+import { Codec, createCodec, metadata, Narrow, Native, ValidateError } from "../common/mod.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
 /**
@@ -17,17 +17,23 @@ export function instance<
   ctor: Ctor,
   ...fields: Narrow<Fields>
 ): Codec<InstanceType<Ctor>> {
-  const $object = object(...fields);
+  const $object: Codec<InstanceType<Ctor>> = object(...fields) as any;
   return createCodec({
     _metadata: metadata("$.instance", instance<Ctor, Fields>, ctor, ...fields),
     _staticSize: $object._staticSize,
-    _encode: $object._encode as any,
+    _encode: $object._encode,
     _decode(buffer) {
       const arr = Array(fields.length);
       for (let i = 0; i < arr.length; i++) {
         arr[i] = (fields as Fields)[i]![1]._decode(buffer);
       }
       return new ctor(...arr as any) as any;
+    },
+    _validate(value) {
+      if (!(value instanceof ctor)) {
+        throw new ValidateError(this, value, `!(value instanceof ${ctor.name})`);
+      }
+      $object._validate(value);
     },
   });
 }

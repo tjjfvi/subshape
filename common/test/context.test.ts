@@ -51,6 +51,7 @@ const $graph: $.Codec<Graph> = $.createCodec({
     graph.to = $.array($graph)._decode(buffer);
     return graph;
   },
+  _validate() {},
 });
 
 const a: Graph = { label: "a", to: [] };

@@ -8,10 +8,10 @@ $.map($.str, $.u32); // Codec<Map<string, number>>
 export const $record = $.transform<
   [string, number][],
   Record<string, number>
->(
-  $.array($.tuple($.str, $.u32)),
-  Object.entries,
-  Object.fromEntries,
-);
+>({
+  $base: $.array($.tuple($.str, $.u32)),
+  encode: Object.entries,
+  decode: Object.fromEntries,
+});
 
 $record; // Codec<Record<string, number>>

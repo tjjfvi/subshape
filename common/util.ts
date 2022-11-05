@@ -7,6 +7,13 @@ export class CodecError extends Error {
   }
 }
 
+export class ValidateError extends CodecError {
+  name = "ValidateError";
+  constructor(codec: AnyCodec, readonly value: unknown, message: string) {
+    super(codec, message);
+  }
+}
+
 export class EncodeError extends CodecError {
   name = "EncodeError";
   constructor(codec: AnyCodec, readonly value: unknown, message: string) {

@@ -1,5 +1,5 @@
 import * as $ from "../../mod.ts";
-import { testCodec } from "../../test-util.ts";
+import { testCodec, testInvalid } from "../../test-util.ts";
 
 testCodec($.promise($.u8), {
   0: () => prom(0),
@@ -16,6 +16,8 @@ testCodec($.array($.promise($.u8)), {
 testCodec($.promise($.array($.promise($.compact($.u32)))), {
   times13: () => Promise.resolve(Array.from({ length: 256 }, (_, i) => prom(i * 13 % 256))),
 }, true);
+
+testInvalid($.promise($.u8), [0]);
 
 function prom(n: number): Promise<number> {
   return new Promise((r) => setTimeout(() => r(n), n * 10));

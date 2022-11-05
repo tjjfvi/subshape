@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, EncodeError, metadata } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, metadata, ValidateError } from "../common/mod.ts";
 
 export function constantPattern<T>(value: T, codec: Pick<Codec<T>, "encode">): Codec<T>;
 export function constantPattern<T>(value: T, pattern: Uint8Array): Codec<T>;
@@ -10,10 +10,7 @@ export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8
     // usually more efficient to insert `pattern` dynamically, rather than
     // manually copy the bytes.
     _staticSize: 0,
-    _encode(buffer, got) {
-      if (got !== value) {
-        throw new EncodeError(this, got, `Invalid value; expected ${value}, got ${got}`);
-      }
+    _encode(buffer) {
       buffer.insertArray(pattern);
     },
     _decode(buffer) {
@@ -24,6 +21,11 @@ export function constantPattern<T>(value: T, c: Pick<Codec<T>, "encode"> | Uint8
         }
       }
       return value;
+    },
+    _validate(got) {
+      if (got !== value) {
+        throw new ValidateError(this, got, `Invalid value; expected ${value}, got ${got}`);
+      }
     },
   });
 }

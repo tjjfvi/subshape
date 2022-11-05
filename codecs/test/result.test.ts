@@ -1,5 +1,5 @@
 import * as $ from "../../mod.ts";
-import { assertThrows, testCodec } from "../../test-util.ts";
+import { assertThrows, testCodec, testInvalid } from "../../test-util.ts";
 
 class StrErr extends Error {
   constructor(readonly str: string) {
@@ -13,6 +13,13 @@ const $strError = $.instance(StrErr, ["str", $.str]);
 testCodec($.result($.str, $strError), [
   "ok",
   new StrErr("err"),
+]);
+
+testInvalid($.result($.str, $strError), [
+  null,
+  undefined,
+  new Error(),
+  new StrErr(null!),
 ]);
 
 Deno.test("result roundtrip error", async () => {

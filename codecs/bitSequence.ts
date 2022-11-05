@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata, ValidateError } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -77,5 +77,10 @@ export const bitSequence: Codec<BitSequence> = createCodec({
     const length = compactU32._decode(buffer);
     const byteLength = Math.ceil(length / 8);
     return new BitSequence(length, buffer.array.subarray(buffer.index, buffer.index += byteLength));
+  },
+  _validate(value) {
+    if (!(value instanceof BitSequence)) {
+      throw new ValidateError(this, value, "!(value instanceof BitSequence)");
+    }
   },
 });

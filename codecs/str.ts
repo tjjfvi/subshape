@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, metadata } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, metadata, ValidateError } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -20,5 +20,10 @@ export const str: Codec<string> = createCodec({
     const slice = buffer.array.slice(buffer.index, buffer.index + len);
     buffer.index += len;
     return new TextDecoder().decode(slice);
+  },
+  _validate(value) {
+    if (typeof value !== "string") {
+      throw new ValidateError(this, value, `typeof value !== "string"`);
+    }
   },
 });

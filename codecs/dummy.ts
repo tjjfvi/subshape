@@ -13,5 +13,6 @@ export function dummy<T>(value: T): Codec<T> {
     _decode() {
       return value;
     },
+    _validate() {},
   });
 }

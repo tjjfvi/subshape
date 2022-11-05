@@ -1,4 +1,4 @@
-import { Codec, createCodec, DecodeError, Expand, metadata, Narrow } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, Expand, metadata, Narrow, ValidateError } from "../common/mod.ts";
 import { dummy } from "./dummy.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
@@ -24,8 +24,8 @@ export function taggedUnion<
   tagKey: TK,
   members: Narrow<M>,
 ): Codec<NativeTaggedUnionMembers<TK, M>> {
-  const tagToDiscriminant: Record<string, number> = {};
-  const discriminantToMember: Record<number, Codec<any>> = {};
+  const tagToDiscriminant: Record<string, number> = Object.create(null);
+  const discriminantToMember: Record<number, Codec<any>> = Object.create(null);
   for (const _discriminant in members) {
     const discriminant = +_discriminant;
     if (isNaN(discriminant)) continue;
@@ -53,11 +53,27 @@ export function taggedUnion<
       }
       return $member._decode(buffer);
     },
+    _validate(value) {
+      if (typeof value !== "object") {
+        throw new ValidateError(this, value, `typeof value !== "object`);
+      }
+      if (value === null) {
+        throw new ValidateError(this, value, `value === null`);
+      }
+      if (!(tagKey in value)) {
+        throw new ValidateError(this, value, `!(${JSON.stringify(tagKey)} in value)`);
+      }
+      const tag = value[tagKey as never];
+      if (!(tag in tagToDiscriminant)) {
+        throw new ValidateError(this, value, `invalid tag`);
+      }
+      (discriminantToMember[tagToDiscriminant[tag]!]!._validate as any)(value);
+    },
   });
 }
 
 export function stringUnion<T extends string>(members: Record<number, T>): Codec<T> {
-  const keyToDiscriminant: Record<string, number> = {};
+  const keyToDiscriminant: Record<string, number> = Object.create(null);
   for (const _discriminant in members) {
     const discriminant = +_discriminant;
     if (isNaN(discriminant)) continue;
@@ -74,6 +90,14 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
     _decode(buffer) {
       const discriminant = buffer.array[buffer.index++]!;
       return members[discriminant]!;
+    },
+    _validate(value) {
+      if (typeof value !== "string") {
+        throw new ValidateError(this, value, `typeof value !== "string"`);
+      }
+      if (!(value in keyToDiscriminant)) {
+        throw new ValidateError(this, value, `invalid value`);
+      }
     },
   });
 }

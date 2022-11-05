@@ -6,7 +6,7 @@ const $magicNumber = $.constantPattern(magicNumber, $.u32);
 testCodec($magicNumber, [magicNumber]);
 
 Deno.test("constantPattern.encode throws", async (t) => {
-  await assertThrowsSnapshot(t, () => $magicNumber.encode(123 as any));
+  await assertThrowsSnapshot(t, () => $magicNumber.encode(123 as any, true));
 });
 
 Deno.test("constantPattern.decode throws", async (t) => {

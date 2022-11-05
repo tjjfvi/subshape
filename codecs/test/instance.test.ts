@@ -1,5 +1,5 @@
 import * as $ from "../../mod.ts";
-import { testCodec } from "../../test-util.ts";
+import { testCodec, testInvalid } from "../../test-util.ts";
 
 // Doesn't extend `Error` to avoid call-stack instability
 class MyError {
@@ -41,6 +41,15 @@ testCodec($myError, [
       c: true,
     },
   ),
+]);
+
+testInvalid($myError, [
+  null,
+  undefined,
+  { code: 123, message: "foo", payload: { a: "abc", b: 2, c: true } },
+  new Error("foo"),
+  new MyError(-1, "a", { a: "abc", b: 2, c: true }),
+  new MyError(123, "a", { a: "abc", b: 2, c: "idk" } as any),
 ]);
 
 namespace _typeTests {

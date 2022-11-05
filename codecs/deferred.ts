@@ -17,13 +17,17 @@ export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
       $codec ??= getCodec();
       return $codec._decode(buffer);
     },
-    encode(value) {
+    _validate(value) {
       $codec ??= getCodec();
-      return $codec.encode(value);
+      $codec._validate(value);
     },
-    encodeAsync(value) {
+    encode(value, validate) {
       $codec ??= getCodec();
-      return $codec.encodeAsync(value);
+      return $codec.encode(value, validate);
+    },
+    encodeAsync(value, validate) {
+      $codec ??= getCodec();
+      return $codec.encodeAsync(value, validate);
     },
     decode(buffer) {
       $codec ??= getCodec();
