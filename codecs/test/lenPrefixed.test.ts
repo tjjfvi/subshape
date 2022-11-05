@@ -1,7 +1,7 @@
 import * as $ from "../../mod.ts";
 import { testCodec, testInvalid } from "../../test-util.ts";
 
-testCodec($.lenPrefixed($.dummy(null)), [null]);
+testCodec($.lenPrefixed($.constant(null)), [null]);
 
 testCodec($.lenPrefixed($.array($.compact($.u32))), {
   empty: [],

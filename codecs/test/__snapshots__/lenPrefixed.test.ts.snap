@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`\$.lenPrefixed(\$.dummy(null)) null 1`] = `00`;
+snapshot[`\$.lenPrefixed(\$.constant(null)) null 1`] = `00`;
 
 snapshot[`\$.lenPrefixed(\$.array(\$.compact(\$.u32))) empty 1`] = `
 04

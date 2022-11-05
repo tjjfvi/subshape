@@ -28,7 +28,7 @@ $.compact($.u256); // Codec<bigint>
 $.str; // Codec<string>
 
 // (encodes as 0 bytes, and always decodes as a constant value)
-$.dummy(null); // Codec<null>
+$.constant(null); // Codec<null>
 
 // (throws if reached)
 $.never; // Codec<never>
