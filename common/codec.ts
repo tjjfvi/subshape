@@ -71,24 +71,6 @@ export abstract class Codec<T> {
     return this._decode(buf);
   }
 
-  assert(value: unknown) {
-    this._assert(value);
-    return value;
-  }
-
-  is(value: unknown): value is T {
-    try {
-      this._assert(value);
-      return true;
-    } catch (e) {
-      if (e instanceof ScaleAssertError) {
-        return false;
-      } else {
-        throw e;
-      }
-    }
-  }
-
   private [nodeCustomInspect](_0: unknown, _1: unknown, inspect: (value: unknown) => string) {
     return this._inspect(inspect);
   }
@@ -125,4 +107,17 @@ export abstract class Codec<T> {
 
 export function assert<T>(codec: Codec<T>, value: unknown): asserts value is T {
   codec._assert(value);
+}
+
+export function is<T>(codec: Codec<T>, value: unknown): value is T {
+  try {
+    codec._assert(value);
+    return true;
+  } catch (e) {
+    if (e instanceof ScaleAssertError) {
+      return false;
+    } else {
+      throw e;
+    }
+  }
 }
