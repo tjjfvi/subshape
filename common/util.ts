@@ -8,21 +8,21 @@ export abstract class ScaleError extends Error {
 }
 
 export class ScaleAssertError extends ScaleError {
-  name = "ScaleAssertError";
+  override readonly name = "ScaleAssertError";
   constructor(codec: AnyCodec, readonly value: unknown, message: string) {
     super(codec, message);
   }
 }
 
 export class ScaleEncodeError extends ScaleError {
-  name = "ScaleEncodeError";
+  override readonly name = "ScaleEncodeError";
   constructor(codec: AnyCodec, readonly value: unknown, message: string) {
     super(codec, message);
   }
 }
 
 export class ScaleDecodeError extends ScaleError {
-  name = "ScaleDecodeError";
+  override readonly name = "ScaleDecodeError";
   constructor(codec: AnyCodec, readonly buffer: DecodeBuffer, message: string) {
     super(codec, message);
   }
