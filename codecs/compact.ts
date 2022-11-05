@@ -1,5 +1,5 @@
 import { Codec, CodecVisitor, createCodec, metadata, ScaleDecodeError, withMetadata } from "../common/mod.ts";
-import { dummy } from "./dummy.ts";
+import { constant } from "./constant.ts";
 import { u128, u16, u256, u32, u64, u8 } from "./int.ts";
 import { object } from "./object.ts";
 import { tuple } from "./tuple.ts";
@@ -115,7 +115,7 @@ compactVisitor.add(u64, () => compactU64);
 compactVisitor.add(u128, () => compactU128);
 compactVisitor.add(u256, () => compactU256);
 
-compactVisitor.add(dummy<any>, (codec) => codec);
+compactVisitor.add(constant<any>, (codec) => codec);
 
 compactVisitor.add(tuple<any[]>, (codec, ...entries) => {
   if (entries.length === 0) return codec;

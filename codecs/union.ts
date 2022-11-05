@@ -1,5 +1,5 @@
 import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
-import { dummy } from "./dummy.ts";
+import { constant } from "./constant.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
 export type AnyTaggedUnionMember = [tag: string, ...fields: AnyField[]];
@@ -32,7 +32,7 @@ export function taggedUnion<
     const [tag, ...fields] = (members as M)[discriminant]!;
     tagToDiscriminant[tag] = discriminant;
     discriminantToMember[discriminant] = object(
-      [tagKey, dummy(tag)],
+      [tagKey, constant(tag)],
       ...fields,
     );
   }

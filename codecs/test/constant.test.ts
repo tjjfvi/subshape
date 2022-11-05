@@ -2,7 +2,7 @@ import * as $ from "../../mod.ts";
 import { assertThrowsSnapshot, testCodec, testInvalid } from "../../test-util.ts";
 
 const magicNumber = 0x6174656d;
-const $magicNumber = $.constantPattern(magicNumber, $.u32);
+const $magicNumber = $.constant(magicNumber, $.u32);
 testCodec($magicNumber, [magicNumber]);
 
 testInvalid($magicNumber, [123]);
