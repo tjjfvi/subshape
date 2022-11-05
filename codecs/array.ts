@@ -89,9 +89,3 @@ export function sizedUint8Array(length: number): Codec<Uint8Array> {
     },
   });
 }
-
-/** @deprecated Use `$.uint8Array` instead */
-export const uint8array = uint8Array;
-
-/** @deprecated Use `$.sizedUint8Array` instead */
-export const sizedUint8array = sizedUint8Array;
