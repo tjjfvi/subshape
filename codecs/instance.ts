@@ -1,4 +1,4 @@
-import { Codec, createCodec, Narrow, Native } from "../common/mod.ts";
+import { Codec, createCodec, metadata, Narrow, Native } from "../common/mod.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
 /**
@@ -19,9 +19,9 @@ export function instance<
 ): Codec<InstanceType<Ctor>> {
   const $object = object(...fields);
   return createCodec({
-    ...$object as Codec<any>,
-    name: "$.instance",
-    _metadata: [instance, ctor, ...fields] as any,
+    _metadata: metadata("$.instance", instance<Ctor, Fields>, ctor, ...fields),
+    _staticSize: $object._staticSize,
+    _encode: $object._encode as any,
     _decode(buffer) {
       const arr = Array(fields.length);
       for (let i = 0; i < arr.length; i++) {

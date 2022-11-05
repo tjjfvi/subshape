@@ -14,8 +14,7 @@ testCodec($.map($.str, $.u8), [
 ]);
 
 const $iterableArray = $.withMetadata(
-  "$iterableArray",
-  null,
+  $.metadata("$iterableArray"),
   $.iterable<number, number[]>({
     $el: $.u8,
     calcLength: (arr) => arr.length,

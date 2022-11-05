@@ -1,4 +1,4 @@
-import { Codec, createCodec } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 
 /**
  * `Dummy`'s decoder returns a hard-coded JS value and DOES NOT encode or decode from any bytes.
@@ -7,8 +7,7 @@ import { Codec, createCodec } from "../common/mod.ts";
  */
 export function dummy<T>(value: T): Codec<T> {
   return createCodec({
-    name: "$.dummy",
-    _metadata: [dummy, value],
+    _metadata: metadata("$.dummy", dummy, value),
     _staticSize: 0,
     _encode() {},
     _decode() {

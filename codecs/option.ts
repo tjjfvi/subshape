@@ -1,12 +1,11 @@
-import { Codec, createCodec, DecodeError } from "../common/mod.ts";
+import { Codec, createCodec, DecodeError, metadata } from "../common/mod.ts";
 
 export function option<Some>($some: Codec<Some>): Codec<Some | undefined> {
-  if ($some._metadata?.[0] === option) {
+  if ($some._metadata.some((x) => x.factory === option)) {
     throw new Error("Nested option codec will not roundtrip correctly");
   }
   return createCodec({
-    name: "$.option",
-    _metadata: [option, $some],
+    _metadata: metadata("$.option", option, $some),
     _staticSize: 1 + $some._staticSize,
     _encode(buffer, value) {
       if ((buffer.array[buffer.index++] = +(value !== undefined))) {

@@ -1,12 +1,11 @@
-import { Codec } from "../common/mod.ts";
+import { Codec, metadata } from "../common/mod.ts";
 
 export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
   let $codec: Codec<T>;
   return {
     // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
     __proto__: Codec.prototype,
-    name: "$.deferred",
-    _metadata: [deferred, getCodec],
+    _metadata: metadata("$.deferred", deferred, getCodec),
     _staticSize: 0,
     _encode(buffer, value) {
       $codec ??= getCodec();

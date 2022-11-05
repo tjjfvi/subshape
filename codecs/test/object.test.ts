@@ -2,8 +2,7 @@ import * as $ from "../../mod.ts";
 import { testCodec } from "../../test-util.ts";
 
 const $person = $.withMetadata(
-  "$person",
-  null,
+  $.metadata("$person"),
   $.object(
     ["name", $.str],
     ["nickName", $.str],

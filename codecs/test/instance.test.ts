@@ -15,8 +15,7 @@ class MyError {
 }
 
 const $myError = $.withMetadata(
-  "$myError",
-  null,
+  $.metadata("$myError"),
   $.instance(
     MyError,
     ["code", $.u8],

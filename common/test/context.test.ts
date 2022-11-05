@@ -24,8 +24,7 @@ class GraphDecodeCtx {
 
 const $compactU32 = $.compact($.u32);
 const $graph: $.Codec<Graph> = $.createCodec({
-  name: "$graph",
-  _metadata: null,
+  _metadata: $.metadata("$graph"),
   _staticSize: $compactU32._staticSize * 2 + $.str._staticSize,
   _encode(buffer, value) {
     const ctx = buffer.context.get(GraphEncodeCtx);

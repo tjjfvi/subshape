@@ -8,10 +8,12 @@ testCodec($.option($.bool), [true, false, undefined]);
 
 Deno.test("option roundtrip error", () => {
   assertThrows(() => $.option($.option($.u8)));
-  assertThrows(
-    () =>
-      $.option($.withMetadata("", null, $.option($.u8)))
-        // Some(None)
-        .decode(new Uint8Array([1, 0])),
-  );
+  assertThrows(() => $.option($.withMetadata($.metadata("$foo"), $.option($.u8))));
+  assertThrows(() => {
+    const $foo = $.option($.u8);
+    $foo._metadata = [];
+    $.option($foo)
+      // Some(None)
+      .decode(new Uint8Array([1, 0]));
+  });
 });
