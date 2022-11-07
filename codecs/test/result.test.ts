@@ -18,7 +18,7 @@ testCodec($.result($.str, $strError), [
 testInvalid($.result($.str, $strError), [
   null,
   undefined,
-  new Error(),
+  Object.assign(new Error("foo"), { stack: "Error: foo" }),
   new StrErr(null!),
 ]);
 

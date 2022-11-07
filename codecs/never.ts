@@ -9,7 +9,7 @@ export const never: Codec<never> = createCodec({
   _decode(buffer) {
     throw new ScaleDecodeError(this, buffer, "Cannot decode $.never");
   },
-  _assert(value) {
-    throw new ScaleAssertError(this, value, "Cannot validate $.never");
+  _assert(assert) {
+    throw new ScaleAssertError(this, assert.value, `${assert.path}: Cannot validate $.never`);
   },
 });

@@ -14,3 +14,11 @@ snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], [ "str", \$.str ])) 
 72
 72
 `;
+
+snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], [ "str", \$.str ])) invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
+
+snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], [ "str", \$.str ])) invalid undefined 1`] = `ScaleAssertError: typeof value !== "string"`;
+
+snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], [ "str", \$.str ])) invalid Error: foo 1`] = `ScaleAssertError: !(value instanceof StrErr)`;
+
+snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], [ "str", \$.str ])) invalid StrErr: null 1`] = `ScaleAssertError: typeof value.str !== "string"`;

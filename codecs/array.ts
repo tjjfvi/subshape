@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata, ScaleAssertError } from "../common/mod.ts";
+import { AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -28,15 +28,13 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec
       }
       return value as ArrayOfLength<T, L>;
     },
-    _assert(value) {
-      if (!(value instanceof Array)) {
-        throw new ScaleAssertError(this, value, "!(value instanceof Array)");
-      }
-      if (value.length !== length) {
-        throw new ScaleAssertError(this, value, `value.length !== ${length}`);
-      }
-      for (let i = 0; i < value.length; i++) {
-        $el._assert(value[i]);
+    _assert(assert: AssertState) {
+      assert.instanceof(this, Array);
+      assert.access("length").with((assert: AssertState) => {
+        assert.equals(this, length);
+      });
+      for (let i = 0; i < length; i++) {
+        $el._assert(assert.access(i));
       }
     },
   });
@@ -64,12 +62,10 @@ export function array<T>($el: Codec<T>): Codec<T[]> {
       }
       return value;
     },
-    _assert(value) {
-      if (!(value instanceof Array)) {
-        throw new ScaleAssertError(this, value, "!(value instanceof Array)");
-      }
-      for (let i = 0; i < value.length; i++) {
-        $el._assert(value[i]);
+    _assert(state: AssertState) {
+      state.instanceof(this, Array);
+      for (let i = 0; i < state.value.length; i++) {
+        $el._assert(state.access(i));
       }
     },
   });
@@ -88,10 +84,8 @@ export const uint8Array: Codec<Uint8Array> = createCodec({
     buffer.index += length;
     return value;
   },
-  _assert(value) {
-    if (!(value instanceof Uint8Array)) {
-      throw new ScaleAssertError(this, value, "!(value instanceof Uint8Array)");
-    }
+  _assert(state: AssertState) {
+    state.instanceof(this, Uint8Array);
   },
 });
 
@@ -108,13 +102,11 @@ export function sizedUint8Array(length: number): Codec<Uint8Array> {
     _decode(buffer) {
       return buffer.array.subarray(buffer.index, buffer.index += length);
     },
-    _assert(value) {
-      if (!(value instanceof Uint8Array)) {
-        throw new ScaleAssertError(this, value, "!(value instanceof Uint8Array)");
-      }
-      if (value.length !== length) {
-        throw new ScaleAssertError(this, value, `value.length !== ${length}`);
-      }
+    _assert(assert: AssertState) {
+      assert.instanceof(this, Uint8Array);
+      assert.access("length").with((assert: AssertState) => {
+        assert.equals(this, length);
+      });
     },
   });
 }

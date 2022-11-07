@@ -9405,3 +9405,11 @@ snapshot[`\$.str cargoLock 1`] = `
 5d
 0a
 `;
+
+snapshot[`\$.str invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
+
+snapshot[`\$.str invalid undefined 1`] = `ScaleAssertError: typeof value !== "string"`;
+
+snapshot[`\$.str invalid 123 1`] = `ScaleAssertError: typeof value !== "string"`;
+
+snapshot[`\$.str invalid Symbol(foo) 1`] = `ScaleAssertError: typeof value !== "string"`;

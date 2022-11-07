@@ -15,9 +15,9 @@ export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
       $codec ??= getCodec();
       return $codec._decode(buffer);
     },
-    _assert(value) {
+    _assert(assert) {
       $codec ??= getCodec();
-      $codec._assert(value);
+      $codec._assert(assert);
     },
   });
   codec["_inspect"] = (inspect) => {

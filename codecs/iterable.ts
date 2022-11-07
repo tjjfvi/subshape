@@ -1,4 +1,5 @@
 import {
+  AssertState,
   Codec,
   createCodec,
   metadata,
@@ -18,7 +19,7 @@ export function iterable<T, I extends Iterable<T>>(
     $el: Codec<T>;
     calcLength: (iterable: I) => number;
     rehydrate: (iterable: Iterable<T>) => I;
-    assert: (this: Codec<I>, value: unknown) => asserts value is I;
+    assert: (this: Codec<I>, assert: AssertState) => asserts assert is AssertState<I>;
   },
 ): Codec<I> {
   return createCodec({
@@ -48,15 +49,17 @@ export function iterable<T, I extends Iterable<T>>(
       if (!done) throw new ScaleDecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted");
       return value;
     },
-    _assert(value) {
-      props.assert.call(this, value);
-      const length = props.calcLength(value as I);
+    _assert(assert: AssertState) {
+      props.assert.call(this, assert);
+      const length = props.calcLength(assert.value as I);
       let i = 0;
-      for (const el of value as I) {
-        props.$el._assert(el);
+      for (const el of assert.value as I) {
+        props.$el._assert(new AssertState(el, `#iterator[${i}]`));
         i++;
       }
-      if (i !== length) throw new ScaleAssertError(this, value, "Incorrect length returned by calcLength");
+      if (i !== length) {
+        throw new ScaleAssertError(this, assert.value, `${assert.path}: Incorrect length returned by calcLength`);
+      }
     },
   });
 }
@@ -68,10 +71,8 @@ export function set<T>($el: Codec<T>): Codec<Set<T>> {
       $el,
       calcLength: (set) => set.size,
       rehydrate: (values) => new Set(values),
-      assert(value) {
-        if (!(value instanceof Set)) {
-          throw new ScaleAssertError(this, value, "!(value instanceof Set)");
-        }
+      assert(assert: AssertState) {
+        assert.instanceof(this, Set);
       },
     }),
   );
@@ -84,10 +85,8 @@ export function map<K, V>($key: Codec<K>, $value: Codec<V>): Codec<Map<K, V>> {
       $el: tuple($key, $value),
       calcLength: (map) => map.size,
       rehydrate: (values) => new Map(values),
-      assert(value) {
-        if (!(value instanceof Map)) {
-          throw new ScaleAssertError(this, value, "!(value instanceof Map)");
-        }
+      assert(assert: AssertState) {
+        assert.instanceof(this, Map);
       },
     }),
   );

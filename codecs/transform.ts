@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata } from "../common/mod.ts";
+import { AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
 
 export function transform<T, U>(
   props: {
@@ -17,9 +17,9 @@ export function transform<T, U>(
     _decode(buffer) {
       return props.decode(props.$base._decode(buffer));
     },
-    _assert(value) {
-      props.assert?.call(this, value);
-      props.$base._assert(props.encode(value as U));
+    _assert(assert) {
+      props.assert?.call(this, assert);
+      props.$base._assert(new AssertState(props.encode(assert.value as U), "#encode", assert));
     },
   });
 }

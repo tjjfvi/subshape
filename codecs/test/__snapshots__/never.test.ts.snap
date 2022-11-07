@@ -1,3 +1,11 @@
 export const snapshot = {};
 
 snapshot[`\$.option(\$.never) undefined 1`] = `00`;
+
+snapshot[`\$.never invalid null 1`] = `ScaleAssertError: value: Cannot validate \$.never`;
+
+snapshot[`\$.never invalid 0 1`] = `ScaleAssertError: value: Cannot validate \$.never`;
+
+snapshot[`\$.option(\$.never) invalid null 1`] = `ScaleAssertError: value: Cannot validate \$.never`;
+
+snapshot[`\$.option(\$.never) invalid 0 1`] = `ScaleAssertError: value: Cannot validate \$.never`;

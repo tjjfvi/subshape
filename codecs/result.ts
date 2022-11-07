@@ -38,11 +38,11 @@ export function result<Ok, Err extends Error>(
         }
       }
     },
-    _assert(value) {
-      if (value instanceof Error) {
-        $err._assert(value);
+    _assert(assert) {
+      if (assert.value instanceof Error) {
+        $err._assert(assert);
       } else {
-        $ok._assert(value);
+        $ok._assert(assert);
       }
     },
   });

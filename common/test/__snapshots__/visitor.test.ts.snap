@@ -1,3 +1,3 @@
 export const snapshot = {};
 
-snapshot[`CodecVisitor 1`] = `"Unrecognized codec"`;
+snapshot[`CodecVisitor 1`] = `Error: Unrecognized codec`;

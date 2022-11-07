@@ -3,3 +3,5 @@ export const snapshot = {};
 snapshot[`\$boxU8 { value: 0 } 1`] = `00`;
 
 snapshot[`\$boxU8 { value: 1 } 1`] = `01`;
+
+snapshot[`\$boxU8 invalid { value: -1 } 1`] = `ScaleAssertError: value#encode < 0`;

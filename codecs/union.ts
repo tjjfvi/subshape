@@ -1,4 +1,13 @@
-import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
+import {
+  AssertState,
+  Codec,
+  createCodec,
+  Expand,
+  metadata,
+  Narrow,
+  ScaleAssertError,
+  ScaleDecodeError,
+} from "../common/mod.ts";
 import { constant } from "./constant.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
@@ -53,21 +62,18 @@ export function taggedUnion<
       }
       return $member._decode(buffer);
     },
-    _assert(value) {
-      if (typeof value !== "object") {
-        throw new ScaleAssertError(this, value, `typeof value !== "object`);
-      }
-      if (value === null) {
-        throw new ScaleAssertError(this, value, `value === null`);
-      }
-      if (!(tagKey in value)) {
-        throw new ScaleAssertError(this, value, `!(${JSON.stringify(tagKey)} in value)`);
-      }
-      const tag = value[tagKey as never];
-      if (!(tag in tagToDiscriminant)) {
-        throw new ScaleAssertError(this, value, `invalid tag`);
-      }
-      (discriminantToMember[tagToDiscriminant[tag]!]!._assert as any)(value);
+    _assert(assert: AssertState) {
+      assert.typeof(this, "object");
+      assert.nonNull(this);
+      assert.hasKey(this, tagKey);
+      const tag = assert.access(tagKey).with((assert: AssertState) => {
+        assert.typeof(this, "string");
+        if (!(assert.value in tagToDiscriminant)) {
+          throw new ScaleAssertError(this, assert.value, `${assert.path}: invalid tag`);
+        }
+        return assert.value;
+      });
+      (discriminantToMember[tagToDiscriminant[tag]!]!._assert as any)(assert);
     },
   });
 }
@@ -91,12 +97,10 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
       const discriminant = buffer.array[buffer.index++]!;
       return members[discriminant]!;
     },
-    _assert(value) {
-      if (typeof value !== "string") {
-        throw new ScaleAssertError(this, value, `typeof value !== "string"`);
-      }
-      if (!(value in keyToDiscriminant)) {
-        throw new ScaleAssertError(this, value, `invalid value`);
+    _assert(assert: AssertState) {
+      assert.typeof(this, "string");
+      if (!(assert.value in keyToDiscriminant)) {
+        throw new ScaleAssertError(this, assert.value, `${assert.path} invalid value`);
       }
     },
   });

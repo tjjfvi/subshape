@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata, Narrow, Native, ScaleAssertError } from "../common/mod.ts";
+import { AssertState, Codec, createCodec, metadata, Narrow, Native } from "../common/mod.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
 /**
@@ -29,11 +29,9 @@ export function instance<
       }
       return new ctor(...arr as any) as any;
     },
-    _assert(value) {
-      if (!(value instanceof ctor)) {
-        throw new ScaleAssertError(this, value, `!(value instanceof ${ctor.name})`);
-      }
-      $object._assert(value);
+    _assert(assert: AssertState) {
+      assert.instanceof(this, ctor);
+      $object._assert(assert);
     },
   });
 }

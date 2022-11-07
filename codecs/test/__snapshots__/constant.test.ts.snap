@@ -7,4 +7,6 @@ snapshot[`\$.constant(1635018093, Uint8Array(4) [ 109, 101, 116, 97 ]) 163501809
 61
 `;
 
-snapshot[`constantPattern.decode throws 1`] = `"Invalid pattern; expected 0x6d657461, got 0x7b000000"`;
+snapshot[`\$.constant(1635018093, Uint8Array(4) [ 109, 101, 116, 97 ]) invalid 123 1`] = `ScaleAssertError: value !== 1635018093`;
+
+snapshot[`constantPattern.decode throws 1`] = `ScaleDecodeError: Invalid pattern; expected 0x6d657461, got 0x7b000000`;

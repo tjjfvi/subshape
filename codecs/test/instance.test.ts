@@ -47,7 +47,7 @@ testInvalid($myError, [
   null,
   undefined,
   { code: 123, message: "foo", payload: { a: "abc", b: 2, c: true } },
-  new Error("foo"),
+  Object.assign(new Error("foo"), { stack: "Error: foo" }),
   new MyError(-1, "a", { a: "abc", b: 2, c: true }),
   new MyError(123, "a", { a: "abc", b: 2, c: "idk" } as any),
 ]);
