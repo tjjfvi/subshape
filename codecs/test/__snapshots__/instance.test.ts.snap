@@ -45,3 +45,15 @@ snapshot[`\$myError MyError {
 02
 01
 `;
+
+snapshot[`\$myError invalid null 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+
+snapshot[`\$myError invalid undefined 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+
+snapshot[`\$myError invalid { code: 123, message: "foo", payload: { a: "abc", b: 2, c: true } } 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+
+snapshot[`\$myError invalid Error: foo 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+
+snapshot[`\$myError invalid MyError { code: -1, message: "a", payload: { a: "abc", b: 2, c: true } } 1`] = `ScaleAssertError: value.code < 0`;
+
+snapshot[`\$myError invalid MyError { code: 123, message: "a", payload: { a: "abc", b: 2, c: "idk" } } 1`] = `ScaleAssertError: typeof value.payload.c !== "boolean"`;

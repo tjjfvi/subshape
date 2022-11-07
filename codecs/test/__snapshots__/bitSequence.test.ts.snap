@@ -7,3 +7,15 @@ snapshot[`\$.bitSequence BitSequence { data: Uint8Array(2) [ 106, 40 ], length: 
 6a
 28
 `;
+
+snapshot[`\$.bitSequence invalid null 1`] = `ScaleAssertError: !(value instanceof BitSequence)`;
+
+snapshot[`\$.bitSequence invalid undefined 1`] = `ScaleAssertError: !(value instanceof BitSequence)`;
+
+snapshot[`\$.bitSequence invalid 123 1`] = `ScaleAssertError: !(value instanceof BitSequence)`;
+
+snapshot[`\$.bitSequence invalid [] 1`] = `ScaleAssertError: !(value instanceof BitSequence)`;
+
+snapshot[`\$.bitSequence invalid {} 1`] = `ScaleAssertError: !(value instanceof BitSequence)`;
+
+snapshot[`\$.bitSequence invalid [ true, false ] 1`] = `ScaleAssertError: !(value instanceof BitSequence)`;

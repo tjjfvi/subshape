@@ -49,8 +49,8 @@ function compactNumber($base: Codec<number>): Codec<number> {
           return u32._decode(buffer);
       }
     },
-    _assert(value) {
-      $base._assert(value);
+    _assert(assert) {
+      $base._assert(assert);
     },
   });
 }
@@ -101,8 +101,8 @@ function compactBigInt($base: Codec<bigint>): Codec<bigint> {
       }
       return value;
     },
-    _assert(value) {
-      $base._assert(value);
+    _assert(assert) {
+      $base._assert(assert);
     },
   });
 }

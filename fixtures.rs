@@ -98,6 +98,7 @@ pub(crate) fn test_fixtures(
     .skip(1)
     .step_by(2)
     .tuples::<(_, _)>()
+    .filter(|(_, v)| !v.contains("Error:"))
     .map(|(k, v)| {
       (
         k,

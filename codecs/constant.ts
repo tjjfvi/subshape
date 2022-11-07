@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
+import { AssertState, Codec, createCodec, metadata, ScaleDecodeError } from "../common/mod.ts";
 
 export function constant<T>(value: T, codec: Pick<Codec<T>, "encode">): Codec<T>;
 export function constant<T>(value: T, pattern?: Uint8Array): Codec<T>;
@@ -26,10 +26,8 @@ export function constant<T>(value: T, c?: Pick<Codec<T>, "encode"> | Uint8Array)
       }
       return value;
     },
-    _assert(got) {
-      if (got !== value) {
-        throw new ScaleAssertError(this, got, `Invalid value; expected ${value}, got ${got}`);
-      }
+    _assert(assert: AssertState) {
+      assert.equals(this, value);
     },
   });
 }

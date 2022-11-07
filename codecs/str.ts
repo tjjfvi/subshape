@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
+import { AssertState, Codec, createCodec, metadata, ScaleDecodeError } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -21,9 +21,7 @@ export const str: Codec<string> = createCodec({
     buffer.index += len;
     return new TextDecoder().decode(slice);
   },
-  _assert(value) {
-    if (typeof value !== "string") {
-      throw new ScaleAssertError(this, value, `typeof value !== "string"`);
-    }
+  _assert(assert: AssertState) {
+    assert.typeof(this, "string");
   },
 });

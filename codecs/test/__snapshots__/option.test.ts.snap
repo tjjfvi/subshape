@@ -35,3 +35,5 @@ snapshot[`\$.option(\$.bool) false 1`] = `
 `;
 
 snapshot[`\$.option(\$.bool) undefined 1`] = `00`;
+
+snapshot[`\$.option(\$.bool) invalid 123 1`] = `ScaleAssertError: typeof value !== "boolean"`;

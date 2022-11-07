@@ -16,3 +16,33 @@ snapshot[`\$.spread(
 00
 7b
 `;
+
+snapshot[`\$.spread(
+  \$.taggedUnion("_tag", [ [ "a" ], [ "b", [Array] ] ]),
+  \$.object([ "bar", \$.u8 ])
+) invalid null 1`] = `ScaleAssertError: value == null`;
+
+snapshot[`\$.spread(
+  \$.taggedUnion("_tag", [ [ "a" ], [ "b", [Array] ] ]),
+  \$.object([ "bar", \$.u8 ])
+) invalid { _tag: null, bar: 1 } 1`] = `ScaleAssertError: typeof value._tag !== "string"`;
+
+snapshot[`\$.spread(
+  \$.taggedUnion("_tag", [ [ "a" ], [ "b", [Array] ] ]),
+  \$.object([ "bar", \$.u8 ])
+) invalid { _tag: "", bar: 1 } 1`] = `ScaleAssertError: value._tag: invalid tag`;
+
+snapshot[`\$.spread(
+  \$.taggedUnion("_tag", [ [ "a" ], [ "b", [Array] ] ]),
+  \$.object([ "bar", \$.u8 ])
+) invalid { _tag: "b", bar: 1 } 1`] = `ScaleAssertError: !("x" in value)`;
+
+snapshot[`\$.spread(
+  \$.taggedUnion("_tag", [ [ "a" ], [ "b", [Array] ] ]),
+  \$.object([ "bar", \$.u8 ])
+) invalid { _tag: "b", x: -1, bar: 1 } 1`] = `ScaleAssertError: value.x < 0`;
+
+snapshot[`\$.spread(
+  \$.taggedUnion("_tag", [ [ "a" ], [ "b", [Array] ] ]),
+  \$.object([ "bar", \$.u8 ])
+) invalid { _tag: "a", bar: -1 } 1`] = `ScaleAssertError: value.bar < 0`;

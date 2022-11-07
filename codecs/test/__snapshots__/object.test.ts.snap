@@ -51,3 +51,19 @@ snapshot[`\$person { name: "Michael", nickName: "Mike", superPower: undefined, l
 00
 07
 `;
+
+snapshot[`\$person invalid null 1`] = `ScaleAssertError: value == null`;
+
+snapshot[`\$person invalid undefined 1`] = `ScaleAssertError: typeof value !== "object"`;
+
+snapshot[`\$person invalid 123 1`] = `ScaleAssertError: typeof value !== "object"`;
+
+snapshot[`\$person invalid [Function] 1`] = `ScaleAssertError: typeof value !== "object"`;
+
+snapshot[`\$person invalid {} 1`] = `ScaleAssertError: !("name" in value)`;
+
+snapshot[`\$person invalid { name: "", nickName: "", superPower: 0, luckyNumber: 0 } 1`] = `ScaleAssertError: typeof value.superPower !== "string"`;
+
+snapshot[`\$person invalid { name: "", nickName: "", superPower: "", luckyNumber: -1 } 1`] = `ScaleAssertError: value.luckyNumber < 0`;
+
+snapshot[`\$person invalid { name: "", nickName: "", superPower: "", unluckyNumber: 0 } 1`] = `ScaleAssertError: !("luckyNumber" in value)`;

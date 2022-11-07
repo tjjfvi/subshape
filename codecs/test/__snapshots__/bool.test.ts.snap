@@ -3,3 +3,13 @@ export const snapshot = {};
 snapshot[`\$.bool true 1`] = `01`;
 
 snapshot[`\$.bool false 1`] = `00`;
+
+snapshot[`\$.bool invalid null 1`] = `ScaleAssertError: typeof value !== "boolean"`;
+
+snapshot[`\$.bool invalid undefined 1`] = `ScaleAssertError: typeof value !== "boolean"`;
+
+snapshot[`\$.bool invalid 123 1`] = `ScaleAssertError: typeof value !== "boolean"`;
+
+snapshot[`\$.bool invalid [] 1`] = `ScaleAssertError: typeof value !== "boolean"`;
+
+snapshot[`\$.bool invalid {} 1`] = `ScaleAssertError: typeof value !== "boolean"`;

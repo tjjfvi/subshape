@@ -1,4 +1,4 @@
-import { Codec, createCodec, metadata, ScaleAssertError } from "../common/mod.ts";
+import { AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
 
 export const u8 = createCodec<number>({
   _metadata: intMetadata(false, 8),
@@ -9,19 +9,10 @@ export const u8 = createCodec<number>({
   _decode(buffer) {
     return buffer.array[buffer.index++]!;
   },
-  _assert(value) {
-    if (typeof value !== "number") {
-      throw new ScaleAssertError(this, value, `typeof value !== "number"`);
-    }
-    if (value !== (value | 0)) {
-      throw new ScaleAssertError(this, value, `invalid int`);
-    }
-    if (value < 0) {
-      throw new ScaleAssertError(this, value, `value < 0`);
-    }
-    if (value > 255) {
-      throw new ScaleAssertError(this, value, `value > 255`);
-    }
+  _assert(assert: AssertState) {
+    assert.typeof(this, "number");
+    assert.integer(this);
+    assert.range(this, 0, 255);
   },
 });
 
@@ -44,19 +35,10 @@ function _intNumber(signed: boolean, size: 8 | 16 | 32): Codec<number> {
       buffer.index += byteSize;
       return value;
     },
-    _assert(value) {
-      if (typeof value !== "number") {
-        throw new ScaleAssertError(this, value, `typeof value !== "number"`);
-      }
-      if (value !== (signed ? value | 0 : value >>> 0)) {
-        throw new ScaleAssertError(this, value, `invalid int`);
-      }
-      if (value < min) {
-        throw new ScaleAssertError(this, value, `value < ${min}`);
-      }
-      if (value > max) {
-        throw new ScaleAssertError(this, value, `value > ${max}`);
-      }
+    _assert(assert: AssertState) {
+      assert.typeof(this, "number");
+      assert.integer(this);
+      assert.range(this, min, max);
     },
   });
 }
@@ -92,16 +74,9 @@ function _intBigInt(signed: boolean, size: 64 | 128 | 256): Codec<bigint> {
       buffer.index += byteSize;
       return value;
     },
-    _assert(value) {
-      if (typeof value !== "bigint") {
-        throw new ScaleAssertError(this, value, `typeof value !== "bigint"`);
-      }
-      if (value < min) {
-        throw new ScaleAssertError(this, value, `value < ${min}`);
-      }
-      if (value > max) {
-        throw new ScaleAssertError(this, value, `value > ${max}`);
-      }
+    _assert(assert: AssertState) {
+      assert.typeof(this, "bigint");
+      assert.range(this, min, max);
     },
   });
 }

@@ -2,7 +2,7 @@
 
 import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testing/asserts.ts";
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts";
-import { AnyCodec, Codec, ScaleAssertError } from "./common/mod.ts";
+import { AnyCodec, assert, Codec, ScaleAssertError } from "./common/mod.ts";
 
 const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
   () => Deno.readTextFile(fileName)
@@ -33,12 +33,12 @@ export function testCodec<T>(
       if (typeof value === "function") {
         value = (value as () => T)();
       }
-      codec._assert(value);
+      assert(codec, value);
       const encoded = async ? await codec.encodeAsync(value) : codec.encode(value);
       await assertSnapshot(t, encoded, { serializer: serializeU8A });
       const decoded = codec.decode(encoded);
       assertEquals(decoded, value);
-      codec._assert(value);
+      assert(codec, decoded);
     });
   }
 }
@@ -54,11 +54,11 @@ export function testInvalid(codec: AnyCodec, values: unknown[] | Record<string, 
         iterableLimit: Infinity,
       })
       : key;
-    Deno.test(`${Deno.inspect(codec)} invalid ${label}`, () => {
+    Deno.test(`${Deno.inspect(codec)} invalid ${label}`, async (t) => {
       if (typeof value === "function") {
         value = (value as () => unknown)();
       }
-      assertThrows(() => codec._assert(value), ScaleAssertError);
+      await assertThrowsSnapshot(t, () => assert(codec as Codec<any>, value), ScaleAssertError);
     });
   }
 }
@@ -79,11 +79,18 @@ export function benchCodec<T>(name: string, codec: Codec<T>, value: T) {
   });
 }
 
-export async function assertThrowsSnapshot(t: Deno.TestContext, fn: () => unknown) {
+export async function assertThrowsSnapshot(
+  t: Deno.TestContext,
+  fn: () => unknown,
+  ctor: abstract new(...args: any) => Error = Error,
+) {
   try {
     fn();
-  } catch (e) {
-    return await assertSnapshot(t, e.message);
+  } catch (error) {
+    if (!(error instanceof ctor)) {
+      throw new Error("Expected " + ctor.name);
+    }
+    return await assertSnapshot(t, `${error.name}: ${error.message}`, { serializer: (x) => x });
   }
   throw new Error("Expected function to throw");
 }

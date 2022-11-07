@@ -1,3 +1,4 @@
+import { AssertState } from "./assert.ts";
 import { DecodeBuffer, EncodeBuffer } from "./buffer.ts";
 import { Metadata } from "./metadata.ts";
 import { ScaleAssertError, ScaleEncodeError } from "./util.ts";
@@ -45,7 +46,7 @@ export abstract class Codec<T> {
   /** Decodes the value from the supplied buffer */
   abstract _decode: (buffer: DecodeBuffer) => T;
   /** Asserts that the value is valid for this codec */
-  abstract _assert: (value: unknown) => asserts value is T;
+  abstract _assert: (state: AssertState) => asserts state is AssertState<T>;
   /** An array with metadata representing the construction of this codec */
   abstract _metadata: Metadata<T>;
 
@@ -105,12 +106,12 @@ export abstract class Codec<T> {
 }
 
 export function assert<T>(codec: Codec<T>, value: unknown): asserts value is T {
-  codec._assert(value);
+  codec._assert(new AssertState(value));
 }
 
 export function is<T>(codec: Codec<T>, value: unknown): value is T {
   try {
-    codec._assert(value);
+    codec._assert(new AssertState(value));
     return true;
   } catch (e) {
     if (e instanceof ScaleAssertError) {

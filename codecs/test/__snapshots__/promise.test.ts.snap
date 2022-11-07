@@ -985,3 +985,5 @@ fd
 cd
 03
 `;
+
+snapshot[`\$.promise(\$.u8) invalid 0 1`] = `ScaleAssertError: !(value instanceof Promise)`;
