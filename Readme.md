@@ -87,6 +87,21 @@ const $plebeianHero: Codec<Superhero> = $.object(
 );
 ```
 
+You can also validate a value against a codec using `$.assert` or `$.is`:
+
+```ts
+value; // unknown
+if ($.is($superhero, value)) {
+  value; // Superhero
+}
+
+value; // unknown
+$.assert($superhero, value);
+value; // Superhero
+```
+
+If `$.assert` fails, it will throw a `ScaleAssertError` detailing why the value was invalid.
+
 Further examples can be found in the [`examples`](https://github.com/paritytech/scale-ts/tree/main/examples) directory.
 
 ## Codec Naming
@@ -154,6 +169,17 @@ const $foo = $.createCodec<Foo>({
 
     // ...
     return value;
+  },
+
+  _assert(assert: $.AssertState) {
+    // Validate that `assert.value` is valid for this codec.
+    // `assert` exposes various utility methods, such as `assert.instanceof`.
+    // See the `AssertState` class for information on other methods.
+
+    // You can delegate to another codec by calling `$bar._assert(assert)` or `$bar._assert(assert.access("key"))`.
+    // Any errors thrown should be an instance of `$.ScaleAssertError`, and should use `assert.path`.
+
+    // ...
   },
 });
 ```
