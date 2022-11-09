@@ -1,4 +1,4 @@
-import { AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 
 export const bool: Codec<boolean> = createCodec({
   _metadata: metadata("$.bool"),
@@ -9,7 +9,7 @@ export const bool: Codec<boolean> = createCodec({
   _decode(buffer) {
     return !!buffer.array[buffer.index++]!;
   },
-  _assert(assert: AssertState) {
+  _assert(assert) {
     assert.typeof(this, "boolean");
   },
 });

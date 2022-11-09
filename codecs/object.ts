@@ -1,4 +1,4 @@
-import { AnyCodec, AssertState, Codec, createCodec, Expand, metadata, Narrow, Native, U2I } from "../common/mod.ts";
+import { AnyCodec, Codec, createCodec, Expand, metadata, Narrow, Native, U2I } from "../common/mod.ts";
 
 export type AnyField = [key: keyof any, value: AnyCodec];
 
@@ -33,13 +33,12 @@ export function object<O extends AnyField[]>(...fields: O): Codec<NativeObject<O
       }
       return obj as any;
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       assert.typeof(this, "object");
       assert.nonNull(this);
       for (let i = 0; i < fields.length; i++) {
         const [key, field] = fields[i]!;
-        assert.hasKey(this, key);
-        field._assert(assert.access(key));
+        field._assert(assert.key(this, key));
       }
     },
   });

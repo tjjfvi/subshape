@@ -46,7 +46,7 @@ export abstract class Codec<T> {
   /** Decodes the value from the supplied buffer */
   abstract _decode: (buffer: DecodeBuffer) => T;
   /** Asserts that the value is valid for this codec */
-  abstract _assert: (state: AssertState) => asserts state is AssertState<T>;
+  abstract _assert: (state: AssertState) => void;
   /** An array with metadata representing the construction of this codec */
   abstract _metadata: Metadata<T>;
 

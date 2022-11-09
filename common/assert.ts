@@ -11,78 +11,73 @@ type TypeofMap = {
   function: Function;
 };
 
-export class AssertState<T = unknown> {
-  constructor(public value: T, public pathPart: string = "value", public parent?: AssertState) {
+export class AssertState {
+  constructor(public value: unknown, public pathPart: string = "value", public parent?: AssertState) {
   }
 
   get path(): string {
     return (this.parent?.path ?? "") + this.pathPart;
   }
 
-  error(codec: AnyCodec, message: string) {
-    return new ScaleAssertError(codec, this.value, message);
-  }
-
-  typeof<K extends keyof TypeofMap>(codec: AnyCodec, type: K): asserts this is AssertState<T & TypeofMap[K]> {
+  typeof<K extends keyof TypeofMap>(codec: AnyCodec, type: K) {
     // deno-lint-ignore valid-typeof
     if (typeof this.value !== type) {
       throw new ScaleAssertError(codec, this.value, `typeof ${this.path} !== "${type}"`);
     }
   }
 
-  nonNull(codec: AnyCodec): asserts this is AssertState<T & {}> {
+  nonNull(codec: AnyCodec) {
     if (this.value == null) {
       throw new ScaleAssertError(codec, this.value, `${this.path} == null`);
     }
   }
 
-  instanceof<U>(codec: AnyCodec, ctor: abstract new(...args: any) => U): asserts this is AssertState<T & U> {
+  instanceof(codec: AnyCodec, ctor: abstract new(...args: any) => unknown) {
     if (!(this.value instanceof ctor)) {
       throw new ScaleAssertError(codec, this.value, `!(${this.path} instanceof ${ctor.name})`);
     }
   }
 
-  hasKey<K extends keyof any>(
-    this: AssertState<{}>,
-    codec: AnyCodec,
-    key: K,
-  ): asserts this is AssertState<T & Record<K, unknown>> {
-    if (!(key in this.value)) {
+  key(codec: AnyCodec, key: keyof any) {
+    this.typeof(codec, "object");
+    this.nonNull(codec);
+    if (!(key in (this.value as object))) {
       throw new ScaleAssertError(codec, this.value, `!(${JSON.stringify(key)} in ${this.path})`);
     }
+    const pathPart = typeof key === "string" && /^[^\W\d]\w*$/u.test(key)
+      ? `.${key}`
+      : `[${typeof key === "string" ? JSON.stringify(key) : key.toString()}]`;
+    return new AssertState((this.value as any)[key], pathPart, this);
   }
 
-  equals<U extends T>(codec: AnyCodec, value: U, label = `${value}`): asserts this is AssertState<U> {
+  equals(codec: AnyCodec, value: unknown, label = `${value}`) {
     if (this.value !== value) {
       throw new ScaleAssertError(codec, this.value, `${this.path} !== ${label}`);
     }
   }
 
-  access<K extends keyof T>(key: K): AssertState<T[K]> {
-    const pathPart = typeof key === "string" && /^[^\W\d]\w*$/u.test(key)
-      ? `.${key}`
-      : `[${typeof key === "string" ? JSON.stringify(key) : key.toString()}]`;
-    return new AssertState(this.value[key], pathPart, this);
-  }
-
-  integer(this: AssertState<number>, codec: AnyCodec) {
-    if (this.value !== (this.value > 0 ? this.value >>> 0 : this.value >> 0)) {
+  integer(codec: AnyCodec, min: number, max: number) {
+    this.typeof(codec, "number");
+    const value = this.value as number;
+    if (value !== (value > 0 ? value >>> 0 : value >> 0)) {
       throw new ScaleAssertError(codec, this.value, `${this.path}: invalid int`);
     }
-  }
-
-  range(this: AssertState<number>, codec: AnyCodec, min: number, max: number): void;
-  range(this: AssertState<bigint>, codec: AnyCodec, min: bigint, max: bigint): void;
-  range(this: AssertState<number | bigint>, codec: AnyCodec, min: number | bigint, max: number | bigint): void {
-    if (this.value < min) {
+    if (value < min) {
       throw new ScaleAssertError(codec, this.value, `${this.path} < ${min}`);
     }
-    if (this.value > max) {
+    if (value > max) {
       throw new ScaleAssertError(codec, this.value, `${this.path} > ${max}`);
     }
   }
 
-  with<T>(cb: (value: this) => T): T {
-    return cb(this);
+  bigint(codec: AnyCodec, min: bigint, max: bigint) {
+    this.typeof(codec, "bigint");
+    const value = this.value as bigint;
+    if (value < min) {
+      throw new ScaleAssertError(codec, this.value, `${this.path} < ${min}n`);
+    }
+    if (value > max) {
+      throw new ScaleAssertError(codec, this.value, `${this.path} > ${max}n`);
+    }
   }
 }

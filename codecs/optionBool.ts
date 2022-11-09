@@ -1,4 +1,4 @@
-import { AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 
 export const optionBool: Codec<boolean | undefined> = createCodec({
   _metadata: metadata("$.optionBool"),
@@ -10,7 +10,7 @@ export const optionBool: Codec<boolean | undefined> = createCodec({
     const byte = buffer.array[buffer.index++]!;
     return byte === 0 ? undefined : !(byte - 1);
   },
-  _assert(assert: AssertState) {
+  _assert(assert) {
     if (assert.value === undefined) return;
     assert.typeof(this, "boolean");
   },

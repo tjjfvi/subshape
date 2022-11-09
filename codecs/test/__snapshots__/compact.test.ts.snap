@@ -175,7 +175,7 @@ snapshot[`\$.compact(\$.u128) invalid undefined 1`] = `ScaleAssertError: typeof 
 
 snapshot[`\$.compact(\$.u128) invalid -1 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.compact(\$.u128) invalid 100000000000000000000000000000000000000000000000000000000n 1`] = `ScaleAssertError: value > 340282366920938463463374607431768211455`;
+snapshot[`\$.compact(\$.u128) invalid 100000000000000000000000000000000000000000000000000000000n 1`] = `ScaleAssertError: value > 340282366920938463463374607431768211455n`;
 
 snapshot[`\$.compact(\$.tuple(\$.u32)) invalid null 1`] = `ScaleAssertError: !(value instanceof Array)`;
 

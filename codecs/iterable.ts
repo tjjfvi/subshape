@@ -19,7 +19,7 @@ export function iterable<T, I extends Iterable<T>>(
     $el: Codec<T>;
     calcLength: (iterable: I) => number;
     rehydrate: (iterable: Iterable<T>) => I;
-    assert: (this: Codec<I>, assert: AssertState) => asserts assert is AssertState<I>;
+    assert: (this: Codec<I>, assert: AssertState) => void;
   },
 ): Codec<I> {
   return createCodec({
@@ -49,7 +49,7 @@ export function iterable<T, I extends Iterable<T>>(
       if (!done) throw new ScaleDecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted");
       return value;
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       props.assert.call(this, assert);
       const length = props.calcLength(assert.value as I);
       let i = 0;
@@ -71,7 +71,7 @@ export function set<T>($el: Codec<T>): Codec<Set<T>> {
       $el,
       calcLength: (set) => set.size,
       rehydrate: (values) => new Set(values),
-      assert(assert: AssertState) {
+      assert(assert) {
         assert.instanceof(this, Set);
       },
     }),
@@ -85,7 +85,7 @@ export function map<K, V>($key: Codec<K>, $value: Codec<V>): Codec<Map<K, V>> {
       $el: tuple($key, $value),
       calcLength: (map) => map.size,
       rehydrate: (values) => new Map(values),
-      assert(assert: AssertState) {
+      assert(assert) {
         assert.instanceof(this, Map);
       },
     }),
