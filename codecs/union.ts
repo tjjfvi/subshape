@@ -1,13 +1,4 @@
-import {
-  AssertState,
-  Codec,
-  createCodec,
-  Expand,
-  metadata,
-  Narrow,
-  ScaleAssertError,
-  ScaleDecodeError,
-} from "../common/mod.ts";
+import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
 import { constant } from "./constant.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
@@ -62,18 +53,13 @@ export function taggedUnion<
       }
       return $member._decode(buffer);
     },
-    _assert(assert: AssertState) {
-      assert.typeof(this, "object");
-      assert.nonNull(this);
-      assert.hasKey(this, tagKey);
-      const tag = assert.access(tagKey).with((assert: AssertState) => {
-        assert.typeof(this, "string");
-        if (!(assert.value in tagToDiscriminant)) {
-          throw new ScaleAssertError(this, assert.value, `${assert.path}: invalid tag`);
-        }
-        return assert.value;
-      });
-      (discriminantToMember[tagToDiscriminant[tag]!]!._assert as any)(assert);
+    _assert(assert) {
+      const assertTag = assert.key(this, tagKey);
+      assertTag.typeof(this, "string");
+      if (!((assertTag.value as string) in tagToDiscriminant)) {
+        throw new ScaleAssertError(this, assertTag.value, `${assertTag.path}: invalid tag`);
+      }
+      discriminantToMember[tagToDiscriminant[assertTag.value as string]!]!._assert(assert);
     },
   });
 }
@@ -97,9 +83,9 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
       const discriminant = buffer.array[buffer.index++]!;
       return members[discriminant]!;
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       assert.typeof(this, "string");
-      if (!(assert.value in keyToDiscriminant)) {
+      if (!((assert.value as string) in keyToDiscriminant)) {
         throw new ScaleAssertError(this, assert.value, `${assert.path} invalid value`);
       }
     },

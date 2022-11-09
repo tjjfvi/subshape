@@ -5,7 +5,7 @@ export function transform<T, U>(
     $base: Codec<T>;
     encode: (value: U) => T;
     decode: (value: T) => U;
-    assert?: (this: Codec<U>, value: unknown) => asserts value is U;
+    assert?: (this: Codec<U>, assert: AssertState) => void;
   },
 ): Codec<U> {
   return createCodec({

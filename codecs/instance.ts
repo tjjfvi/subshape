@@ -1,4 +1,4 @@
-import { AssertState, Codec, createCodec, metadata, Narrow, Native } from "../common/mod.ts";
+import { Codec, createCodec, metadata, Narrow, Native } from "../common/mod.ts";
 import { AnyField, NativeObject, object } from "./object.ts";
 
 /**
@@ -29,7 +29,7 @@ export function instance<
       }
       return new ctor(...arr as any) as any;
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       assert.instanceof(this, ctor);
       $object._assert(assert);
     },

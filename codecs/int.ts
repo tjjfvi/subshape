@@ -1,4 +1,4 @@
-import { AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 
 export const u8 = createCodec<number>({
   _metadata: intMetadata(false, 8),
@@ -9,10 +9,8 @@ export const u8 = createCodec<number>({
   _decode(buffer) {
     return buffer.array[buffer.index++]!;
   },
-  _assert(assert: AssertState) {
-    assert.typeof(this, "number");
-    assert.integer(this);
-    assert.range(this, 0, 255);
+  _assert(assert) {
+    assert.integer(this, 0, 255);
   },
 });
 
@@ -35,10 +33,9 @@ function _intNumber(signed: boolean, size: 8 | 16 | 32): Codec<number> {
       buffer.index += byteSize;
       return value;
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       assert.typeof(this, "number");
-      assert.integer(this);
-      assert.range(this, min, max);
+      assert.integer(this, min, max);
     },
   });
 }
@@ -74,9 +71,8 @@ function _intBigInt(signed: boolean, size: 64 | 128 | 256): Codec<bigint> {
       buffer.index += byteSize;
       return value;
     },
-    _assert(assert: AssertState) {
-      assert.typeof(this, "bigint");
-      assert.range(this, min, max);
+    _assert(assert) {
+      assert.bigint(this, min, max);
     },
   });
 }

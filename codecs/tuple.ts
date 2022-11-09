@@ -1,4 +1,4 @@
-import { AnyCodec, AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
+import { AnyCodec, Codec, createCodec, metadata } from "../common/mod.ts";
 
 export type NativeTuple<ElCodecs extends AnyCodec[]> = {
   [I in keyof ElCodecs]: ElCodecs[I] extends Codec<infer T> ? T : never;
@@ -20,13 +20,11 @@ export function tuple<T extends AnyCodec[]>(...codecs: [...T]): Codec<NativeTupl
       }
       return value as any;
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       assert.instanceof(this, Array);
-      assert.access("length").with((assert: AssertState) => {
-        assert.equals(this, codecs.length);
-      });
+      assert.key(this, "length").equals(this, codecs.length);
       for (let i = 0; i < codecs.length; i++) {
-        codecs[i]._assert(assert.access(i));
+        codecs[i]._assert(assert.key(this, i));
       }
     },
   });

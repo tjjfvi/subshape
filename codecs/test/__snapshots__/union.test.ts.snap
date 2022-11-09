@@ -88,4 +88,4 @@ snapshot[`\$abc invalid { _tag: "D", b: 1n } 1`] = `ScaleAssertError: !("a" in v
 
 snapshot[`\$abc invalid { _tag: "D", a: -1, b: 1n } 1`] = `ScaleAssertError: value.a < 0`;
 
-snapshot[`\$abc invalid { _tag: "D", a: 1, b: -1n } 1`] = `ScaleAssertError: value.b < 0`;
+snapshot[`\$abc invalid { _tag: "D", a: 1, b: -1n } 1`] = `ScaleAssertError: value.b < 0n`;

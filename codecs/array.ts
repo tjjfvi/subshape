@@ -1,4 +1,4 @@
-import { AssertState, Codec, createCodec, metadata } from "../common/mod.ts";
+import { Codec, createCodec, metadata } from "../common/mod.ts";
 import { compact } from "./compact.ts";
 import { u32 } from "./int.ts";
 
@@ -28,13 +28,11 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec
       }
       return value as ArrayOfLength<T, L>;
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       assert.instanceof(this, Array);
-      assert.access("length").with((assert: AssertState) => {
-        assert.equals(this, length);
-      });
+      assert.key(this, "length").equals(this, length);
       for (let i = 0; i < length; i++) {
-        $el._assert(assert.access(i));
+        $el._assert(assert.key(this, i));
       }
     },
   });
@@ -62,10 +60,10 @@ export function array<T>($el: Codec<T>): Codec<T[]> {
       }
       return value;
     },
-    _assert(state: AssertState) {
-      state.instanceof(this, Array);
-      for (let i = 0; i < state.value.length; i++) {
-        $el._assert(state.access(i));
+    _assert(assert) {
+      assert.instanceof(this, Array);
+      for (let i = 0; i < (assert.value as unknown[]).length; i++) {
+        $el._assert(assert.key(this, i));
       }
     },
   });
@@ -84,8 +82,8 @@ export const uint8Array: Codec<Uint8Array> = createCodec({
     buffer.index += length;
     return value;
   },
-  _assert(state: AssertState) {
-    state.instanceof(this, Uint8Array);
+  _assert(assert) {
+    assert.instanceof(this, Uint8Array);
   },
 });
 
@@ -102,11 +100,9 @@ export function sizedUint8Array(length: number): Codec<Uint8Array> {
     _decode(buffer) {
       return buffer.array.subarray(buffer.index, buffer.index += length);
     },
-    _assert(assert: AssertState) {
+    _assert(assert) {
       assert.instanceof(this, Uint8Array);
-      assert.access("length").with((assert: AssertState) => {
-        assert.equals(this, length);
-      });
+      assert.key(this, "length").equals(this, length);
     },
   });
 }

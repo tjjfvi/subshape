@@ -1070,9 +1070,9 @@ snapshot[`\$.u64 invalid 1.2 1`] = `ScaleAssertError: typeof value !== "bigint"`
 
 snapshot[`\$.u64 invalid 0 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.u64 invalid -1n 1`] = `ScaleAssertError: value < 0`;
+snapshot[`\$.u64 invalid -1n 1`] = `ScaleAssertError: value < 0n`;
 
-snapshot[`\$.u64 invalid 18446744073709551616n 1`] = `ScaleAssertError: value > 18446744073709551615`;
+snapshot[`\$.u64 invalid 18446744073709551616n 1`] = `ScaleAssertError: value > 18446744073709551615n`;
 
 snapshot[`\$.u128 invalid null 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
@@ -1088,9 +1088,9 @@ snapshot[`\$.u128 invalid 1.2 1`] = `ScaleAssertError: typeof value !== "bigint"
 
 snapshot[`\$.u128 invalid 0 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.u128 invalid -1n 1`] = `ScaleAssertError: value < 0`;
+snapshot[`\$.u128 invalid -1n 1`] = `ScaleAssertError: value < 0n`;
 
-snapshot[`\$.u128 invalid 340282366920938463463374607431768211456n 1`] = `ScaleAssertError: value > 340282366920938463463374607431768211455`;
+snapshot[`\$.u128 invalid 340282366920938463463374607431768211456n 1`] = `ScaleAssertError: value > 340282366920938463463374607431768211455n`;
 
 snapshot[`\$.u256 invalid null 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
@@ -1106,9 +1106,9 @@ snapshot[`\$.u256 invalid 1.2 1`] = `ScaleAssertError: typeof value !== "bigint"
 
 snapshot[`\$.u256 invalid 0 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.u256 invalid -1n 1`] = `ScaleAssertError: value < 0`;
+snapshot[`\$.u256 invalid -1n 1`] = `ScaleAssertError: value < 0n`;
 
-snapshot[`\$.u256 invalid 115792089237316195423570985008687907853269984665640564039457584007913129639936n 1`] = `ScaleAssertError: value > 115792089237316195423570985008687907853269984665640564039457584007913129639935`;
+snapshot[`\$.u256 invalid 115792089237316195423570985008687907853269984665640564039457584007913129639936n 1`] = `ScaleAssertError: value > 115792089237316195423570985008687907853269984665640564039457584007913129639935n`;
 
 snapshot[`\$.i8 invalid null 1`] = `ScaleAssertError: typeof value !== "number"`;
 
@@ -1178,9 +1178,9 @@ snapshot[`\$.i64 invalid 1.2 1`] = `ScaleAssertError: typeof value !== "bigint"`
 
 snapshot[`\$.i64 invalid 0 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.i64 invalid -9223372036854775809n 1`] = `ScaleAssertError: value < -9223372036854775808`;
+snapshot[`\$.i64 invalid -9223372036854775809n 1`] = `ScaleAssertError: value < -9223372036854775808n`;
 
-snapshot[`\$.i64 invalid 9223372036854775808n 1`] = `ScaleAssertError: value > 9223372036854775807`;
+snapshot[`\$.i64 invalid 9223372036854775808n 1`] = `ScaleAssertError: value > 9223372036854775807n`;
 
 snapshot[`\$.i128 invalid null 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
@@ -1196,9 +1196,9 @@ snapshot[`\$.i128 invalid 1.2 1`] = `ScaleAssertError: typeof value !== "bigint"
 
 snapshot[`\$.i128 invalid 0 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.i128 invalid -170141183460469231731687303715884105729n 1`] = `ScaleAssertError: value < -170141183460469231731687303715884105728`;
+snapshot[`\$.i128 invalid -170141183460469231731687303715884105729n 1`] = `ScaleAssertError: value < -170141183460469231731687303715884105728n`;
 
-snapshot[`\$.i128 invalid 170141183460469231731687303715884105728n 1`] = `ScaleAssertError: value > 170141183460469231731687303715884105727`;
+snapshot[`\$.i128 invalid 170141183460469231731687303715884105728n 1`] = `ScaleAssertError: value > 170141183460469231731687303715884105727n`;
 
 snapshot[`\$.i128 invalid null 2`] = `ScaleAssertError: typeof value !== "bigint"`;
 
@@ -1214,9 +1214,9 @@ snapshot[`\$.i128 invalid 1.2 2`] = `ScaleAssertError: typeof value !== "bigint"
 
 snapshot[`\$.i128 invalid 0 2`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.i128 invalid -170141183460469231731687303715884105729n 2`] = `ScaleAssertError: value < -170141183460469231731687303715884105728`;
+snapshot[`\$.i128 invalid -170141183460469231731687303715884105729n 2`] = `ScaleAssertError: value < -170141183460469231731687303715884105728n`;
 
-snapshot[`\$.i128 invalid 170141183460469231731687303715884105728n 2`] = `ScaleAssertError: value > 170141183460469231731687303715884105727`;
+snapshot[`\$.i128 invalid 170141183460469231731687303715884105728n 2`] = `ScaleAssertError: value > 170141183460469231731687303715884105727n`;
 
 snapshot[`\$.i256 invalid null 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
@@ -1232,6 +1232,6 @@ snapshot[`\$.i256 invalid 1.2 1`] = `ScaleAssertError: typeof value !== "bigint"
 
 snapshot[`\$.i256 invalid 0 1`] = `ScaleAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.i256 invalid -57896044618658097711785492504343953926634992332820282019728792003956564819969n 1`] = `ScaleAssertError: value < -57896044618658097711785492504343953926634992332820282019728792003956564819968`;
+snapshot[`\$.i256 invalid -57896044618658097711785492504343953926634992332820282019728792003956564819969n 1`] = `ScaleAssertError: value < -57896044618658097711785492504343953926634992332820282019728792003956564819968n`;
 
-snapshot[`\$.i256 invalid 57896044618658097711785492504343953926634992332820282019728792003956564819968n 1`] = `ScaleAssertError: value > 57896044618658097711785492504343953926634992332820282019728792003956564819967`;
+snapshot[`\$.i256 invalid 57896044618658097711785492504343953926634992332820282019728792003956564819968n 1`] = `ScaleAssertError: value > 57896044618658097711785492504343953926634992332820282019728792003956564819967n`;

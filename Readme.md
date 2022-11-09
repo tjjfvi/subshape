@@ -171,7 +171,7 @@ const $foo = $.createCodec<Foo>({
     return value;
   },
 
-  _assert(assert: $.AssertState) {
+  _assert(assert) {
     // Validate that `assert.value` is valid for this codec.
     // `assert` exposes various utility methods, such as `assert.instanceof`.
     // See the `AssertState` class for information on other methods.
