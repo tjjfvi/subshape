@@ -1,5 +1,5 @@
-import * as $ from "../../mod.ts";
-import { files, testCodec, testInvalid } from "../../test-util.ts";
+import * as $ from "../../mod.ts"
+import { files, testCodec, testInvalid } from "../../test-util.ts"
 
 testCodec($.str, {
   "\"\"": "",
@@ -7,6 +7,6 @@ testCodec($.str, {
   lipsum: await files.lipsum(),
   words: await files.words(),
   cargoLock: await files.cargoLock(),
-});
+})
 
-testInvalid($.str, [null, undefined, 123, Symbol("foo")]);
+testInvalid($.str, [null, undefined, 123, Symbol("foo")])

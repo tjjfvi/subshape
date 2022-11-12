@@ -1,6 +1,6 @@
-import * as $ from "../../mod.ts";
-import { testCodec, testInvalid } from "../../test-util.ts";
+import * as $ from "../../mod.ts"
+import { testCodec, testInvalid } from "../../test-util.ts"
 
-testCodec($.optionBool, [undefined, true, false]);
+testCodec($.optionBool, [undefined, true, false])
 
-testInvalid($.optionBool, [123]);
+testInvalid($.optionBool, [123])

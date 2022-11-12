@@ -1,4 +1,4 @@
-import * as $ from "../../mod.ts";
-import { benchCodec } from "../../test-util.ts";
+import * as $ from "../../mod.ts"
+import { benchCodec } from "../../test-util.ts"
 
-benchCodec("bool", $.bool, true);
+benchCodec("bool", $.bool, true)

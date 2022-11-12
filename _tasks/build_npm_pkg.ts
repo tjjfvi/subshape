@@ -1,9 +1,9 @@
-import { emptyDir } from "https://deno.land/std@0.161.0/fs/mod.ts";
-import { build } from "https://deno.land/x/dnt@0.31.0/mod.ts";
+import { emptyDir } from "https://deno.land/std@0.161.0/fs/mod.ts"
+import { build } from "https://deno.land/x/dnt@0.31.0/mod.ts"
 
-await emptyDir("target/npm_pkg");
+await emptyDir("target/npm_pkg")
 
-const DESCRIPTION = "A TypeScript Reference Implementation of SCALE Transcoding";
+const DESCRIPTION = "A TypeScript Reference Implementation of SCALE Transcoding"
 
 await build({
   entryPoints: ["mod.ts"],
@@ -26,6 +26,6 @@ await build({
     lib: ["es2021", "dom"], // https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/60038
   },
   test: false,
-});
+})
 
-await Deno.copyFile("Readme.md", "target/npm_pkg/Readme.md");
+await Deno.copyFile("Readme.md", "target/npm_pkg/Readme.md")

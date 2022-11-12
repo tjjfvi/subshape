@@ -1,9 +1,9 @@
 // import * as $ from "https://deno.land/x/scale/mod.ts";
-import * as $ from "../mod.ts";
+import * as $ from "../mod.ts"
 
-$.set($.u32); // Codec<Set<number>>
+$.set($.u32) // Codec<Set<number>>
 
-$.map($.str, $.u32); // Codec<Map<string, number>>
+$.map($.str, $.u32) // Codec<Map<string, number>>
 
 export const $record = $.transform<
   [string, number][],
@@ -12,6 +12,6 @@ export const $record = $.transform<
   $base: $.array($.tuple($.str, $.u32)),
   encode: Object.entries,
   decode: Object.fromEntries,
-});
+})
 
-$record; // Codec<Record<string, number>>
+$record // Codec<Record<string, number>>
