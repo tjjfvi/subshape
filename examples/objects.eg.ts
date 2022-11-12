@@ -1,13 +1,13 @@
 // import * as $ from "https://deno.land/x/scale/mod.ts";
-import * as $ from "../mod.ts";
+import * as $ from "../mod.ts"
 
 export const $superhero = $.object(
   ["pseudonym", $.str],
   ["secretIdentity", $.option($.str)],
   ["superpowers", $.array($.str)],
-);
+)
 
-$superhero;
+$superhero
 // Codec<{
 //   pseudonym: string;
 //   secretIdentity: string | undefined;
@@ -15,10 +15,10 @@ $superhero;
 // }>
 
 class MyError extends Error {
-  code;
+  code
   constructor(code: number, message: string) {
-    super(message);
-    this.code = code;
+    super(message)
+    this.code = code
   }
 }
 
@@ -27,6 +27,6 @@ export const $myError = $.instance(
   // Entries should correspond to both properties and constructor arguments
   ["code", $.u8],
   ["message", $.str],
-);
+)
 
-$myError; // Codec<MyError>
+$myError // Codec<MyError>

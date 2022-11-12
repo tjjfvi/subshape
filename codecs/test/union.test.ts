@@ -1,6 +1,6 @@
-import * as $ from "../../mod.ts";
-import { metadata } from "../../mod.ts";
-import { testCodec, testInvalid } from "../../test-util.ts";
+import * as $ from "../../mod.ts"
+import { metadata } from "../../mod.ts"
+import { testCodec, testInvalid } from "../../test-util.ts"
 
 const $abc = $.withMetadata(
   metadata("$abc"),
@@ -10,7 +10,7 @@ const $abc = $.withMetadata(
     ["C", ["C", $.tuple($.u32, $.u64)]],
     ["D", ["a", $.u32], ["b", $.u64]],
   ]),
-);
+)
 
 const interestingU8s = {
   0: "Min",
@@ -20,9 +20,9 @@ const interestingU8s = {
   129: "FirstUninteresting",
   225: "LargestSquare",
   255: "Max",
-} as const;
+} as const
 
-const $interestingU8s = $.withMetadata(metadata("$.stringUnion(interestingU8s)"), $.stringUnion(interestingU8s));
+const $interestingU8s = $.withMetadata(metadata("$.stringUnion(interestingU8s)"), $.stringUnion(interestingU8s))
 
 const names = [
   "Ross",
@@ -32,20 +32,20 @@ const names = [
   "James",
   "David",
   "Pierre",
-] as const;
+] as const
 
-const $names = $.withMetadata(metadata("$.stringUnion(names)"), $.stringUnion(names));
+const $names = $.withMetadata(metadata("$.stringUnion(names)"), $.stringUnion(names))
 
 testCodec($abc, [
   { _tag: "A" },
   { _tag: "B", B: "HELLO" },
   { _tag: "C", C: [255, 101010101n] },
   { _tag: "D", a: 101, b: 999n },
-]);
+])
 
-testCodec($names, [...names]);
+testCodec($names, [...names])
 
-testCodec($interestingU8s, Object.values(interestingU8s));
+testCodec($interestingU8s, Object.values(interestingU8s))
 
 testInvalid($abc, [
   null,
@@ -57,4 +57,4 @@ testInvalid($abc, [
   { _tag: "D", b: 1n },
   { _tag: "D", a: -1, b: 1n },
   { _tag: "D", a: 1, b: -1n },
-]);
+])

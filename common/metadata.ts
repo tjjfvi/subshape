@@ -1,30 +1,30 @@
-import { Codec } from "./codec.ts";
+import { Codec } from "./codec.ts"
 
 export type Metadata<T> = Array<
   | {
-    type: "atomic";
-    name: string;
-    factory?: never;
-    args?: never;
+    type: "atomic"
+    name: string
+    factory?: never
+    args?: never
   }
   | {
-    type: "factory";
-    name: string;
-    factory: (...args: any) => Codec<T>;
-    args: any[];
+    type: "factory"
+    name: string
+    factory: (...args: any) => Codec<T>
+    args: any[]
   }
->;
+>
 
 /** Metadata for an atomic codec */
-export function metadata<T = any>(name: string): Metadata<T>;
+export function metadata<T = any>(name: string): Metadata<T>
 /** Metadata for a factory-made codec */
 export function metadata<T, A extends unknown[]>(
   name: string,
   factory: (...args: A) => Codec<T>,
   ...args: A
-): Metadata<T>;
+): Metadata<T>
 /** Concatenate multiple metadata arrays */
-export function metadata<T>(...metadata: Metadata<T>[]): Metadata<T>;
+export function metadata<T>(...metadata: Metadata<T>[]): Metadata<T>
 export function metadata<T>(
   ...fullArgs:
     | Metadata<T>[]
@@ -34,8 +34,8 @@ export function metadata<T>(
       ...args: any[],
     ]
 ): Metadata<T> {
-  if (typeof fullArgs[0] !== "string") return fullArgs.flat();
-  const [name, factory, ...args] = fullArgs as [name: string, factory?: (...args: any) => Codec<T>, ...args: any[]];
+  if (typeof fullArgs[0] !== "string") return fullArgs.flat()
+  const [name, factory, ...args] = fullArgs as [name: string, factory?: (...args: any) => Codec<T>, ...args: any[]]
   return [
     factory
       ? {
@@ -48,29 +48,29 @@ export function metadata<T>(
         type: "atomic",
         name,
       },
-  ];
+  ]
 }
 
 export class CodecVisitor<R> {
-  #fallback?: <T>(codec: Codec<T>) => R;
-  #visitors = new Map<Codec<any> | Function, (codec: Codec<any>, ...args: any[]) => R>();
+  #fallback?: <T>(codec: Codec<T>) => R
+  #visitors = new Map<Codec<any> | Function, (codec: Codec<any>, ...args: any[]) => R>()
 
-  add<T, A extends unknown[]>(codec: (...args: A) => Codec<T>, fn: (codec: Codec<T>, ...args: A) => R): this;
-  add<T>(codec: Codec<T>, fn: (codec: Codec<T>) => R): this;
+  add<T, A extends unknown[]>(codec: (...args: A) => Codec<T>, fn: (codec: Codec<T>, ...args: A) => R): this
+  add<T>(codec: Codec<T>, fn: (codec: Codec<T>) => R): this
   add(codec: Codec<any> | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
     if (this.#visitors.has(codec)) {
-      throw new Error("Duplicate visitor");
+      throw new Error("Duplicate visitor")
     }
-    this.#visitors.set(codec, fn);
-    return this;
+    this.#visitors.set(codec, fn)
+    return this
   }
 
   fallback(fn: <T>(codec: Codec<T>) => R): this {
     if (this.#fallback) {
-      throw new Error("Duplicate fallback");
+      throw new Error("Duplicate fallback")
     }
-    this.#fallback = fn;
-    return this;
+    this.#fallback = fn
+    return this
   }
 
   /**
@@ -83,21 +83,21 @@ export class CodecVisitor<R> {
    * ```
    */
   generic(fn: (visitor: this) => void): this {
-    fn(this);
-    return this;
+    fn(this)
+    return this
   }
 
   visit<T>(codec: Codec<T>): R {
-    const visitor = this.#visitors.get(codec);
-    if (visitor) return visitor(codec);
+    const visitor = this.#visitors.get(codec)
+    if (visitor) return visitor(codec)
     for (const metadata of codec._metadata) {
-      if (metadata.type === "atomic") continue;
-      const visitor = this.#visitors.get(metadata.factory);
-      if (visitor) return visitor(codec, ...metadata.args);
+      if (metadata.type === "atomic") continue
+      const visitor = this.#visitors.get(metadata.factory)
+      if (visitor) return visitor(codec, ...metadata.args)
     }
     if (this.#fallback) {
-      return this.#fallback(codec);
+      return this.#fallback(codec)
     }
-    throw new Error("Unrecognized codec");
+    throw new Error("Unrecognized codec")
   }
 }

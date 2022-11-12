@@ -1,8 +1,8 @@
-import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts";
-import { constant } from "./constant.ts";
-import { AnyField, NativeObject, object } from "./object.ts";
+import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts"
+import { constant } from "./constant.ts"
+import { AnyField, NativeObject, object } from "./object.ts"
 
-export type AnyTaggedUnionMember = [tag: string, ...fields: AnyField[]];
+export type AnyTaggedUnionMember = [tag: string, ...fields: AnyField[]]
 
 export type NativeTaggedUnionMember<
   TK extends PropertyKey,
@@ -10,12 +10,12 @@ export type NativeTaggedUnionMember<
 > = Expand<
   & Record<TK, M[0]>
   & (M extends [any, ...infer R] ? R extends AnyField[] ? NativeObject<R> : {} : never)
->;
+>
 
 export type NativeTaggedUnionMembers<
   TK extends PropertyKey,
   M extends Record<number, AnyTaggedUnionMember>,
-> = [{ [K in keyof M]: NativeTaggedUnionMember<TK, Extract<M[K], AnyTaggedUnionMember>> }[keyof M & number]][0];
+> = [{ [K in keyof M]: NativeTaggedUnionMember<TK, Extract<M[K], AnyTaggedUnionMember>> }[keyof M & number]][0]
 
 export function taggedUnion<
   TK extends PropertyKey,
@@ -24,70 +24,70 @@ export function taggedUnion<
   tagKey: TK,
   members: Narrow<M>,
 ): Codec<NativeTaggedUnionMembers<TK, M>> {
-  const tagToDiscriminant: Record<string, number> = Object.create(null);
-  const discriminantToMember: Record<number, Codec<any>> = Object.create(null);
+  const tagToDiscriminant: Record<string, number> = Object.create(null)
+  const discriminantToMember: Record<number, Codec<any>> = Object.create(null)
   for (const _discriminant in members) {
-    const discriminant = +_discriminant;
-    if (isNaN(discriminant)) continue;
-    const [tag, ...fields] = (members as M)[discriminant]!;
-    tagToDiscriminant[tag] = discriminant;
+    const discriminant = +_discriminant
+    if (isNaN(discriminant)) continue
+    const [tag, ...fields] = (members as M)[discriminant]!
+    tagToDiscriminant[tag] = discriminant
     discriminantToMember[discriminant] = object(
       [tagKey, constant(tag)],
       ...fields,
-    );
+    )
   }
   return createCodec({
     _metadata: metadata("$.taggedUnion", taggedUnion, tagKey, members),
     _staticSize: 1 + Math.max(...Object.values(discriminantToMember).map((x) => x._staticSize)),
     _encode(buffer, value) {
-      const discriminant = tagToDiscriminant[value[tagKey]]!;
-      const $member = discriminantToMember[discriminant]!;
-      buffer.array[buffer.index++] = discriminant;
-      $member._encode(buffer, value as never);
+      const discriminant = tagToDiscriminant[value[tagKey]]!
+      const $member = discriminantToMember[discriminant]!
+      buffer.array[buffer.index++] = discriminant
+      $member._encode(buffer, value as never)
     },
     _decode(buffer) {
-      const discriminant = buffer.array[buffer.index++]!;
-      const $member = discriminantToMember[discriminant];
+      const discriminant = buffer.array[buffer.index++]!
+      const $member = discriminantToMember[discriminant]
       if (!$member) {
-        throw new ScaleDecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``);
+        throw new ScaleDecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``)
       }
-      return $member._decode(buffer);
+      return $member._decode(buffer)
     },
     _assert(assert) {
-      const assertTag = assert.key(this, tagKey);
-      assertTag.typeof(this, "string");
+      const assertTag = assert.key(this, tagKey)
+      assertTag.typeof(this, "string")
       if (!((assertTag.value as string) in tagToDiscriminant)) {
-        throw new ScaleAssertError(this, assertTag.value, `${assertTag.path}: invalid tag`);
+        throw new ScaleAssertError(this, assertTag.value, `${assertTag.path}: invalid tag`)
       }
-      discriminantToMember[tagToDiscriminant[assertTag.value as string]!]!._assert(assert);
+      discriminantToMember[tagToDiscriminant[assertTag.value as string]!]!._assert(assert)
     },
-  });
+  })
 }
 
 export function stringUnion<T extends string>(members: Record<number, T>): Codec<T> {
-  const keyToDiscriminant: Record<string, number> = Object.create(null);
+  const keyToDiscriminant: Record<string, number> = Object.create(null)
   for (const _discriminant in members) {
-    const discriminant = +_discriminant;
-    if (isNaN(discriminant)) continue;
-    const key = members[discriminant]!;
-    keyToDiscriminant[key] = discriminant;
+    const discriminant = +_discriminant
+    if (isNaN(discriminant)) continue
+    const key = members[discriminant]!
+    keyToDiscriminant[key] = discriminant
   }
   return createCodec({
     _metadata: metadata("$.stringUnion", stringUnion, members),
     _staticSize: 1,
     _encode(buffer, value) {
-      const discriminant = keyToDiscriminant[value]!;
-      buffer.array[buffer.index++] = discriminant;
+      const discriminant = keyToDiscriminant[value]!
+      buffer.array[buffer.index++] = discriminant
     },
     _decode(buffer) {
-      const discriminant = buffer.array[buffer.index++]!;
-      return members[discriminant]!;
+      const discriminant = buffer.array[buffer.index++]!
+      return members[discriminant]!
     },
     _assert(assert) {
-      assert.typeof(this, "string");
+      assert.typeof(this, "string")
       if (!((assert.value as string) in keyToDiscriminant)) {
-        throw new ScaleAssertError(this, assert.value, `${assert.path} invalid value`);
+        throw new ScaleAssertError(this, assert.value, `${assert.path} invalid value`)
       }
     },
-  });
+  })
 }

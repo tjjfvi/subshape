@@ -16,7 +16,8 @@
         "no-empty",
         "no-explicit-any",
         "no-namespace",
-        "require-await"
+        "require-await",
+        "no-extra-semi"
       ],
       "tags": ["recommended"]
     }

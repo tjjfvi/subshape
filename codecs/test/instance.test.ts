@@ -1,5 +1,5 @@
-import * as $ from "../../mod.ts";
-import { testCodec, testInvalid } from "../../test-util.ts";
+import * as $ from "../../mod.ts"
+import { testCodec, testInvalid } from "../../test-util.ts"
 
 // Doesn't extend `Error` to avoid call-stack instability
 class MyError {
@@ -7,9 +7,9 @@ class MyError {
     readonly code: number,
     readonly message: string,
     readonly payload: {
-      a: string;
-      b: number;
-      c: boolean;
+      a: string
+      b: number
+      c: boolean
     },
   ) {}
 }
@@ -29,7 +29,7 @@ const $myError = $.withMetadata(
       ),
     ],
   ),
-);
+)
 
 testCodec($myError, [
   new MyError(
@@ -41,7 +41,7 @@ testCodec($myError, [
       c: true,
     },
   ),
-]);
+])
 
 testInvalid($myError, [
   null,
@@ -50,30 +50,30 @@ testInvalid($myError, [
   Object.assign(new Error("foo"), { stack: "Error: foo" }),
   new MyError(-1, "a", { a: "abc", b: 2, c: true }),
   new MyError(123, "a", { a: "abc", b: 2, c: "idk" } as any),
-]);
+])
 
 namespace _typeTests {
   // @ts-ignore: Prevent execution
-  if (1 as 0) return;
+  if (1 as 0) return
 
   const $payload = $.object(
     ["a", $.str],
     ["b", $.u8],
     ["c", $.bool],
-  );
+  )
 
   // ok
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["payload", $payload]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["payload", $payload])
 
   // @ts-expect-error: Missing constructor parameters
-  $.instance(MyError);
+  $.instance(MyError)
 
   // @ts-expect-error: Constructor parameter type mismatch
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", $.str]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", $.str])
 
   // @ts-expect-error: Missing field
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["paidload", $payload]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["paidload", $payload])
 
   // @ts-expect-error: Field type mismatch
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", $payload]);
+  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", $payload])
 }

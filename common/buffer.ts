@@ -1,18 +1,18 @@
 export class EncodeBuffer {
-  finishedArrays: (Uint8Array | EncodeBuffer)[] = [];
-  finishedSize = 0;
-  queuedArrays: Uint8Array[] = [];
-  array!: Uint8Array;
-  view!: DataView;
-  index = 0;
+  finishedArrays: (Uint8Array | EncodeBuffer)[] = []
+  finishedSize = 0
+  queuedArrays: Uint8Array[] = []
+  array!: Uint8Array
+  view!: DataView
+  index = 0
 
-  asyncCount = 0;
-  asyncPromise = Promise.resolve();
-  asyncResolve: (value: void | Promise<void>) => void = () => {};
+  asyncCount = 0
+  asyncPromise = Promise.resolve()
+  asyncResolve: (value: void | Promise<void>) => void = () => {}
 
   /** Creates a new EncodeBuffer with a specified initial size/buffer */
   constructor(init: number | Uint8Array, public context = new Context()) {
-    this._setArray(typeof init === "number" ? new Uint8Array(init) : init);
+    this._setArray(typeof init === "number" ? new Uint8Array(init) : init)
   }
 
   /**
@@ -20,11 +20,11 @@ export class EncodeBuffer {
    * This does not consume any of the pre-allocated space.
    */
   insertArray(buffer: Uint8Array) {
-    this._commitWritten();
-    this.finishedArrays.push(buffer);
-    this.finishedSize += buffer.length;
+    this._commitWritten()
+    this.finishedArrays.push(buffer)
+    this.finishedSize += buffer.length
     if (this.index) {
-      this._setArray(this.array.subarray(this.index));
+      this._setArray(this.array.subarray(this.index))
     }
   }
 
@@ -33,9 +33,9 @@ export class EncodeBuffer {
    * `.popAlloc()` must be called after this space is used.
    */
   pushAlloc(size: number) {
-    this._commitWritten();
-    this.queuedArrays.push(this.array.subarray(this.index));
-    this._setArray(new Uint8Array(size));
+    this._commitWritten()
+    this.queuedArrays.push(this.array.subarray(this.index))
+    this._setArray(new Uint8Array(size))
   }
 
   /**
@@ -43,8 +43,8 @@ export class EncodeBuffer {
    * Must be called after `.pushAlloc()`.
    */
   popAlloc() {
-    this._commitWritten();
-    this._setArray(this.queuedArrays.pop()!);
+    this._commitWritten()
+    this._setArray(this.queuedArrays.pop()!)
   }
 
   /**
@@ -53,10 +53,10 @@ export class EncodeBuffer {
    */
   writeAsync(length: number, fn: (buffer: EncodeBuffer) => Promise<void>) {
     this.waitFor(async () => {
-      const cursor = this.createCursor(length);
-      await fn(cursor);
-      cursor.close();
-    });
+      const cursor = this.createCursor(length)
+      await fn(cursor)
+      cursor.close()
+    })
   }
 
   /**
@@ -71,15 +71,15 @@ export class EncodeBuffer {
       {
         close: () => {
           this.waitForBuffer(cursor, () => {
-            cursor._commitWritten();
-            this.finishedSize += cursor.finishedSize;
-          });
+            cursor._commitWritten()
+            this.finishedSize += cursor.finishedSize
+          })
         },
       },
-    );
-    this.finishedArrays.push(cursor);
+    )
+    this.finishedArrays.push(cursor)
 
-    return cursor;
+    return cursor
   }
 
   /**
@@ -88,20 +88,20 @@ export class EncodeBuffer {
    */
   waitFor(fn: () => Promise<void>) {
     if (!this.asyncCount) {
-      this.asyncPromise = new Promise((resolve) => this.asyncResolve = resolve);
+      this.asyncPromise = new Promise((resolve) => this.asyncResolve = resolve)
     }
-    this.asyncCount++;
+    this.asyncCount++
 
     fn()
       .then(() => {
-        this.asyncCount--;
+        this.asyncCount--
         if (!this.asyncCount) {
-          this.asyncResolve();
+          this.asyncResolve()
         }
       })
       .catch((e) => {
-        this.asyncResolve(Promise.reject(e));
-      });
+        this.asyncResolve(Promise.reject(e))
+      })
   }
 
   /**
@@ -111,10 +111,10 @@ export class EncodeBuffer {
    * Rather niche.
    */
   stealAlloc(length: number): Uint8Array {
-    this._commitWritten();
-    const array = this.array.subarray(this.index, this.index + length);
-    this._setArray(this.array.subarray(this.index + length));
-    return array;
+    this._commitWritten()
+    const array = this.array.subarray(this.index, this.index + length)
+    this._setArray(this.array.subarray(this.index + length))
+    return array
   }
 
   /**
@@ -124,11 +124,11 @@ export class EncodeBuffer {
   waitForBuffer(buffer: EncodeBuffer, fn: () => void) {
     if (buffer.asyncCount) {
       this.waitFor(async () => {
-        await buffer.asyncPromise;
-        fn();
-      });
+        await buffer.asyncPromise
+        fn()
+      })
     } else {
-      fn();
+      fn()
     }
   }
 
@@ -138,12 +138,12 @@ export class EncodeBuffer {
    * Throws if asynchronous writes are still pending.
    */
   finish(): Uint8Array {
-    if (this.asyncCount) throw new Error("Attempted to finish before async completion");
-    if (!this.finishedArrays.length) return this.array.subarray(0, this.index);
-    this._commitWritten();
-    const fullArray = new Uint8Array(this.finishedSize);
-    this._finishInto(fullArray, 0);
-    return fullArray;
+    if (this.asyncCount) throw new Error("Attempted to finish before async completion")
+    if (!this.finishedArrays.length) return this.array.subarray(0, this.index)
+    this._commitWritten()
+    const fullArray = new Uint8Array(this.finishedSize)
+    this._finishInto(fullArray, 0)
+    return fullArray
   }
 
   /**
@@ -151,22 +151,22 @@ export class EncodeBuffer {
    * The EncodeBuffer is left in an undefined state, and should not be used afterwards.
    */
   async finishAsync(): Promise<Uint8Array> {
-    await this.asyncPromise;
-    return this.finish();
+    await this.asyncPromise
+    return this.finish()
   }
 
   /** Copies all data from finishedArrays into fullArray */
   _finishInto(fullArray: Uint8Array, index: number): number {
     for (let i = 0; i < this.finishedArrays.length; i++) {
-      const array = this.finishedArrays[i]!;
+      const array = this.finishedArrays[i]!
       if (array instanceof EncodeBuffer) {
-        index = array._finishInto(fullArray, index);
+        index = array._finishInto(fullArray, index)
       } else {
-        fullArray.set(array, index);
-        index += array.length;
+        fullArray.set(array, index)
+        index += array.length
       }
     }
-    return index;
+    return index
   }
 
   /**
@@ -175,36 +175,36 @@ export class EncodeBuffer {
    */
   _commitWritten() {
     if (this.index) {
-      this.finishedArrays.push(this.array.subarray(0, this.index));
-      this.finishedSize += this.index;
+      this.finishedArrays.push(this.array.subarray(0, this.index))
+      this.finishedSize += this.index
     }
   }
 
   /** Sets array and updates view */
   _setArray(array: Uint8Array) {
-    this.array = array;
-    this.view = new DataView(array.buffer, array.byteOffset, array.byteLength);
-    this.index = 0;
+    this.array = array
+    this.view = new DataView(array.buffer, array.byteOffset, array.byteLength)
+    this.index = 0
   }
 }
 
 export class DecodeBuffer {
-  view;
-  index = 0;
-  context = new Context();
+  view
+  index = 0
+  context = new Context()
   constructor(public array: Uint8Array) {
-    this.view = new DataView(array.buffer, array.byteOffset, array.byteLength);
+    this.view = new DataView(array.buffer, array.byteOffset, array.byteLength)
   }
 }
 
 export class Context {
-  private map = new Map<new() => any, any>();
+  private map = new Map<new() => any, any>()
   get<T>(T: new() => T): T {
-    let value = this.map.get(T);
+    let value = this.map.get(T)
     if (!value) {
-      value = new T();
-      this.map.set(T, value);
+      value = new T()
+      this.map.set(T, value)
     }
-    return value;
+    return value
   }
 }

@@ -1,7 +1,7 @@
-import * as $ from "../../mod.ts";
-import { testCodec, testInvalid } from "../../test-util.ts";
+import * as $ from "../../mod.ts"
+import { testCodec, testInvalid } from "../../test-util.ts"
 
-testCodec($.bool, [true, false]);
+testCodec($.bool, [true, false])
 
 testInvalid($.bool, [
   null,
@@ -9,4 +9,4 @@ testInvalid($.bool, [
   123,
   [],
   {},
-]);
+])

@@ -7,7 +7,7 @@ A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endi
 If you're using [Deno](https://deno.land/), simply import via the `deno.land/x` specifier.
 
 ```ts
-import * as $ from "https://deno.land/x/scale/mod.ts";
+import * as $ from "https://deno.land/x/scale/mod.ts"
 ```
 
 If you're using [Node](https://nodejs.org/), install as follows.
@@ -19,7 +19,7 @@ npm install scale-codec
 Then import as follows.
 
 ```ts
-import * as $ from "scale-codec";
+import * as $ from "scale-codec"
 ```
 
 ## Usage
@@ -31,30 +31,30 @@ import * as $ from "scale-codec";
 ## Example
 
 ```ts
-import * as $ from "https://deno.land/x/scale/mod.ts";
+import * as $ from "https://deno.land/x/scale/mod.ts"
 
 const $superhero = $.object(
   ["pseudonym", $.str],
   ["secretIdentity", $.option($.str)],
   ["superpowers", $.array($.str)],
-);
+)
 
 const valueToEncode = {
   pseudonym: "Spider-Man",
   secretIdentity: "Peter Parker",
   superpowers: ["does whatever a spider can"],
-};
+}
 
-const encodedBytes: Uint8Array = $superhero.encode(valueToEncode);
-const decodedValue: Superhero = $superhero.decode(encodedBytes);
+const encodedBytes: Uint8Array = $superhero.encode(valueToEncode)
+const decodedValue: Superhero = $superhero.decode(encodedBytes)
 
-assertEquals(decodedValue, valueToEncode);
+assertEquals(decodedValue, valueToEncode)
 ```
 
 To extract the JS-native TypeScript type from a given codec, use the `Native` utility type.
 
 ```ts
-type Superhero = $.Native<typeof $superhero>;
+type Superhero = $.Native<typeof $superhero>
 // {
 //   pseudonym: string;
 //   secretIdentity: string | undefined;
@@ -66,16 +66,16 @@ You can also explicitly type the codec, which will validate that the inferred ty
 
 ```ts
 interface Superhero {
-  pseudonym: string;
-  secretIdentity: string | undefined;
-  superpowers: string[];
+  pseudonym: string
+  secretIdentity: string | undefined
+  superpowers: string[]
 }
 
 const $superhero: Codec<Superhero> = $.object(
   ["pseudonym", $.str],
   ["secretIdentity", $.option($.str)],
   ["superpowers", $.array($.str)],
-);
+)
 
 // @ts-expect-error
 //   Type 'Codec<{ pseudonym: string; secretIdentity: string | undefined; }>' is not assignable to type 'Codec<Superhero>'.
@@ -84,20 +84,20 @@ const $superhero: Codec<Superhero> = $.object(
 const $plebeianHero: Codec<Superhero> = $.object(
   ["pseudonym", $.str],
   ["secretIdentity", $.option($.str)],
-);
+)
 ```
 
 You can also validate a value against a codec using `$.assert` or `$.is`:
 
 ```ts
-value; // unknown
+value // unknown
 if ($.is($superhero, value)) {
-  value; // Superhero
+  value // Superhero
 }
 
-value; // unknown
-$.assert($superhero, value);
-value; // Superhero
+value // unknown
+$.assert($superhero, value)
+value // Superhero
 ```
 
 If `$.assert` fails, it will throw a `ScaleAssertError` detailing why the value was invalid.
@@ -168,7 +168,7 @@ const $foo = $.createCodec<Foo>({
     // Note that you should use `_decode` and not `decode`.
 
     // ...
-    return value;
+    return value
   },
 
   _assert(assert) {
@@ -181,5 +181,5 @@ const $foo = $.createCodec<Foo>({
 
     // ...
   },
-});
+})
 ```
