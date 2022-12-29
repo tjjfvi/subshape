@@ -148,38 +148,3 @@ snapshot[`\$.f64 invalid "0" 1`] = `ScaleAssertError: typeof value !== "number"`
 snapshot[`\$.f64 invalid null 1`] = `ScaleAssertError: typeof value !== "number"`;
 
 snapshot[`\$.f64 invalid {} 1`] = `ScaleAssertError: typeof value !== "number"`;
-
-snapshot[`\$.f32 0 1`] = `
-00
-00
-00
-00
-`;
-
-snapshot[`\$.f32 1 1`] = `
-00
-00
-80
-3f
-`;
-
-snapshot[`\$.f32 -1 1`] = `
-00
-00
-80
-bf
-`;
-
-snapshot[`\$.f32 -Infinity 1`] = `
-00
-00
-80
-ff
-`;
-
-snapshot[`\$.f32 Infinity 1`] = `
-00
-00
-80
-7f
-`;
