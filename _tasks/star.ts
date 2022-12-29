@@ -13,4 +13,5 @@ for await (
 
 const dest = path.join(Deno.cwd(), "target/star.ts")
 console.log(`Writing "${dest}".`)
+await Deno.mkdir(path.dirname(dest), { recursive: true })
 await Deno.writeTextFile(dest, generated)
