@@ -9,7 +9,7 @@ export const f64 = createCodec<number>({
   },
   _decode(buffer) {
     const value = buffer.view.getFloat64(buffer.index, true)
-    buffer.index += 4
+    buffer.index += 8
     return value
   },
   _assert(assert) {
