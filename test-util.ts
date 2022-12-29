@@ -2,7 +2,7 @@
 
 import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testing/asserts.ts"
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts"
-import { AnyCodec, assert, Codec, ScaleAssertError } from "./common/mod.ts"
+import { AnyCodec, assert, Codec, DecodeBuffer, ScaleAssertError } from "./common/mod.ts"
 
 const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
   () => Deno.readTextFile(fileName)
@@ -36,8 +36,10 @@ export function testCodec<T>(
       assert(codec, value)
       const encoded = async ? await codec.encodeAsync(value) : codec.encode(value)
       await assertSnapshot(t, encoded, { serializer: serializeU8A })
-      const decoded = codec.decode(encoded)
+      const decodeBuffer = new DecodeBuffer(encoded)
+      const decoded = codec._decode(decodeBuffer)
       assertEquals(decoded, value)
+      assertEquals(decodeBuffer.index, encoded.length)
       assert(codec, decoded)
     })
   }
