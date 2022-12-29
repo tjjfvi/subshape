@@ -5,6 +5,7 @@
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true
   },
+  "lock": false,
   "lint": {
     "files": {
       "exclude": ["target"],
