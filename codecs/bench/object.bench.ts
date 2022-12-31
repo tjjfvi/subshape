@@ -17,6 +17,15 @@ benchCodec(
   { x: 123n, y: 456n, z: 789n },
 )
 
+benchCodec(
+  "Array<{ x: u128, y: u128, z: u128 }>",
+  $.array($.object(["x", $.u128], ["y", $.u128], ["z", $.u128])),
+  Array.from(
+    { length: 1000 },
+    (_, i) => ({ x: BigInt(i), y: BigInt(i) ** 2n, z: BigInt(i) ** 3n }),
+  ),
+)
+
 const longKey =
   "thisIsTheKeyThatNeverEnds_itJustGoesRoundAndRoundMyFriends_somePeopleStartedWritingIt_notKnowingWhatItWas_andWeContinueWritingItForeverJustBecause_"
     .repeat(1000)
