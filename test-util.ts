@@ -4,8 +4,8 @@ import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testin
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts"
 import { AnyCodec, assert, Codec, DecodeBuffer, ScaleAssertError } from "./common/mod.ts"
 
-const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) =>
-  () => Deno.readTextFile(fileName)
+const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) => () =>
+  Deno.readTextFile(fileName)
 )
 export const files = { lipsum: lipsum!, words: words!, cargoLock: cargoLock! }
 
