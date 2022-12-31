@@ -10,8 +10,8 @@ export const $myResult = $.result($.str, $myError)
 $myResult // Codec<string | MyError>
 
 export const $animal = $.taggedUnion("type", [
-  ["dog", ["bark", $.str]],
-  ["cat", ["purr", $.str]],
+  $.variant("dog", $.field("bark", $.str)),
+  $.variant("cat", $.field("purr", $.str)),
 ])
 
 $animal
@@ -20,9 +20,9 @@ $animal
 //   | { type: "cat"; purr: string }
 // >
 
-export const $pet = $.spread(
+export const $pet = $.object(
   $animal,
-  $.object(["name", $.str]),
+  $.field("name", $.str),
 )
 
 $pet

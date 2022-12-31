@@ -1,37 +1,23 @@
-import { Codec, createCodec, metadata, Narrow, Native } from "../common/mod.ts"
-import { AnyField, NativeObject, object } from "./object.ts"
+import { AssertState } from "../common/assert.ts"
+import { Codec, createCodec, metadata } from "../common/mod.ts"
 
-/**
- * @param ctor The constructor with which to instantiate the instance / from whose instance to encode
- * @param fields the ordered fields used to decode params for the constructor / encode from the instance
- * @returns the instance codec
- */
-export function instance<
-  Ctor extends new(
-    ...args: {
-      [K in keyof Fields]: Native<Extract<Fields[K], AnyField>[1]>
-    }
-  ) => NativeObject<Fields>,
-  Fields extends AnyField[],
->(
-  ctor: Ctor,
-  ...fields: Narrow<Fields>
-): Codec<InstanceType<Ctor>> {
-  const $object: Codec<InstanceType<Ctor>> = object(...fields) as any
+export function instance<A extends unknown[], T>(
+  ctor: new(...args: A) => T,
+  $args: Codec<A>,
+  toArgs: (value: T) => [...A],
+): Codec<T> {
   return createCodec({
-    _metadata: metadata("$.instance", instance<Ctor, Fields>, ctor, ...fields),
-    _staticSize: $object._staticSize,
-    _encode: $object._encode,
+    _metadata: metadata("$.instance", instance, ctor, $args, toArgs),
+    _staticSize: $args._staticSize,
+    _encode(buffer, value) {
+      $args._encode(buffer, toArgs(value))
+    },
     _decode(buffer) {
-      const arr = Array(fields.length)
-      for (let i = 0; i < arr.length; i++) {
-        arr[i] = (fields as Fields)[i]![1]._decode(buffer)
-      }
-      return new ctor(...arr as any) as any
+      return new ctor(...$args._decode(buffer))
     },
     _assert(assert) {
       assert.instanceof(this, ctor)
-      $object._assert(assert)
+      $args._assert(new AssertState(toArgs(assert.value as T), "#arguments", assert))
     },
   })
 }

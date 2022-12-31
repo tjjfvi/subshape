@@ -42,9 +42,6 @@ pub mod object_fixtures;
 #[path = "./codecs/fixtures/result.rs"]
 pub mod result_fixtures;
 
-#[path = "./codecs/fixtures/spread.rs"]
-pub mod spread_fixtures;
-
 #[path = "./codecs/fixtures/str.rs"]
 pub mod str_fixtures;
 

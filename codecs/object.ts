@@ -1,44 +1,82 @@
-import { AnyCodec, Codec, createCodec, Expand, metadata, Narrow, Native, U2I } from "../common/mod.ts"
+import { AnyCodec, Codec, createCodec, Expand, metadata, Native, U2I } from "../common/mod.ts"
+import { option } from "./option.ts"
 
-export type AnyField = [key: keyof any, value: AnyCodec]
-
-export type NativeField<F extends AnyField> = { [_ in F[0]]: Native<F[1]> }
-
-// // TODO: do we prefer the following (variadic) approach?
-export type NativeObject<O extends AnyField[]> = Expand<
-  U2I<
-    | {}
-    | {
-      // @ts-ignore passes deno but failing dnt
-      [K in keyof O]: Record<O[K][0], Native<O[K][1]>>
-    }[number]
-  >
->
-
-export function object<O extends AnyField[]>(...fields: Narrow<O>): Codec<NativeObject<O>>
-export function object<O extends AnyField[]>(...fields: O): Codec<NativeObject<O>> {
+export function field<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<Expand<Record<K, V>>> {
   return createCodec({
-    _metadata: metadata("$.object", object<O>, ...fields as Narrow<O>),
-    _staticSize: fields.map((x) => x[1]._staticSize).reduce((a, b) => a + b, 0),
+    _metadata: metadata("$.field", field, key, $value),
+    _staticSize: $value._staticSize,
     _encode(buffer, value) {
-      fields.forEach(([key, fieldEncoder]) => {
-        fieldEncoder._encode(buffer, (value as any)[key] as never)
-      })
+      $value._encode(buffer, value[key])
     },
     _decode(buffer) {
-      const obj: Record<string, unknown> = {}
-      for (let i = 0; i < fields.length; i++) {
-        const [key, field] = fields[i]!
-        obj[key as any] = field._decode(buffer)
+      return { [key]: $value._decode(buffer) } as any
+    },
+    _assert(assert) {
+      $value._assert(assert.key(this, key))
+    },
+  })
+}
+
+export function optionalField<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<Expand<Partial<Record<K, V>>>> {
+  const $option = option($value)
+  return createCodec({
+    _metadata: metadata("$.optionalField", optionalField, key, $value),
+    _staticSize: $value._staticSize,
+    _encode(buffer, value) {
+      $option._encode(buffer, value[key])
+    },
+    _decode(buffer) {
+      if(buffer.array[buffer.index++]){
+      return { [key]: $value._decode(buffer) } as any
+      } else {
+        return {}
       }
-      return obj as any
     },
     _assert(assert) {
       assert.typeof(this, "object")
       assert.nonNull(this)
-      for (let i = 0; i < fields.length; i++) {
-        const [key, field] = fields[i]!
-        field._assert(assert.key(this, key))
+      if(key in (assert.value as any)){
+        $option._assert(assert.key(this, key))
+      }
+    },
+  })
+}
+
+export type NativeObject<T extends AnyCodec[]> = Expand<U2I<
+  | { x: {} }
+  | {
+    [K in keyof T]: { x: Native<T[K]> }
+  }[number]
+>["x"]>
+
+type UnionKeys<T> = T extends T ? keyof T : never
+export type ObjectMembers<T extends AnyCodec[]> = [...never extends T ? {
+  [K in keyof T]: UnionKeys<Native<T[K]>> & {
+    [L in keyof T]: K extends L ? never : UnionKeys<Native<T[L]>>
+  }[number] extends (infer O extends keyof any) ? [O] extends [never] ? Codec<Native<T[K]> & {}> : Codec<{ [_ in O]?: never }> : never
+} : T]
+
+export function object<T extends AnyCodec[]>(...members: ObjectMembers<T>): Codec<NativeObject<T>> {
+  return createCodec({
+    _metadata: metadata("$.object", object<T>, ...members),
+    _staticSize: members.map((x) => x._staticSize).reduce((a, b) => a + b, 0),
+    _encode(buffer, value) {
+      for (const member of members as T) {
+        member._encode(buffer, value as never)
+      }
+    },
+    _decode(buffer) {
+      let value = {}
+      for (const member of members as T) {
+        value = { ...value, ...member._decode(buffer)}
+      }
+      return value as any
+    },
+    _assert(assert) {
+      assert.typeof(this, "object")
+      assert.nonNull(this)
+      for (const member of members as T) {
+        member._assert(assert)
       }
     },
   })

@@ -34,9 +34,9 @@ import * as $ from "scale-codec"
 import * as $ from "https://deno.land/x/scale/mod.ts"
 
 const $superhero = $.object(
-  ["pseudonym", $.str],
-  ["secretIdentity", $.option($.str)],
-  ["superpowers", $.array($.str)],
+  $.field("pseudonym", $.str),
+  $.optionalField("secretIdentity", $.str),
+  $.field("superpowers", $.array($.str)),
 )
 
 const valueToEncode = {
@@ -57,7 +57,7 @@ To extract the JS-native TypeScript type from a given codec, use the `Native` ut
 type Superhero = $.Native<typeof $superhero>
 // {
 //   pseudonym: string;
-//   secretIdentity: string | undefined;
+//   secretIdentity?: string | undefined;
 //   superpowers: string[];
 // }
 ```
@@ -67,23 +67,23 @@ You can also explicitly type the codec, which will validate that the inferred ty
 ```ts
 interface Superhero {
   pseudonym: string
-  secretIdentity: string | undefined
+  secretIdentity?: string
   superpowers: string[]
 }
 
 const $superhero: Codec<Superhero> = $.object(
-  ["pseudonym", $.str],
-  ["secretIdentity", $.option($.str)],
-  ["superpowers", $.array($.str)],
+  $.field("pseudonym", $.str),
+  $.optionalField("secretIdentity", $.str),
+  $.field("superpowers", $.array($.str)),
 )
 
 // @ts-expect-error
-//   Type 'Codec<{ pseudonym: string; secretIdentity: string | undefined; }>' is not assignable to type 'Codec<Superhero>'.
+//   Type 'Codec<{ pseudonym: string; secretIdentity?: string | undefined; }>' is not assignable to type 'Codec<Superhero>'.
 //     The types returned by 'decode(...)' are incompatible between these types.
-//       Type '{ pseudonym: string; secretIdentity: string | undefined; }' is not assignable to type 'Superhero'.
+//       Type '{ pseudonym: string; secretIdentity?: string | undefined; }' is not assignable to type 'Superhero'.
 const $plebeianHero: Codec<Superhero> = $.object(
-  ["pseudonym", $.str],
-  ["secretIdentity", $.option($.str)],
+  $.field("pseudonym", $.str),
+  $.optionalField("secretIdentity", $.str),
 )
 ```
 
