@@ -1,4 +1,5 @@
-import { AnyCodec, Codec, createCodec, Expand, metadata, Native, U2I } from "../common/mod.ts"
+import { AnyCodec, Codec, CodecVisitor, createCodec, Expand, metadata, Native, U2I } from "../common/mod.ts"
+import { constant } from "./constant.ts"
 import { option } from "./option.ts"
 
 export function field<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<Expand<Record<K, V>>> {
@@ -69,18 +70,8 @@ export function object<T extends AnyCodec[]>(...members: ObjectMembers<T>): Code
   return createCodec({
     _metadata: metadata("$.object", object<T>, ...members),
     _staticSize: members.map((x) => x._staticSize).reduce((a, b) => a + b, 0),
-    _encode(buffer, value) {
-      for (const member of members as T) {
-        member._encode(buffer, value as never)
-      }
-    },
-    _decode(buffer) {
-      let value = {}
-      for (const member of members as T) {
-        value = { ...value, ...member._decode(buffer) }
-      }
-      return value as any
-    },
+    _encode: generateEncode(members as Codec<any>[]),
+    _decode: generateDecode(members as Codec<any>[]),
     _assert(assert) {
       assert.typeof(this, "object")
       assert.nonNull(this)
@@ -89,4 +80,85 @@ export function object<T extends AnyCodec[]>(...members: ObjectMembers<T>): Code
       }
     },
   })
+}
+
+function generateEncode(members: Codec<any>[]) {
+  const vars: string[] = []
+  const args: unknown[] = []
+
+  const valueVisitor = new CodecVisitor<(v: string) => string>()
+  valueVisitor.add(constant, (codec, value, pattern) => (v) => {
+    if (pattern) {
+      return `${addVar(codec)}._encode(buffer, ${v})`
+    }
+    return addVar(value)
+  })
+  valueVisitor.fallback((codec) => (v) => {
+    return `${addVar(codec)}._encode(buffer, ${v})`
+  })
+
+  const fieldVisitor = new CodecVisitor<string>()
+  fieldVisitor.add(field, (_, key, value) => {
+    return valueVisitor.visit(value)(`value[${typeof key === "symbol" ? addVar(key) : JSON.stringify(key)}]`)
+  })
+  fieldVisitor.add(optionalField, (_, key, value) => {
+    return fieldVisitor.visit(field(key, option(value)))
+  })
+  fieldVisitor.add(object, (_, ...members) => {
+    return members.map((x) => fieldVisitor.visit(x)).join(";")
+  })
+  fieldVisitor.fallback((codec) => {
+    return `${addVar(codec)}._encode(buffer, value)`
+  })
+
+  const content = members.map((x) => fieldVisitor.visit(x)).join(";")
+
+  return (new Function(...vars, `return function objectEncode(buffer,value){${content}}`))(...args)
+
+  function addVar(value: unknown) {
+    const v = "v" + vars.length
+    vars.push(v)
+    args.push(value)
+    return v
+  }
+}
+
+function generateDecode(members: Codec<any>[]) {
+  const vars: string[] = []
+  const args: unknown[] = []
+
+  const valueVisitor = new CodecVisitor<string>()
+  valueVisitor.add(constant, (codec, value, pattern) => {
+    if (pattern) {
+      return `${addVar(codec)}._decode(buffer)`
+    }
+    return addVar(value)
+  })
+  valueVisitor.fallback((codec) => {
+    return `${addVar(codec)}._decode(buffer)`
+  })
+  const fieldVisitor = new CodecVisitor<string>()
+  fieldVisitor.add(field, (_, key, value) => {
+    return `[${typeof key === "symbol" ? addVar(key) : JSON.stringify(key)}]: ${valueVisitor.visit(value)}`
+  })
+  fieldVisitor.add(optionalField, (_, key, value) => {
+    return `...buffer.array[buffer.index++] ? {${fieldVisitor.visit(field(key, value))} } : undefined`
+  })
+  fieldVisitor.add(object, (_, ...members) => {
+    return members.map((x) => fieldVisitor.visit(x)).join(",")
+  })
+  fieldVisitor.fallback((codec) => {
+    return `...${addVar(codec)}._decode(buffer)`
+  })
+
+  const content = members.map((x) => fieldVisitor.visit(x)).join(",")
+
+  return (new Function(...vars, `return function objectDecode(buffer){return{${content}}}`))(...args)
+
+  function addVar(value: unknown) {
+    const v = "v" + vars.length
+    vars.push(v)
+    args.push(value)
+    return v
+  }
 }
