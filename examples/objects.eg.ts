@@ -2,15 +2,15 @@
 import * as $ from "../mod.ts"
 
 export const $superhero = $.object(
-  ["pseudonym", $.str],
-  ["secretIdentity", $.option($.str)],
-  ["superpowers", $.array($.str)],
+  $.field("pseudonym", $.str),
+  $.optionalField("secretIdentity", $.str),
+  $.field("superpowers", $.array($.str)),
 )
 
 $superhero
 // Codec<{
 //   pseudonym: string;
-//   secretIdentity: string | undefined;
+//   secretIdentity?: string | undefined;
 //   superpowers: string[];
 // }>
 
@@ -24,9 +24,8 @@ class MyError extends Error {
 
 export const $myError = $.instance(
   MyError,
-  // Entries should correspond to both properties and constructor arguments
-  ["code", $.u8],
-  ["message", $.str],
+  $.tuple($.u8, $.str), // Specify how to encode/decode constructor arguments
+  (myError) => [myError.code, myError.message], // Specify how to extract arguments from an instance
 )
 
 $myError // Codec<MyError>

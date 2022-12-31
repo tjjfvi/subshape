@@ -18,16 +18,16 @@ const $myError = $.withMetadata(
   $.metadata("$myError"),
   $.instance(
     MyError,
-    ["code", $.u8],
-    ["message", $.str],
-    [
-      "payload",
+    $.tuple(
+      $.u8,
+      $.str,
       $.object(
-        ["a", $.str],
-        ["b", $.u8],
-        ["c", $.bool],
+        $.field("a", $.str),
+        $.field("b", $.u8),
+        $.field("c", $.bool),
       ),
-    ],
+    ),
+    (myError) => [myError.code, myError.message, myError.payload],
   ),
 )
 
@@ -51,29 +51,3 @@ testInvalid($myError, [
   new MyError(-1, "a", { a: "abc", b: 2, c: true }),
   new MyError(123, "a", { a: "abc", b: 2, c: "idk" } as any),
 ])
-
-namespace _typeTests {
-  // @ts-ignore: Prevent execution
-  if (1 as 0) return
-
-  const $payload = $.object(
-    ["a", $.str],
-    ["b", $.u8],
-    ["c", $.bool],
-  )
-
-  // ok
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["payload", $payload])
-
-  // @ts-expect-error: Missing constructor parameters
-  $.instance(MyError)
-
-  // @ts-expect-error: Constructor parameter type mismatch
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", $.str])
-
-  // @ts-expect-error: Missing field
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["paidload", $payload])
-
-  // @ts-expect-error: Field type mismatch
-  $.instance(MyError, ["code", $.u8], ["message", $.str], ["name", $payload])
-}

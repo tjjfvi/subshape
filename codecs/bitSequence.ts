@@ -5,7 +5,7 @@ import { u32 } from "./int.ts"
 const compactU32 = compact(u32)
 
 export class BitSequence {
-  readonly data
+  readonly data;
 
   [index: number]: boolean
 

@@ -12,8 +12,8 @@ interface Person {
 }
 
 const $person: $.Codec<Person> = $.object(
-  ["name", $.str],
-  ["favoriteU8", $interestingU8],
-  ["pets", $.array($pet)],
-  ["children", $.array($.deferred(() => $person))],
+  $.field("name", $.str),
+  $.field("favoriteU8", $interestingU8),
+  $.field("pets", $.array($pet)),
+  $.field("children", $.array($.deferred(() => $person))),
 )

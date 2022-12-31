@@ -156,7 +156,12 @@ ed
 01
 `;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) { foo: 456 } 1`] = `
+snapshot[`\$.compact(\$.field("foo", \$.u32)) { foo: 456 } 1`] = `
+21
+07
+`;
+
+snapshot[`\$.compact(\$.object(\$.field("foo", \$.u32))) { foo: 456 } 1`] = `
 21
 07
 `;
@@ -189,14 +194,14 @@ snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 123n ] 1`] = `ScaleAssertError:
 
 snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 9007199254740991 ] 1`] = `ScaleAssertError: value[0]: invalid int`;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) invalid null 1`] = `ScaleAssertError: value == null`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid null 1`] = `ScaleAssertError: value == null`;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) invalid undefined 1`] = `ScaleAssertError: typeof value !== "object"`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid undefined 1`] = `ScaleAssertError: typeof value !== "object"`;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) invalid {} 1`] = `ScaleAssertError: !("foo" in value)`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid {} 1`] = `ScaleAssertError: !("foo" in value)`;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) invalid { foo: -1 } 1`] = `ScaleAssertError: value.foo < 0`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: -1 } 1`] = `ScaleAssertError: value.foo < 0`;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) invalid { foo: 123n } 1`] = `ScaleAssertError: typeof value.foo !== "number"`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 123n } 1`] = `ScaleAssertError: typeof value.foo !== "number"`;
 
-snapshot[`\$.compact(\$.object([ "foo", \$.u32 ])) invalid { foo: 9007199254740991 } 1`] = `ScaleAssertError: value.foo: invalid int`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 9007199254740991 } 1`] = `ScaleAssertError: value.foo: invalid int`;

@@ -8,6 +8,18 @@ struct Person {
   pub lucky_number: u8,
 }
 
+#[derive(Encode)]
+enum Foo {
+  A,
+  B(u8),
+}
+
+#[derive(Encode)]
+struct Bar(u8);
+
+#[derive(Encode)]
+struct Foobar(Foo, Bar);
+
 crate::fixtures!(
   Person {
     name: "Darrel".to_string(),
@@ -21,4 +33,6 @@ crate::fixtures!(
     super_power: None,
     lucky_number: 7 // Cummon... be more predictable!
   },
+  Foobar(Foo::A, Bar(123)),
+  Foobar(Foo::B(0), Bar(123)),
 );

@@ -24,12 +24,13 @@ export function createCodec<T>(
   return codec
 }
 
-export function withMetadata<T>(metadata: Metadata<T>, codec: Codec<T>): Codec<T> {
+type NoInfer<T> = T extends infer U ? U : never
+export function withMetadata<T>(metadata: Metadata<NoInfer<T>>, codec: Codec<T>): Codec<T> {
   const result: Codec<T> = {
     // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
     __proto__: Codec.prototype,
     ...codec,
-    _metadata: [...metadata, ...codec._metadata],
+    _metadata: [...metadata as Metadata<T>, ...codec._metadata],
   }
   return result
 }

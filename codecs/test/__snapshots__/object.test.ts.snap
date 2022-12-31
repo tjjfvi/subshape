@@ -34,7 +34,7 @@ snapshot[`\$person { name: "Darrel", nickName: "The Durst", superPower: "telekin
 09
 `;
 
-snapshot[`\$person { name: "Michael", nickName: "Mike", superPower: undefined, luckyNumber: 7 } 1`] = `
+snapshot[`\$person { name: "Michael", nickName: "Mike", luckyNumber: 7 } 1`] = `
 1c
 4d
 69
@@ -67,3 +67,74 @@ snapshot[`\$person invalid { name: "", nickName: "", superPower: 0, luckyNumber:
 snapshot[`\$person invalid { name: "", nickName: "", superPower: "", luckyNumber: -1 } 1`] = `ScaleAssertError: value.luckyNumber < 0`;
 
 snapshot[`\$person invalid { name: "", nickName: "", superPower: "", unluckyNumber: 0 } 1`] = `ScaleAssertError: !("luckyNumber" in value)`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) { _tag: "a", bar: 123 } 1`] = `
+00
+7b
+`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) { _tag: "b", x: 0, bar: 123 } 1`] = `
+01
+00
+7b
+`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid null 1`] = `ScaleAssertError: value == null`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: null, bar: 1 } 1`] = `ScaleAssertError: typeof value._tag !== "string"`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "", bar: 1 } 1`] = `ScaleAssertError: value._tag: invalid tag`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "b", bar: 1 } 1`] = `ScaleAssertError: !("x" in value)`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "b", x: -1, bar: 1 } 1`] = `ScaleAssertError: value.x < 0`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [ { tag: "a", codec: \$.object(Array) }, { tag: "b", codec: \$.object(Array) } ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "a", bar: -1 } 1`] = `ScaleAssertError: value.bar < 0`;

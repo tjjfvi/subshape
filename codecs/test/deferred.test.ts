@@ -7,8 +7,8 @@ type LinkedList = undefined | {
 }
 
 const $linkedList: $.Codec<LinkedList> = $.option($.object(
-  ["val", $.u8],
-  ["next", $.deferred(() => $linkedList)],
+  $.field("val", $.u8),
+  $.field("next", $.deferred(() => $linkedList)),
 ))
 
 testCodec($linkedList, [

@@ -1,7 +1,7 @@
 import { Codec, CodecVisitor, createCodec, metadata, ScaleDecodeError, withMetadata } from "../common/mod.ts"
 import { constant } from "./constant.ts"
 import { u128, u16, u256, u32, u64, u8 } from "./int.ts"
-import { object } from "./object.ts"
+import { field, object } from "./object.ts"
 import { tuple } from "./tuple.ts"
 
 const MAX_U6 = 0b00111111
@@ -123,8 +123,12 @@ compactVisitor.add(tuple<any[]>, (codec, ...entries) => {
   return withMetadata(metadata("$.compact", compact, codec), tuple<any[]>(compact(entries[0]!)))
 })
 
+compactVisitor.add(field<any, any>, (codec, key, value) => {
+  return withMetadata(metadata("$.compact", compact, codec), field(key, compact(value)))
+})
+
 compactVisitor.add(object<any[]>, (codec, ...entries) => {
   if (entries.length === 0) return codec
   if (entries.length > 1) throw new Error("Cannot derive compact codec for objects with more than one field")
-  return withMetadata(metadata("$.compact", compact, codec), object<any[]>([entries[0][0], compact(entries[0][1])]))
+  return withMetadata(metadata("$.compact", compact, codec), compact(entries[0]!))
 })

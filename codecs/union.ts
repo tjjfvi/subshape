@@ -1,40 +1,41 @@
+import { AnyCodec, Native } from "../common/codec.ts"
 import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts"
 import { constant } from "./constant.ts"
-import { AnyField, NativeObject, object } from "./object.ts"
+import { field, NativeObject, object, ObjectMembers } from "./object.ts"
 
-export type AnyTaggedUnionMember = [tag: string, ...fields: AnyField[]]
+export interface Variant<T extends string, V> {
+  tag: T
+  codec: Codec<V>
+}
 
-export type NativeTaggedUnionMember<
-  TK extends PropertyKey,
-  M extends AnyTaggedUnionMember,
-> = Expand<
-  & Record<TK, M[0]>
-  & (M extends [any, ...infer R] ? R extends AnyField[] ? NativeObject<R> : {} : never)
->
+export function variant<T extends string, E extends AnyCodec[]>(
+  tag: T,
+  ...members: ObjectMembers<E>
+): Variant<T, NativeObject<E>> {
+  return { tag, codec: object(...members) }
+}
 
-export type NativeTaggedUnionMembers<
-  TK extends PropertyKey,
-  M extends Record<number, AnyTaggedUnionMember>,
-> = [{ [K in keyof M]: NativeTaggedUnionMember<TK, Extract<M[K], AnyTaggedUnionMember>> }[keyof M & number]][0]
+export type NativeTaggedUnion<
+  K extends keyof any,
+  M extends Record<number, Variant<any, any>>,
+> = {
+  [I in keyof M]: Expand<
+    Record<K, Extract<M[I], Variant<any, any>>["tag"]> & Native<Extract<M[I], Variant<any, any>>["codec"]>
+  >
+}[keyof M & number]
 
 export function taggedUnion<
-  TK extends PropertyKey,
-  M extends Record<number, AnyTaggedUnionMember>,
->(
-  tagKey: TK,
-  members: Narrow<M>,
-): Codec<NativeTaggedUnionMembers<TK, M>> {
+  K extends keyof any,
+  M extends Record<number, Variant<any, any>>,
+>(tagKey: K, members: Narrow<M>): Codec<NativeTaggedUnion<K, M>> {
   const tagToDiscriminant: Record<string, number> = Object.create(null)
   const discriminantToMember: Record<number, Codec<any>> = Object.create(null)
   for (const _discriminant in members) {
     const discriminant = +_discriminant
     if (isNaN(discriminant)) continue
-    const [tag, ...fields] = (members as M)[discriminant]!
+    const { tag, codec } = (members as M)[discriminant]!
     tagToDiscriminant[tag] = discriminant
-    discriminantToMember[discriminant] = object(
-      [tagKey, constant(tag)],
-      ...fields,
-    )
+    discriminantToMember[discriminant] = object(field(tagKey, constant(tag)) as any, codec)
   }
   return createCodec({
     _metadata: metadata("$.taggedUnion", taggedUnion, tagKey, members),

@@ -5,10 +5,10 @@ import { testCodec, testInvalid } from "../../test-util.ts"
 const $abc = $.withMetadata(
   metadata("$abc"),
   $.taggedUnion("_tag", [
-    ["A"],
-    ["B", ["B", $.str]],
-    ["C", ["C", $.tuple($.u32, $.u64)]],
-    ["D", ["a", $.u32], ["b", $.u64]],
+    $.variant("A"),
+    $.variant("B", $.field("B", $.str)),
+    $.variant("C", $.field("C", $.tuple($.u32, $.u64))),
+    $.variant("D", $.field("a", $.u32), $.field("b", $.u64)),
   ]),
 )
 
