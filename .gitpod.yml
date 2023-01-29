@@ -1,0 +1,7 @@
+tasks:
+  - init: cargo build
+    command: brew install deno
+
+vscode:
+  extensions:
+    - denoland.vscode-deno
