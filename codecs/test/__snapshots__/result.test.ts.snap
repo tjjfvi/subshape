@@ -1,13 +1,13 @@
 export const snapshot = {};
 
-snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], \$.tuple(\$.str), [Function])) "ok" 1`] = `
+snapshot[`\$.result(\$.str, \$.instance([Class: StrErr], \$.tuple(\$.str), [Function])) "ok" 1`] = `
 00
 08
 6f
 6b
 `;
 
-snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], \$.tuple(\$.str), [Function])) StrErr: err 1`] = `
+snapshot[`\$.result(\$.str, \$.instance([Class: StrErr], \$.tuple(\$.str), [Function])) StrErr: err 1`] = `
 01
 0c
 65
@@ -15,10 +15,10 @@ snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], \$.tuple(\$.str), [F
 72
 `;
 
-snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], \$.tuple(\$.str), [Function])) invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.result(\$.str, \$.instance([Class: StrErr], \$.tuple(\$.str), [Function])) invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
 
-snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], \$.tuple(\$.str), [Function])) invalid undefined 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.result(\$.str, \$.instance([Class: StrErr], \$.tuple(\$.str), [Function])) invalid undefined 1`] = `ScaleAssertError: typeof value !== "string"`;
 
-snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], \$.tuple(\$.str), [Function])) invalid Error: foo 1`] = `ScaleAssertError: !(value instanceof StrErr)`;
+snapshot[`\$.result(\$.str, \$.instance([Class: StrErr], \$.tuple(\$.str), [Function])) invalid Error: foo 1`] = `ScaleAssertError: !(value instanceof StrErr)`;
 
-snapshot[`\$.result(\$.str, \$.instance([Function: StrErr], \$.tuple(\$.str), [Function])) invalid StrErr: null 1`] = `ScaleAssertError: typeof value#arguments[0] !== "string"`;
+snapshot[`\$.result(\$.str, \$.instance([Class: StrErr], \$.tuple(\$.str), [Function])) invalid StrErr: null 1`] = `ScaleAssertError: typeof value#arguments[0] !== "string"`;
