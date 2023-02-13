@@ -4,14 +4,22 @@ export type Metadata<T> = Array<
   | {
     type: "atomic"
     name: string
+    docs?: never
     factory?: never
     args?: never
   }
   | {
     type: "factory"
     name: string
+    docs?: never
     factory: (...args: any) => Codec<T>
     args: any[]
+  }
+  | {
+    type: "docs"
+    docs: string
+    factory?: never
+    args?: never
   }
 >
 
@@ -49,6 +57,10 @@ export function metadata<T>(
         name,
       },
   ]
+}
+
+export function docs<T = any>(docs: string): Metadata<T> {
+  return [{ type: "docs", docs }]
 }
 
 export class CodecVisitor<R> {
@@ -91,7 +103,7 @@ export class CodecVisitor<R> {
     const visitor = this.#visitors.get(codec)
     if (visitor) return visitor(codec)
     for (const metadata of codec._metadata) {
-      if (metadata.type === "atomic") continue
+      if (metadata.type !== "factory") continue
       const visitor = this.#visitors.get(metadata.factory)
       if (visitor) return visitor(codec, ...metadata.args)
     }
