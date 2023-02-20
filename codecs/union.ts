@@ -26,8 +26,8 @@ export type NativeTaggedUnion<
 
 export function taggedUnion<
   K extends keyof any,
-  M extends Record<number, Variant<any, any>>,
->(tagKey: K, members: Narrow<M>): Codec<NativeTaggedUnion<K, M>> {
+  M extends [] | Record<number, Variant<any, any>>,
+>(tagKey: K, members: M): Codec<NativeTaggedUnion<K, M>> {
   const tagToDiscriminant: Record<string, number> = Object.create(null)
   const discriminantToMember: Record<number, Codec<any>> = Object.create(null)
   for (const _discriminant in members) {
@@ -65,19 +65,19 @@ export function taggedUnion<
   })
 }
 
-export function stringUnion<T extends string>(members: Record<number, T>): Codec<T> {
-  const keyToDiscriminant: Record<string, number> = Object.create(null)
+export function literalUnion<T extends Narrow>(members: Record<number, T>): Codec<T> {
+  const keyToDiscriminant: Map<T, number> = new Map()
   for (const _discriminant in members) {
     const discriminant = +_discriminant
     if (isNaN(discriminant)) continue
-    const key = members[discriminant]!
-    keyToDiscriminant[key] = discriminant
+    const key = members[discriminant] as T
+    keyToDiscriminant.set(key, discriminant)
   }
   return createCodec({
-    _metadata: metadata("$.stringUnion", stringUnion, members),
+    _metadata: metadata("$.literalUnion", literalUnion, members),
     _staticSize: 1,
     _encode(buffer, value) {
-      const discriminant = keyToDiscriminant[value]!
+      const discriminant = keyToDiscriminant.get(value)!
       buffer.array[buffer.index++] = discriminant
     },
     _decode(buffer) {
@@ -86,7 +86,7 @@ export function stringUnion<T extends string>(members: Record<number, T>): Codec
     },
     _assert(assert) {
       assert.typeof(this, "string")
-      if (!((assert.value as string) in keyToDiscriminant)) {
+      if (!keyToDiscriminant.has(assert.value as T)) {
         throw new ScaleAssertError(this, assert.value, `${assert.path} invalid value`)
       }
     },

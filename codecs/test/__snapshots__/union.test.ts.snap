@@ -44,33 +44,33 @@ e7
 00
 `;
 
-snapshot[`\$.stringUnion(names) "Ross" 1`] = `00`;
+snapshot[`\$.literalUnion(names) "Ross" 1`] = `00`;
 
-snapshot[`\$.stringUnion(names) "Alisa" 1`] = `01`;
+snapshot[`\$.literalUnion(names) "Alisa" 1`] = `01`;
 
-snapshot[`\$.stringUnion(names) "Stefan" 1`] = `02`;
+snapshot[`\$.literalUnion(names) "Stefan" 1`] = `02`;
 
-snapshot[`\$.stringUnion(names) "Raoul" 1`] = `03`;
+snapshot[`\$.literalUnion(names) "Raoul" 1`] = `03`;
 
-snapshot[`\$.stringUnion(names) "James" 1`] = `04`;
+snapshot[`\$.literalUnion(names) "James" 1`] = `04`;
 
-snapshot[`\$.stringUnion(names) "David" 1`] = `05`;
+snapshot[`\$.literalUnion(names) "David" 1`] = `05`;
 
-snapshot[`\$.stringUnion(names) "Pierre" 1`] = `06`;
+snapshot[`\$.literalUnion(names) "Pierre" 1`] = `06`;
 
-snapshot[`\$.stringUnion(interestingU8s) "Min" 1`] = `00`;
+snapshot[`\$.literalUnion(interestingU8s) "Min" 1`] = `00`;
 
-snapshot[`\$.stringUnion(interestingU8s) "Unit" 1`] = `01`;
+snapshot[`\$.literalUnion(interestingU8s) "Unit" 1`] = `01`;
 
-snapshot[`\$.stringUnion(interestingU8s) "EvenPrime" 1`] = `02`;
+snapshot[`\$.literalUnion(interestingU8s) "EvenPrime" 1`] = `02`;
 
-snapshot[`\$.stringUnion(interestingU8s) "LargestPerfect" 1`] = `1c`;
+snapshot[`\$.literalUnion(interestingU8s) "LargestPerfect" 1`] = `1c`;
 
-snapshot[`\$.stringUnion(interestingU8s) "FirstUninteresting" 1`] = `81`;
+snapshot[`\$.literalUnion(interestingU8s) "FirstUninteresting" 1`] = `81`;
 
-snapshot[`\$.stringUnion(interestingU8s) "LargestSquare" 1`] = `e1`;
+snapshot[`\$.literalUnion(interestingU8s) "LargestSquare" 1`] = `e1`;
 
-snapshot[`\$.stringUnion(interestingU8s) "Max" 1`] = `ff`;
+snapshot[`\$.literalUnion(interestingU8s) "Max" 1`] = `ff`;
 
 snapshot[`\$abc invalid null 1`] = `ScaleAssertError: value == null`;
 

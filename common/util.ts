@@ -30,7 +30,15 @@ export class ScaleDecodeError extends ScaleError {
 
 export type Expand<T> = T extends T ? { [K in keyof T]: T[K] } : never
 export type U2I<U> = (U extends U ? (u: U) => 0 : never) extends (i: infer I) => 0 ? Extract<I, U> : never
-export type Narrow<T> =
-  | (T extends infer U ? U : never)
-  | Extract<T, number | string | boolean | bigint | symbol | null | undefined | []>
-  | ([T] extends [[]] ? [] : { [K in keyof T]: Narrow<T[K]> })
+
+type _Narrow<T, U> = [U] extends [T] ? U : Extract<T, U>
+export type Narrow<T = unknown> =
+  | _Narrow<T, 0 | number & {}>
+  | _Narrow<T, 0n | bigint & {}>
+  | _Narrow<T, "" | string & {}>
+  | _Narrow<T, boolean>
+  | _Narrow<T, symbol>
+  | _Narrow<T, []>
+  | _Narrow<T, { [_: PropertyKey]: Narrow }>
+  | (T extends object ? { [K in keyof T]: Narrow<T[K]> } : never)
+  | Extract<{} | null | undefined, T>

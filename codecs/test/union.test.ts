@@ -22,7 +22,7 @@ const interestingU8s = {
   255: "Max",
 } as const
 
-const $interestingU8s = $.withMetadata(metadata("$.stringUnion(interestingU8s)"), $.stringUnion(interestingU8s))
+const $interestingU8s = $.withMetadata(metadata("$.literalUnion(interestingU8s)"), $.literalUnion(interestingU8s))
 
 const names = [
   "Ross",
@@ -34,7 +34,7 @@ const names = [
   "Pierre",
 ] as const
 
-const $names = $.withMetadata(metadata("$.stringUnion(names)"), $.stringUnion(names))
+const $names = $.withMetadata(metadata("$.literalUnion(names)"), $.literalUnion(names))
 
 testCodec($abc, [
   { _tag: "A" },
