@@ -31,7 +31,7 @@ $pet
 //   | { type: "cat"; purr: string; name: string }
 // >
 
-export const $dinosaur = $.stringUnion([
+export const $dinosaur = $.literalUnion([
   "Liopleurodon",
   "Kosmoceratops",
   "Psittacosaurus",
