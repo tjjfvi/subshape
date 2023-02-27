@@ -3,16 +3,15 @@ import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDe
 import { constant } from "./constant.ts"
 import { field, NativeObject, object, ObjectMembers } from "./object.ts"
 
-export interface Variant<T extends string, V> {
-  tag: T
-  codec: Codec<V>
+export class Variant<T extends string, V> {
+  constructor(readonly tag: T, readonly codec: Codec<V>) {}
 }
 
 export function variant<T extends string, E extends AnyCodec[]>(
   tag: T,
   ...members: ObjectMembers<E>
 ): Variant<T, NativeObject<E>> {
-  return { tag, codec: object(...members) }
+  return new Variant(tag, object(...members))
 }
 
 export type NativeTaggedUnion<
