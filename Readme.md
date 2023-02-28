@@ -1,6 +1,6 @@
 # SCALE Codecs for JavaScript and TypeScript
 
-A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/reference/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. **Faster than `avsc`, `jsbin` and `protobuf`** ([see benchmarks](https://github.com/paritytech/scale-ts-benchmark)).
+A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/reference/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. **Faster than `JSON`, `avsc`, `jsbin` and `protobuf`** ([see benchmarks](https://github.com/paritytech/scale-ts-benchmark)).
 
 ## Setup
 
