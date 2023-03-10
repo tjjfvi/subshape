@@ -65,11 +65,15 @@ export function docs<T = any>(docs: string): Metadata<T> {
 
 export class CodecVisitor<R> {
   #fallback?: <T>(codec: Codec<T>) => R
-  #visitors = new Map<Codec<any> | Function, (codec: Codec<any>, ...args: any[]) => R>()
+  #visitors = new Map<Metadata<any>[number] | Function, (codec: Codec<any>, ...args: any[]) => R>()
 
   add<T, A extends unknown[]>(codec: (...args: A) => Codec<T>, fn: (codec: Codec<T>, ...args: A) => R): this
   add<T>(codec: Codec<T>, fn: (codec: Codec<T>) => R): this
-  add(codec: Codec<any> | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
+  add(codec: Codec<any> | Metadata<any>[number] | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
+    if (codec instanceof Codec) {
+      codec = codec._metadata[0]!
+      if (!codec) throw new Error("Cannot register visitor for metadata-less codec")
+    }
     if (this.#visitors.has(codec)) {
       throw new Error("Duplicate visitor")
     }
@@ -100,11 +104,11 @@ export class CodecVisitor<R> {
   }
 
   visit<T>(codec: Codec<T>): R {
-    const visitor = this.#visitors.get(codec)
-    if (visitor) return visitor(codec)
     for (const metadata of codec._metadata) {
+      let visitor = this.#visitors.get(metadata)
+      if (visitor) return visitor(codec)
       if (metadata.type !== "factory") continue
-      const visitor = this.#visitors.get(metadata.factory)
+      visitor = this.#visitors.get(metadata.factory)
       if (visitor) return visitor(codec, ...metadata.args)
     }
     if (this.#fallback) {
