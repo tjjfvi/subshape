@@ -129,7 +129,7 @@ export abstract class Codec<in out T> extends _Codec implements AnyCodec {
     return this._decode(buf)
   }
 
-  /** Asserts that the value is valid for this codec */
+  /** Requires the codec to have an explicit type annotation; if it doesn't, use `$.assert` instead. */
   assert(value: unknown): asserts value is T {
     assert(this, value)
   }
