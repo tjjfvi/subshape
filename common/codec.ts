@@ -93,7 +93,7 @@ export interface AnyCodec extends _Codec {
   encode(value: any): Uint8Array
   encodeAsync(value: any): Promise<Uint8Array>
   decode(array: Uint8Array): any
-  assert(value: any): void
+  assert(value: unknown): void
 }
 
 export abstract class Codec<in out T> extends _Codec implements AnyCodec {
