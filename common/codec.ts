@@ -93,6 +93,7 @@ export interface AnyCodec extends _Codec {
   encode(value: any): Uint8Array
   encodeAsync(value: any): Promise<Uint8Array>
   decode(array: Uint8Array): any
+  assert(value: unknown): void
 }
 
 export abstract class Codec<in out T> extends _Codec implements AnyCodec {
@@ -127,8 +128,14 @@ export abstract class Codec<in out T> extends _Codec implements AnyCodec {
     const buf = new DecodeBuffer(array)
     return this._decode(buf)
   }
+
+  /** Requires the codec to have an explicit type annotation; if it doesn't, use `$.assert` instead. */
+  assert(value: unknown): asserts value is T {
+    assert(this, value)
+  }
 }
 
+/** Asserts that the value is valid for the specified codec */
 export function assert<T>(codec: Codec<T>, value: unknown): asserts value is T {
   codec._assert(new AssertState(value))
 }
