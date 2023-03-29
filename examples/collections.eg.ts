@@ -5,13 +5,4 @@ $.set($.u32) // Codec<Set<number>>
 
 $.map($.str, $.u32) // Codec<Map<string, number>>
 
-export const $record = $.transform<
-  [string, number][],
-  Record<string, number>
->({
-  $base: $.array($.tuple($.str, $.u32)),
-  encode: Object.entries,
-  decode: Object.fromEntries,
-})
-
-$record // Codec<Record<string, number>>
+$.record($.str, $.u8) // Codec<Record<string, number>>
