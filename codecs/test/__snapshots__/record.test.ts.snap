@@ -128,20 +128,6 @@ snapshot[`\$.transform(
 
 snapshot[`\$.transform(
   {
-    "\$base": \$.array(\$.tuple(\$.literalUnion(Array), \$.u8)),
-    encode: [Function: entries],
-    decode: [Function: fromEntries]
-  }
-) { a: 1, b: 2 } 1`] = `
-08
-00
-01
-01
-02
-`;
-
-snapshot[`\$.transform(
-  {
     "\$base": \$.array(\$.tuple(\$.str, \$.str)),
     encode: [Function: entries],
     decode: [Function: fromEntries]
@@ -179,27 +165,3 @@ snapshot[`\$.transform(
     decode: [Function: fromEntries]
   }
 ) invalid { and: "this" } 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
-
-snapshot[`\$.transform(
-  {
-    "\$base": \$.array(\$.tuple(\$.literalUnion(Array), \$.u8)),
-    encode: [Function: entries],
-    decode: [Function: fromEntries]
-  }
-) invalid { hello: 3 } 1`] = `ScaleAssertError: value#encode[0][0] invalid value`;
-
-snapshot[`\$.transform(
-  {
-    "\$base": \$.array(\$.tuple(\$.literalUnion(Array), \$.u8)),
-    encode: [Function: entries],
-    decode: [Function: fromEntries]
-  }
-) invalid { goodbye: 4 } 1`] = `ScaleAssertError: value#encode[0][0] invalid value`;
-
-snapshot[`\$.transform(
-  {
-    "\$base": \$.array(\$.tuple(\$.literalUnion(Array), \$.u8)),
-    encode: [Function: entries],
-    decode: [Function: fromEntries]
-  }
-) invalid { hello: 5, goodbye: 6 } 1`] = `ScaleAssertError: value#encode[0][0] invalid value`;

@@ -5,4 +5,4 @@ $.set($.u32) // Codec<Set<number>>
 
 $.map($.str, $.u32) // Codec<Map<string, number>>
 
-$.partialRecord($.str, $.u8) // Codec<Partial<Record<string, number>>>
+$.record($.u8) // Codec<Partial<Record<string, number>>>
