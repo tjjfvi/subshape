@@ -1,3 +1,4 @@
+// import * as $ from "https://deno.land/x/scale/mod.ts";
 import * as $ from "../mod.ts"
 
 // using `$.assert` (no explicit typing required)

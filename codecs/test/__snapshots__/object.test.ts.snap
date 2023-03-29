@@ -58,7 +58,7 @@ snapshot[`\$person invalid undefined 1`] = `ScaleAssertError: typeof value !== "
 
 snapshot[`\$person invalid 123 1`] = `ScaleAssertError: typeof value !== "object"`;
 
-snapshot[`\$person invalid [Function] 1`] = `ScaleAssertError: typeof value !== "object"`;
+snapshot[`\$person invalid [Function (anonymous)] 1`] = `ScaleAssertError: typeof value !== "object"`;
 
 snapshot[`\$person invalid {} 1`] = `ScaleAssertError: !("name" in value)`;
 
