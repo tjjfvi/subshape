@@ -1,5 +1,4 @@
-// import * as $ from "https://deno.land/x/scale/mod.ts";
-import * as $ from "../mod.ts"
+import * as $ from "https://deno.land/x/scale/mod.ts"
 
 export const $superhero = $.object(
   $.field("pseudonym", $.str),

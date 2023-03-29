@@ -1,4 +1,4 @@
-import * as $ from "../mod.ts"
+import * as $ from "https://deno.land/x/scale/mod.ts"
 
 // using `$.assert` (no explicit typing required)
 const a: unknown = 1

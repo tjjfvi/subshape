@@ -128,11 +128,19 @@ snapshot[`\$.transform(
 
 snapshot[`\$.transform(
   {
-    "\$base": \$.array(\$.tuple(\$.str, \$.u8)),
+    "\$base": \$.array(\$.tuple(\$.str, \$.str)),
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid [ "abc" ] 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
+) invalid [ true, false ] 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "string"`;
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.str)),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) invalid [ 1, 2, 3, -1, 4 ] 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "string"`;
 
 snapshot[`\$.transform(
   {
@@ -140,4 +148,20 @@ snapshot[`\$.transform(
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid [ 1, 2, 3, -1, 4 ] 1`] = `ScaleAssertError: value#encode[3][1] < 0`;
+) invalid { this: "should" } 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.u8)),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) invalid { be: "invalid" } 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.u8)),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) invalid { and: "this" } 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;

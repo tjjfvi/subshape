@@ -1,0 +1,7 @@
+{
+  "scopes": {
+    "examples/": {
+      "https://deno.land/x/scale/mod.ts": "./mod.ts"
+    }
+  }
+}
