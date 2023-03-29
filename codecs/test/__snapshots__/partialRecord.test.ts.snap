@@ -202,4 +202,4 @@ snapshot[`\$.transform(
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid { hello: 5, goodbye: 6 } 1`] = `ScaleAssertError: value#encode[0][0] invalid value`;
+) invalid { first: 5, goodbye: 6 } 1`] = `ScaleAssertError: value#encode[1][0] invalid value`;
