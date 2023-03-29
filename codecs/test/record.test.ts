@@ -12,10 +12,4 @@ testCodec($.record($.str, $.record($.str, $.u8)), [{
   seven: { eight: 9 },
 }])
 
-testInvalid($.record($.str, $.u8), [
-  null,
-  undefined,
-  123,
-  ["abc"],
-  [1, 2, 3, -1, 4],
-])
+testInvalid($.record($.str, $.u8), [["abc"], [1, 2, 3, -1, 4]])

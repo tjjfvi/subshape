@@ -1,0 +1,143 @@
+export const snapshot = {};
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.str)),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) { a: "hi", b: "sup", c: "yo" } 1`] = `
+0c
+04
+61
+08
+68
+69
+04
+62
+0c
+73
+75
+70
+04
+63
+08
+79
+6f
+`;
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.str)),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) { the: "quick", brown: "fox", jumped: "over", theLazy: "hen" } 1`] = `
+10
+0c
+74
+68
+65
+14
+71
+75
+69
+63
+6b
+14
+62
+72
+6f
+77
+6e
+0c
+66
+6f
+78
+18
+6a
+75
+6d
+70
+65
+64
+10
+6f
+76
+65
+72
+1c
+74
+68
+65
+4c
+61
+7a
+79
+0c
+68
+65
+6e
+`;
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.transform(Array))),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) { one: { two: 3 }, four: { five: 6 }, seven: { eight: 9 } } 1`] = `
+0c
+0c
+6f
+6e
+65
+04
+0c
+74
+77
+6f
+03
+10
+66
+6f
+75
+72
+04
+10
+66
+69
+76
+65
+06
+14
+73
+65
+76
+65
+6e
+04
+14
+65
+69
+67
+68
+74
+09
+`;
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.u8)),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) invalid [ "abc" ] 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
+
+snapshot[`\$.transform(
+  {
+    "\$base": \$.array(\$.tuple(\$.str, \$.u8)),
+    encode: [Function: entries],
+    decode: [Function: fromEntries]
+  }
+) invalid [ 1, 2, 3, -1, 4 ] 1`] = `ScaleAssertError: value#encode[3][1] < 0`;
