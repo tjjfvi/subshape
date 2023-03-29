@@ -1,4 +1,5 @@
-import * as $ from "https://deno.land/x/scale/mod.ts"
+// import * as $ from "https://deno.land/x/scale/mod.ts";
+import * as $ from "../mod.ts"
 
 $.array($.u32) // Codec<number[]>
 $.sizedArray($.u32, 2) // Codec<[number, number]>

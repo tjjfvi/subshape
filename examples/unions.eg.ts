@@ -1,4 +1,5 @@
-import * as $ from "https://deno.land/x/scale/mod.ts"
+// import * as $ from "https://deno.land/x/scale/mod.ts";
+import * as $ from "../mod.ts"
 import { $myError } from "./objects.eg.ts"
 
 $.option($.u32) // Codec<number | undefined>

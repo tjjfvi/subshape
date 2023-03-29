@@ -23,7 +23,6 @@
       "tags": ["recommended"]
     }
   },
-  "importMap": "import_map.json",
   "include": ["."],
   "tasks": {
     "run": "deno run -A --no-check=remote",
