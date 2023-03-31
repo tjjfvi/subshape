@@ -20,8 +20,8 @@ export function option<T, U>($some: Codec<T>, none?: U): Codec<T | U> {
           return none as U
         case 1: {
           const value = $some._decode(buffer)
-          if (value === undefined) {
-            throw new ScaleDecodeError(this, buffer, "An undefined some value will not roundtrip correctly")
+          if (value === none) {
+            throw new ScaleDecodeError(this, buffer, "Some(None) will not roundtrip correctly")
           }
           return value
         }
