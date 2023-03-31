@@ -5,4 +5,7 @@ crate::fixtures!(
   Some(true),
   Some(false),
   None as Option<bool>,
+  Some("hi"),
+  Some("low"),
+  None as Option<&str>
 );
