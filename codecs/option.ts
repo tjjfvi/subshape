@@ -11,7 +11,7 @@ export function option<T, U>($some: Codec<T>, none?: U): Codec<T | U> {
     _staticSize: 1 + $some._staticSize,
     _encode(buffer, value) {
       if ((buffer.array[buffer.index++] = +(value !== none))) {
-        $some._encode(buffer, value! as T)
+        $some._encode(buffer, value as T)
       }
     },
     _decode(buffer) {
