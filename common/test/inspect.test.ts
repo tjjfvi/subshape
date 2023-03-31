@@ -15,19 +15,13 @@ Deno.test("inspect", () => {
   assertEquals(Deno.inspect($.array($.tuple($.u8, $.str))), "$.array($.tuple($.u8, $.str))")
   assertEquals(
     Deno.inspect($linkedList),
-    `$0 = $.option(
-  $.object($.field("val", $.u8), $.field("next", $.deferred(() => $0))),
-  undefined
-)`,
+    `$0 = $.option($.object($.field("val", $.u8), $.field("next", $.deferred(() => $0))))`,
   )
   assertEquals(
     Deno.inspect($.array($linkedList)),
     `
 $.array(
-  $0 = $.option(
-    $.object($.field("val", $.u8), $.field("next", $.deferred(() => $0))),
-    undefined
-  )
+  $0 = $.option($.object($.field("val", $.u8), $.field("next", $.deferred(() => $0))))
 )
     `.trim(),
   )

@@ -1,23 +1,14 @@
 export const snapshot = {};
 
-snapshot[`\$0 = \$.option(
-  \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0))),
-  undefined
-) undefined 1`] = `00`;
+snapshot[`\$0 = \$.option(\$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))) undefined 1`] = `00`;
 
-snapshot[`\$0 = \$.option(
-  \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0))),
-  undefined
-) { val: 1, next: undefined } 1`] = `
+snapshot[`\$0 = \$.option(\$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))) { val: 1, next: undefined } 1`] = `
 01
 01
 00
 `;
 
-snapshot[`\$0 = \$.option(
-  \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0))),
-  undefined
-) { val: 1, next: { val: 2, next: { val: 3, next: undefined } } } 1`] = `
+snapshot[`\$0 = \$.option(\$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))) { val: 1, next: { val: 2, next: { val: 3, next: undefined } } } 1`] = `
 01
 01
 01
@@ -27,22 +18,10 @@ snapshot[`\$0 = \$.option(
 00
 `;
 
-snapshot[`\$0 = \$.option(
-  \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0))),
-  undefined
-) invalid null 1`] = `ScaleAssertError: value == null`;
+snapshot[`\$0 = \$.option(\$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))) invalid null 1`] = `ScaleAssertError: value == null`;
 
-snapshot[`\$0 = \$.option(
-  \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0))),
-  undefined
-) invalid { val: 1, next: null } 1`] = `ScaleAssertError: value.next == null`;
+snapshot[`\$0 = \$.option(\$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))) invalid { val: 1, next: null } 1`] = `ScaleAssertError: value.next == null`;
 
-snapshot[`\$0 = \$.option(
-  \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0))),
-  undefined
-) invalid { val: 1, next: { val: -1, next: undefined } } 1`] = `ScaleAssertError: value.next.val < 0`;
+snapshot[`\$0 = \$.option(\$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))) invalid { val: 1, next: { val: -1, next: undefined } } 1`] = `ScaleAssertError: value.next.val < 0`;
 
-snapshot[`\$0 = \$.option(
-  \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0))),
-  undefined
-) invalid { val: 1, next: { val: 2, next: { val: 3, next: { val: -1, next: undefined } } } } 1`] = `ScaleAssertError: value.next.next.next.val < 0`;
+snapshot[`\$0 = \$.option(\$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))) invalid { val: 1, next: { val: 2, next: { val: 3, next: { val: -1, next: undefined } } } } 1`] = `ScaleAssertError: value.next.next.next.val < 0`;
