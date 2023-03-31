@@ -468,7 +468,7 @@ ff
 ff
 `;
 
-snapshot[`\$.tuple(\$.str, \$.i16, \$.option(\$.u16)) [ "GOODBYE!", 2, 101 ] 1`] = `
+snapshot[`\$.tuple(\$.str, \$.i16, \$.option(\$.u16, undefined)) [ "GOODBYE!", 2, 101 ] 1`] = `
 20
 47
 4f
