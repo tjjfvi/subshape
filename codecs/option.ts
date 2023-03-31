@@ -3,7 +3,7 @@ import { Codec, createCodec, metadata, ScaleDecodeError } from "../common/mod.ts
 export function option<T>($some: Codec<T>): Codec<T | undefined>
 export function option<T, U>($some: Codec<T>, none: U): Codec<T | U>
 export function option<T, U>($some: Codec<T>, none?: U): Codec<T | U> {
-  if ($some._metadata.some((x) => x.factory === option)) {
+  if ($some._metadata.some((x) => x.factory === option && x.args[1] === none)) {
     throw new Error("Nested option codec will not roundtrip correctly")
   }
   return createCodec({
