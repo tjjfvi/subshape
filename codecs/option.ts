@@ -7,7 +7,7 @@ export function option<T, U>($some: Codec<T>, none?: U): Codec<T | U> {
     throw new Error("Nested option codec will not roundtrip correctly")
   }
   return createCodec({
-    _metadata: metadata("$.option", option<T, U>, $some, none!),
+    _metadata: metadata("$.option", option<T, U>, $some, ...none === undefined ? [] as never : [none!]),
     _staticSize: 1 + $some._staticSize,
     _encode(buffer, value) {
       if ((buffer.array[buffer.index++] = +(value !== none))) {
