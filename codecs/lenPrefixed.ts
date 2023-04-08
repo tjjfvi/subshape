@@ -4,7 +4,7 @@ import { u32 } from "./int.ts"
 
 const compactU32 = compact(u32)
 
-export function lenPrefixed<T>($inner: Codec<T>): Codec<T> {
+export function lenPrefixed<I, O>($inner: Codec<I, O>): Codec<I, O> {
   return createCodec({
     _metadata: metadata("$.lenPrefixed", lenPrefixed, $inner),
     _staticSize: compactU32._staticSize + $inner._staticSize,

@@ -96,7 +96,7 @@ export function int(signed: boolean, size: 8 | 16 | 32 | 64 | 128 | 256): Codec<
 }
 
 function intMetadata<T extends number | bigint>(signed: boolean, size: number) {
-  return metadata<T>(
+  return metadata<T, T>(
     metadata(`$.${signed ? "i" : "u"}${size}`),
     metadata("$.int", int as any, signed, size),
   )

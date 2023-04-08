@@ -7,7 +7,7 @@ import { $interestingU8, $pet, InterestingU8 } from "./unions.eg.ts"
 interface Person {
   name: string
   favoriteU8: InterestingU8
-  pets: $.Native<typeof $pet>[]
+  pets: $.Output<typeof $pet>[]
   children: Person[]
 }
 

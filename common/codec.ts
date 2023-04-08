@@ -3,15 +3,16 @@ import { DecodeBuffer, EncodeBuffer } from "./buffer.ts"
 import { Metadata } from "./metadata.ts"
 import { ScaleAssertError, ScaleEncodeError } from "./util.ts"
 
-export type Native<T extends AnyCodec> = T extends Codec<infer U> ? U : never
+export type Input<T extends AnyCodec> = T extends Codec<infer I, unknown> ? I : never
+export type Output<T extends AnyCodec> = T extends Codec<never, infer O> ? O : never
 
-export function createCodec<T>(
+export function createCodec<I, O = I>(
   _codec:
-    & ThisType<Codec<T>>
-    & Pick<Codec<T>, "_encode" | "_decode" | "_assert" | "_staticSize" | "_metadata">,
-): Codec<T> {
+    & ThisType<Codec<I, O>>
+    & Pick<Codec<I, O>, "_encode" | "_decode" | "_assert" | "_staticSize" | "_metadata">,
+): Codec<I, O> {
   const { _staticSize, _encode, _assert, _decode, _metadata } = _codec
-  const codec: Codec<T> = {
+  const codec: Codec<I, O> = {
     // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
     __proto__: Codec.prototype,
     _staticSize,
@@ -24,12 +25,12 @@ export function createCodec<T>(
 }
 
 type NoInfer<T> = T extends infer U ? U : never
-export function withMetadata<T>(metadata: Metadata<NoInfer<T>>, codec: Codec<T>): Codec<T> {
-  const result: Codec<T> = {
+export function withMetadata<I, O>(metadata: Metadata<NoInfer<I>, NoInfer<O>>, codec: Codec<I, O>): Codec<I, O> {
+  const result: Codec<I, O> = {
     // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
     __proto__: Codec.prototype,
     ...codec,
-    _metadata: [...metadata as Metadata<T>, ...codec._metadata],
+    _metadata: [...metadata as Metadata<I, O>, ...codec._metadata],
   }
   return result
 }
@@ -83,33 +84,24 @@ abstract class _Codec {
   }
 }
 
-export interface AnyCodec extends _Codec {
-  _staticSize: number
-  _encode(buffer: EncodeBuffer, value: any): void
-  _decode: (buffer: DecodeBuffer) => any
-  _assert: (state: AssertState) => void
-  _metadata: any
+export type AnyCodec = Codec<never, unknown>
+export type Encodec<I> = Codec<I, unknown>
+export type Decodec<O> = Codec<never, O>
 
-  encode(value: any): Uint8Array
-  encodeAsync(value: any): Promise<Uint8Array>
-  decode(array: Uint8Array): any
-  assert(value: unknown): void
-}
-
-export abstract class Codec<in out T> extends _Codec implements AnyCodec {
+export abstract class Codec<in I, out O = I> extends _Codec implements AnyCodec {
   /** A static estimation of the size, which may be an under- or over-estimate */
   abstract _staticSize: number
   /** Encodes the value into the supplied buffer, which should have at least `_staticSize` free byte. */
-  abstract _encode: (buffer: EncodeBuffer, value: T) => void
+  abstract _encode: (buffer: EncodeBuffer, value: I) => void
   /** Decodes the value from the supplied buffer */
-  abstract _decode: (buffer: DecodeBuffer) => T
+  abstract _decode: (buffer: DecodeBuffer) => O
   /** Asserts that the value is valid for this codec */
   abstract _assert: (state: AssertState) => void
   /** An array with metadata representing the construction of this codec */
-  abstract _metadata: Metadata<T>
+  abstract _metadata: Metadata<I, O>
 
   /** Encodes the value into a new Uint8Array (throws if async) */
-  encode(value: T) {
+  encode(value: I) {
     const buf = new EncodeBuffer(this._staticSize)
     this._encode(buf, value)
     if (buf.asyncCount) throw new ScaleEncodeError(this, value, "Attempted to synchronously encode an async codec")
@@ -117,7 +109,7 @@ export abstract class Codec<in out T> extends _Codec implements AnyCodec {
   }
 
   /** Asynchronously encodes the value into a new Uint8Array */
-  async encodeAsync(value: T) {
+  async encodeAsync(value: I) {
     const buf = new EncodeBuffer(this._staticSize)
     this._encode(buf, value)
     return buf.finishAsync()
@@ -130,13 +122,13 @@ export abstract class Codec<in out T> extends _Codec implements AnyCodec {
   }
 
   /** Requires the codec to have an explicit type annotation; if it doesn't, use `$.assert` instead. */
-  assert(value: unknown): asserts value is T {
+  assert(value: unknown): asserts value is I {
     assert(this, value)
   }
 }
 
 /** Asserts that the value is valid for the specified codec */
-export function assert<T>(codec: Codec<T>, value: unknown): asserts value is T {
+export function assert<I>(codec: Codec<I, unknown>, value: unknown): asserts value is I {
   codec._assert(new AssertState(value))
 }
 

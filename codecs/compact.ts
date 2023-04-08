@@ -120,7 +120,7 @@ compactVisitor.add(constant<any>, (codec) => codec)
 compactVisitor.add(tuple<any[]>, (codec, ...entries) => {
   if (entries.length === 0) return codec
   if (entries.length > 1) throw new Error("Cannot derive compact codec for tuples with more than one field")
-  return withMetadata(metadata("$.compact", compact, codec), tuple<any[]>(compact(entries[0]!)))
+  return withMetadata(metadata("$.compact", compact<any>, codec), tuple(compact(entries[0]!)))
 })
 
 compactVisitor.add(field<any, any>, (codec, key, value) => {

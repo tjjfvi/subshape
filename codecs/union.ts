@@ -1,32 +1,42 @@
-import { AnyCodec, Native } from "../common/codec.ts"
+import { AnyCodec, Input, Output } from "../common/codec.ts"
 import { Codec, createCodec, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError } from "../common/mod.ts"
 import { constant } from "./constant.ts"
-import { field, NativeObject, object, ObjectMembers } from "./object.ts"
+import { field, InputObject, object, ObjectMembers, OutputObject } from "./object.ts"
 
-export class Variant<T extends string, V> {
-  constructor(readonly tag: T, readonly codec: Codec<V>) {}
+export class Variant<T extends string, I, O> {
+  constructor(readonly tag: T, readonly codec: Codec<I, O>) {}
 }
 
 export function variant<T extends string, E extends AnyCodec[]>(
   tag: T,
   ...members: ObjectMembers<E>
-): Variant<T, NativeObject<E>> {
+): Variant<T, InputObject<E>, OutputObject<E>> {
   return new Variant(tag, object(...members))
 }
 
-export type NativeTaggedUnion<
+export type InputTaggedUnion<
   K extends keyof any,
-  M extends Record<number, Variant<any, any>>,
+  M extends Record<number, Variant<any, any, any>>,
 > = {
   [I in keyof M]: Expand<
-    Record<K, Extract<M[I], Variant<any, any>>["tag"]> & Native<Extract<M[I], Variant<any, any>>["codec"]>
+    & Readonly<Record<K, Extract<M[I], Variant<any, any, any>>["tag"]>>
+    & Input<Extract<M[I], Variant<any, any, any>>["codec"]>
+  >
+}[keyof M & number]
+export type OutputTaggedUnion<
+  K extends keyof any,
+  M extends Record<number, Variant<any, any, any>>,
+> = {
+  [I in keyof M]: Expand<
+    & Record<K, Extract<M[I], Variant<any, any, any>>["tag"]>
+    & Output<Extract<M[I], Variant<any, any, any>>["codec"]>
   >
 }[keyof M & number]
 
 export function taggedUnion<
   K extends keyof any,
-  M extends [] | Record<number, Variant<any, any>>,
->(tagKey: K, members: M): Codec<NativeTaggedUnion<K, M>> {
+  M extends [] | Record<number, Variant<any, any, any>>,
+>(tagKey: K, members: M): Codec<InputTaggedUnion<K, M>, OutputTaggedUnion<K, M>> {
   const tagToDiscriminant: Record<string, number> = Object.create(null)
   const discriminantToMember: Record<number, Codec<any>> = Object.create(null)
   for (const _discriminant in members) {
