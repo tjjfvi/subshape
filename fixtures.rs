@@ -18,6 +18,9 @@ pub mod deferred_fixtures;
 #[path = "./codecs/fixtures/float.rs"]
 pub mod float_fixtures;
 
+#[path = "./codecs/fixtures/hex.rs"]
+pub mod hex_fixtures;
+
 #[path = "./codecs/fixtures/int.rs"]
 pub mod int_fixtures;
 
