@@ -1,6 +1,6 @@
 import { Codec } from "./codec.ts"
 
-export type Metadata<T> = Array<
+export type Metadata<I, O> = Array<
   | {
     type: "atomic"
     name: string
@@ -12,7 +12,7 @@ export type Metadata<T> = Array<
     type: "factory"
     name: string
     docs?: never
-    factory: (...args: any) => Codec<T>
+    factory: (...args: any) => Codec<I, O>
     args: any[]
   }
   | {
@@ -24,26 +24,26 @@ export type Metadata<T> = Array<
 >
 
 /** Metadata for an atomic codec */
-export function metadata<T = any>(name: string): Metadata<T>
+export function metadata<I = any, O = any>(name: string): Metadata<I, O>
 /** Metadata for a factory-made codec */
-export function metadata<T, A extends unknown[]>(
+export function metadata<I, O, A extends unknown[]>(
   name: string,
-  factory: (...args: A) => Codec<T>,
+  factory: (...args: A) => Codec<I, O>,
   ...args: A
-): Metadata<T>
+): Metadata<I, O>
 /** Concatenate multiple metadata arrays */
-export function metadata<T>(...metadata: Metadata<T>[]): Metadata<T>
-export function metadata<T>(
+export function metadata<I, O>(...metadata: Metadata<I, O>[]): Metadata<I, O>
+export function metadata<I, O>(
   ...fullArgs:
-    | Metadata<T>[]
+    | Metadata<I, O>[]
     | [
       name: string,
-      factory?: (...args: any) => Codec<T>,
+      factory?: (...args: any) => Codec<[I, O]>,
       ...args: any[],
     ]
-): Metadata<T> {
+): Metadata<I, O> {
   if (typeof fullArgs[0] !== "string") return fullArgs.flat()
-  const [name, factory, ...args] = fullArgs as [name: string, factory?: (...args: any) => Codec<T>, ...args: any[]]
+  const [name, factory, ...args] = fullArgs as [name: string, factory?: (...args: any) => Codec<I, O>, ...args: any[]]
   return [
     factory
       ? {
@@ -59,17 +59,17 @@ export function metadata<T>(
   ]
 }
 
-export function docs<T = any>(docs: string): Metadata<T> {
+export function docs<I = any, O = any>(docs: string): Metadata<I, O> {
   return [{ type: "docs", docs }]
 }
 
 export class CodecVisitor<R> {
   #fallback?: <T>(codec: Codec<T>) => R
-  #visitors = new Map<Metadata<any>[number] | Function, (codec: Codec<any>, ...args: any[]) => R>()
+  #visitors = new Map<Metadata<any, any>[number] | Function, (codec: Codec<any>, ...args: any[]) => R>()
 
   add<T, A extends unknown[]>(codec: (...args: A) => Codec<T>, fn: (codec: Codec<T>, ...args: A) => R): this
   add<T>(codec: Codec<T>, fn: (codec: Codec<T>) => R): this
-  add(codec: Codec<any> | Metadata<any>[number] | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
+  add(codec: Codec<any> | Metadata<any, any>[number] | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
     if (codec instanceof Codec) {
       codec = codec._metadata[0]!
       if (!codec) throw new Error("Cannot register visitor for metadata-less codec")

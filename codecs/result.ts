@@ -1,9 +1,9 @@
 import { Codec, createCodec, metadata, ScaleDecodeError } from "../common/mod.ts"
 
-export function result<Ok, Err extends Error>(
-  $ok: Codec<Ok>,
-  $err: Codec<Err>,
-): Codec<Ok | Err> {
+export function result<TI, TO, UI extends Error, UO extends Error>(
+  $ok: Codec<TI, TO>,
+  $err: Codec<UI, UO>,
+): Codec<TI | UI, TO | UO> {
   if ($ok._metadata.some((x) => x.factory === result)) {
     throw new Error("Nested result codec will not roundtrip correctly")
   }
@@ -12,9 +12,9 @@ export function result<Ok, Err extends Error>(
     _staticSize: 1 + Math.max($ok._staticSize, $err._staticSize),
     _encode(buffer, value) {
       if ((buffer.array[buffer.index++] = +(value instanceof Error))) {
-        $err._encode(buffer, value as Err)
+        $err._encode(buffer, value as UI)
       } else {
-        $ok._encode(buffer, value as Ok)
+        $ok._encode(buffer, value as TI)
       }
     },
     _decode(buffer) {

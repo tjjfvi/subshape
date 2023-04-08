@@ -14,14 +14,14 @@ import { tuple } from "./tuple.ts"
 
 const compactU32 = compact(u32)
 
-export function iterable<T, I extends Iterable<T>>(
+export function iterable<TI, I extends Iterable<TI>, TO = TI, O = I>(
   props: {
-    $el: Codec<T>
+    $el: Codec<TI, TO>
     calcLength: (iterable: I) => number
-    rehydrate: (iterable: Iterable<T>) => I
-    assert: (this: Codec<I>, assert: AssertState) => void
+    rehydrate: (iterable: Iterable<TO>) => O
+    assert: (this: Codec<I, O>, assert: AssertState) => void
   },
-): Codec<I> {
+): Codec<I, O> {
   return createCodec({
     _metadata: metadata("$.iterable", iterable, props),
     _staticSize: compactU32._staticSize,
@@ -64,7 +64,7 @@ export function iterable<T, I extends Iterable<T>>(
   })
 }
 
-export function set<T>($el: Codec<T>): Codec<Set<T>> {
+export function set<I, O>($el: Codec<I, O>): Codec<ReadonlySet<I>, Set<O>> {
   return withMetadata(
     metadata("$.set", set, $el),
     iterable({
@@ -78,8 +78,11 @@ export function set<T>($el: Codec<T>): Codec<Set<T>> {
   )
 }
 
-export function map<K, V>($key: Codec<K>, $value: Codec<V>): Codec<Map<K, V>> {
-  return withMetadata(
+export function map<KI, KO, VI, VO>(
+  $key: Codec<KI, KO>,
+  $value: Codec<VI, VO>,
+): Codec<ReadonlyMap<KI, VI>, Map<KO, VO>> {
+  return withMetadata<ReadonlyMap<KI, VI>, Map<KO, VO>>(
     metadata("$.map", map, $key, $value),
     iterable({
       $el: tuple($key, $value),

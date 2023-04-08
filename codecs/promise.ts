@@ -1,6 +1,6 @@
 import { Codec, createCodec, metadata } from "../common/mod.ts"
 
-export function promise<T>($value: Codec<T>): Codec<Promise<T>> {
+export function promise<I, O>($value: Codec<I, O>): Codec<Promise<I>, Promise<O>> {
   return createCodec({
     _metadata: metadata("$.promise", promise, $value),
     _staticSize: $value._staticSize,

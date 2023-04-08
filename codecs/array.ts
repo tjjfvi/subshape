@@ -12,7 +12,10 @@ type ArrayOfLength<
   : L extends A["length"] ? A
   : ArrayOfLength<T, L, [...A, T]>
 
-export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec<ArrayOfLength<T, L>> {
+export function sizedArray<L extends number, I, O>($el: Codec<I, O>, length: L): Codec<
+  Readonly<ArrayOfLength<I, L>>,
+  ArrayOfLength<O, L>
+> {
   return createCodec({
     _metadata: metadata("$.sizedArray", sizedArray, $el, length),
     _staticSize: $el._staticSize * length,
@@ -22,11 +25,11 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec
       }
     },
     _decode(buffer) {
-      const value: T[] = Array(length)
+      const value: O[] = Array(length)
       for (let i = 0; i < value.length; i++) {
         value[i] = $el._decode(buffer)
       }
-      return value as ArrayOfLength<T, L>
+      return value as ArrayOfLength<O, L>
     },
     _assert(assert) {
       assert.instanceof(this, Array)
@@ -38,7 +41,7 @@ export function sizedArray<L extends number, T>($el: Codec<T>, length: L): Codec
   })
 }
 
-export function array<T>($el: Codec<T>): Codec<T[]> {
+export function array<I, O = I>($el: Codec<I, O>): Codec<readonly I[], O[]> {
   return createCodec({
     _metadata: metadata("$.array", array, $el),
     _staticSize: compactU32._staticSize,
@@ -54,7 +57,7 @@ export function array<T>($el: Codec<T>): Codec<T[]> {
     },
     _decode(buffer) {
       const length = compactU32._decode(buffer)
-      const value: T[] = Array(length)
+      const value: O[] = Array(length)
       for (let i = 0; i < value.length; i++) {
         value[i] = $el._decode(buffer)
       }

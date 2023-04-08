@@ -1,8 +1,11 @@
-import { AnyCodec, Codec, CodecVisitor, createCodec, Expand, metadata, Native, U2I } from "../common/mod.ts"
+import { AnyCodec, Codec, CodecVisitor, createCodec, Expand, Input, metadata, Output, U2I } from "../common/mod.ts"
 import { constant } from "./constant.ts"
 import { option } from "./option.ts"
 
-export function field<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<Expand<Record<K, V>>> {
+export function field<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<
+  Expand<Readonly<Record<K, V>>>,
+  Expand<Record<K, V>>
+> {
   return createCodec({
     _metadata: metadata("$.field", field, key, $value),
     _staticSize: $value._staticSize,
@@ -18,7 +21,10 @@ export function field<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<E
   })
 }
 
-export function optionalField<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<Expand<Partial<Record<K, V>>>> {
+export function optionalField<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<
+  Expand<Readonly<Partial<Record<K, V>>>>,
+  Expand<Partial<Record<K, V>>>
+> {
   const $option = option($value)
   return createCodec({
     _metadata: metadata("$.optionalField", optionalField, key, $value),
@@ -43,11 +49,19 @@ export function optionalField<K extends keyof any, V>(key: K, $value: Codec<V>):
   })
 }
 
-export type NativeObject<T extends AnyCodec[]> = Expand<
+export type InputObject<T extends AnyCodec[]> = Expand<
   U2I<
     | { x: {} }
     | {
-      [K in keyof T]: { x: Native<T[K]> }
+      [K in keyof T]: { x: Input<T[K]> }
+    }[number]
+  >["x"]
+>
+export type OutputObject<T extends AnyCodec[]> = Expand<
+  U2I<
+    | { x: {} }
+    | {
+      [K in keyof T]: { x: Output<T[K]> }
     }[number]
   >["x"]
 >
@@ -56,17 +70,17 @@ type UnionKeys<T> = T extends T ? keyof T : never
 export type ObjectMembers<T extends AnyCodec[]> = [
   ...never extends T ? {
       [K in keyof T]:
-        & UnionKeys<Native<T[K]>>
+        & UnionKeys<Input<T[K]>>
         & {
-          [L in keyof T]: K extends L ? never : UnionKeys<Native<T[L]>>
+          [L in keyof T]: K extends L ? never : UnionKeys<Input<T[L]>>
         }[number] extends (infer O extends keyof any)
-        ? [O] extends [never] ? Codec<Native<T[K]> & {}> : Codec<{ [_ in O]?: never }>
+        ? [O] extends [never] ? Codec<Input<T[K]> & {}> : Codec<{ [_ in O]?: never }>
         : never
     }
     : T,
 ]
 
-export function object<T extends AnyCodec[]>(...members: ObjectMembers<T>): Codec<NativeObject<T>> {
+export function object<T extends AnyCodec[]>(...members: ObjectMembers<T>): Codec<InputObject<T>, OutputObject<T>> {
   return createCodec({
     _metadata: metadata("$.object", object<T>, ...members),
     _staticSize: members.map((x) => x._staticSize).reduce((a, b) => a + b, 0),

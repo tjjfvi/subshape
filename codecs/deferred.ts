@@ -1,7 +1,7 @@
 import { Codec, createCodec, metadata } from "../common/mod.ts"
 
-export function deferred<T>(getCodec: () => Codec<T>): Codec<T> {
-  let $codec: Codec<T>
+export function deferred<I, O>(getCodec: () => Codec<I, O>): Codec<I, O> {
+  let $codec: Codec<I, O>
   const codec = createCodec({
     _metadata: metadata("$.deferred", deferred, getCodec),
     _staticSize: 0,

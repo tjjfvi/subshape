@@ -1,23 +1,23 @@
 import { Codec, createCodec, metadata, ScaleDecodeError } from "../common/mod.ts"
 
-export function option<T>($some: Codec<T>): Codec<T | undefined>
-export function option<T, U>($some: Codec<T>, none: U): Codec<T | U>
-export function option<T, U>($some: Codec<T>, none?: U): Codec<T | U> {
+export function option<SI, SO>($some: Codec<SI, SO>): Codec<SI | undefined, SO | undefined>
+export function option<SI, SO, N>($some: Codec<SI, SO>, none: N): Codec<SI | N, SO | N>
+export function option<SI, SO, N>($some: Codec<SI, SO>, none?: N): Codec<SI | N, SO | N> {
   if ($some._metadata.some((x) => x.factory === option && x.args[1] === none)) {
     throw new Error("Nested option codec will not roundtrip correctly")
   }
   return createCodec({
-    _metadata: metadata("$.option", option<T, U>, $some, ...(none === undefined ? [] : [none!]) as [U]),
+    _metadata: metadata("$.option", option<SI, SO, N>, $some, ...(none === undefined ? [] : [none!]) as [N]),
     _staticSize: 1 + $some._staticSize,
     _encode(buffer, value) {
       if ((buffer.array[buffer.index++] = +(value !== none))) {
-        $some._encode(buffer, value as T)
+        $some._encode(buffer, value as SI)
       }
     },
     _decode(buffer) {
       switch (buffer.array[buffer.index++]) {
         case 0:
-          return none as U
+          return none as N
         case 1: {
           const value = $some._decode(buffer)
           if (value === none) {

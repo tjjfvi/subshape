@@ -51,10 +51,10 @@ const decodedValue: Superhero = $superhero.decode(encodedBytes)
 assertEquals(decodedValue, valueToEncode)
 ```
 
-To extract the JS-native TypeScript type from a given codec, use the `Native` utility type.
+To extract the type from a given codec, you can use the `Output` utility type.
 
 ```ts
-type Superhero = $.Native<typeof $superhero>
+type Superhero = $.Output<typeof $superhero>
 // {
 //   pseudonym: string;
 //   secretIdentity?: string | undefined;
