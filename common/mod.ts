@@ -1,4 +1,4 @@
-// moderate --exclude *.test.ts
+// moderate
 
 export * from "./assert.ts"
 export * from "./buffer.ts"
