@@ -15,13 +15,19 @@ Deno.test("inspect", () => {
   assertEquals(Deno.inspect($.array($.tuple($.u8, $.str))), "$.array($.tuple($.u8, $.str))")
   assertEquals(
     Deno.inspect($linkedList),
-    `$0 = $.option($.object($.field("val", $.u8), $.field("next", $.deferred(() => $0))))`,
+    `
+$0 = $.option(
+  $.object($.field("val", $.u8), $.field("next", $.deferred(() => $0)))
+)
+    `.trim(),
   )
   assertEquals(
     Deno.inspect($.array($linkedList)),
     `
 $.array(
-  $0 = $.option($.object($.field("val", $.u8), $.field("next", $.deferred(() => $0))))
+  $0 = $.option(
+    $.object($.field("val", $.u8), $.field("next", $.deferred(() => $0)))
+  )
 )
     `.trim(),
   )
@@ -41,7 +47,10 @@ $0 = $.object(
       $.field("foo", $.deferred(() => $0)),
       $.field(
         "baz",
-        $.deferred(() => $.object($.field("foo", $.deferred(() => $0)), $.field("bar", $.deferred(() => $1))))
+        $.deferred(() => $.object(
+          $.field("foo", $.deferred(() => $0)),
+          $.field("bar", $.deferred(() => $1))
+        ))
       )
     ))
   ),
@@ -51,7 +60,10 @@ $0 = $.object(
       $.field("foo", $.deferred(() => $0)),
       $.field(
         "bar",
-        $.deferred(() => $.object($.field("foo", $.deferred(() => $0)), $.field("baz", $.deferred(() => $2))))
+        $.deferred(() => $.object(
+          $.field("foo", $.deferred(() => $0)),
+          $.field("baz", $.deferred(() => $2))
+        ))
       )
     ))
   )

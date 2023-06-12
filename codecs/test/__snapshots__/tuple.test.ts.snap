@@ -1,11 +1,9 @@
 export const snapshot = {};
 
-snapshot[`\$.tuple(\$.str, \$.u8, \$.str, \$.u32) [
-  "HELLO!",
+snapshot[`\$.tuple(\$.str, \$.u8, \$.str, \$.u32) [ "HELLO!",
   1,
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore ...",
-  4294967295,
-] 1`] = `
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore "... 346 more characters,
+  4294967295 ] 1`] = `
 18
 48
 45

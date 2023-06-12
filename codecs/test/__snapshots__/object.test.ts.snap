@@ -72,8 +72,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)
@@ -86,8 +86,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)
@@ -101,8 +101,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)
@@ -112,8 +112,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)
@@ -123,8 +123,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)
@@ -134,8 +134,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)
@@ -145,8 +145,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)
@@ -156,8 +156,8 @@ snapshot[`\$.object(
   \$.taggedUnion(
     "_tag",
     [
-      Variant { tag: "a", codec: \$.object(Array) },
-      Variant { tag: "b", codec: \$.object(Array) }
+      Variant { tag: "a", codec: \$.object([]) },
+      Variant { tag: "b", codec: \$.object(\$.field("x", \$.u8)) }
     ]
   ),
   \$.field("bar", \$.u8)

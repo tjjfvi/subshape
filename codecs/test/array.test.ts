@@ -18,7 +18,7 @@ testInvalid($.array($.u8), [
 
 testCodec($.sizedArray($.u8, 1), [[1]])
 testCodec($.sizedArray($.u8, 2), [[1, 1]])
-testCodec($.sizedArray($.u8, 100), [Array(100).fill(1) as any])
+testCodec($.sizedArray($.u8, 100), { "[1] * 100": Array(100).fill(1) as any })
 
 testInvalid($.sizedArray($.u8, 3), [
   null,

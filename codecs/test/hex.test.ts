@@ -4,12 +4,12 @@ import { encodeHex } from "../hex.ts"
 
 const $unsizedHex = $.hex($.uint8Array)
 
-testCodec($unsizedHex, [
-  "",
-  "000102030405",
-  "deadbeef",
-  encodeHex(await Deno.readFile("Cargo.lock")),
-])
+testCodec($unsizedHex, {
+  "\"\"": "",
+  "\"000102030405\"": "000102030405",
+  "\"deadbeef\"": "deadbeef",
+  "Cargo.lock": encodeHex(await Deno.readFile("Cargo.lock")),
+})
 
 testCodec($.hex($.sizedUint8Array(1)), [
   "00",
