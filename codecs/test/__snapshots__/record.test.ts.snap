@@ -82,7 +82,18 @@ snapshot[`\$.transform(
 
 snapshot[`\$.transform(
   {
-    "\$base": \$.array(\$.tuple(\$.str, \$.transform(Array))),
+    "\$base": \$.array(
+      \$.tuple(
+        \$.str,
+        \$.transform(
+          {
+            "\$base": \$.array(\$.tuple(\$.str, \$.u8)),
+            encode: [Function: entries],
+            decode: [Function: fromEntries]
+          }
+        )
+      )
+    ),
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }

@@ -3,8 +3,7 @@ export const snapshot = {};
 snapshot[`\$myError MyError {
   code: 1,
   message: "At war with my Arch system config",
-  payload: { a: "a", b: 2, c: true },
-} 1`] = `
+  payload: { a: "a", b: 2, c: true } } 1`] = `
 01
 84
 41
@@ -52,7 +51,7 @@ snapshot[`\$myError invalid undefined 1`] = `ScaleAssertError: !(value instanceo
 
 snapshot[`\$myError invalid { code: 123, message: "foo", payload: { a: "abc", b: 2, c: true } } 1`] = `ScaleAssertError: !(value instanceof MyError)`;
 
-snapshot[`\$myError invalid Error: foo 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+snapshot[`\$myError invalid [Error: foo] 1`] = `ScaleAssertError: !(value instanceof MyError)`;
 
 snapshot[`\$myError invalid MyError { code: -1, message: "a", payload: { a: "abc", b: 2, c: true } } 1`] = `ScaleAssertError: value#arguments[0] < 0`;
 
