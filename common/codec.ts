@@ -35,7 +35,7 @@ export function withMetadata<I, O>(metadata: Metadata<NoInfer<I>, NoInfer<O>>, c
   return result
 }
 
-const codecInspectCtx = new Map<Codec<any>, number | null>()
+const codecInspectCtx = new Map<AnyCodec, number | null>()
 let codecInspectIdN = 0
 const nodeCustomInspect = Symbol.for("nodejs.util.inspect.custom")
 const denoCustomInspect = Symbol.for("Deno.customInspect")
@@ -51,7 +51,7 @@ abstract class _Codec {
 
   // Properly handles circular codecs in the case of $.deferred
   private _inspect(inspect: (value: unknown) => string): string
-  private _inspect<T>(this: Codec<T>, inspect: (value: unknown) => string): string {
+  private _inspect(this: AnyCodec, inspect: (value: unknown) => string): string {
     let id = codecInspectCtx.get(this)
     if (id !== undefined) {
       if (id === null) {

@@ -1,9 +1,9 @@
 import { AnyCodec, Codec, createCodec, Input, metadata, Output } from "../common/mod.ts"
 
-type InputTuple<T extends AnyCodec[]> = {
+export type InputTuple<T extends AnyCodec[]> = {
   readonly [K in keyof T]: Input<T[K]>
 }
-type OutputTuple<T extends AnyCodec[]> = {
+export type OutputTuple<T extends AnyCodec[]> = {
   [K in keyof T]: Output<T[K]>
 }
 
