@@ -8,7 +8,7 @@ class StrErr extends Error {
   }
 }
 
-const $strError = $.instance(StrErr, $.tuple($.str), (err) => [err.str])
+const $strError = $.instance(StrErr, $.tuple($.str), (err: StrErr) => [err.str])
 
 testCodec($.result($.str, $strError), [
   "ok",

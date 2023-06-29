@@ -25,7 +25,7 @@ class MyError extends Error {
 export const $myError = $.instance(
   MyError,
   $.tuple($.u8, $.str), // Specify how to encode/decode constructor arguments
-  (myError) => [myError.code, myError.message], // Specify how to extract arguments from an instance
+  (myError: MyError) => [myError.code, myError.message], // Specify how to extract arguments from an instance
 )
 
 $myError // Codec<MyError>

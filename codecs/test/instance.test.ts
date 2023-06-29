@@ -27,7 +27,7 @@ const $myError = $.withMetadata(
         $.field("c", $.bool),
       ),
     ),
-    (myError) => [myError.code, myError.message, myError.payload],
+    (myError: MyError) => [myError.code, myError.message, myError.payload],
   ),
 )
 
