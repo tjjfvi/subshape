@@ -1,4 +1,5 @@
 import { Codec, CodecVisitor, createCodec, metadata, ScaleDecodeError, withMetadata } from "../common/mod.ts"
+import { AnyCodec } from "../mod.ts"
 import { constant } from "./constant.ts"
 import { u128, u16, u256, u32, u64, u8 } from "./int.ts"
 import { field, object } from "./object.ts"
@@ -8,10 +9,10 @@ const MAX_U6 = 0b00111111
 const MAX_U14 = 0b00111111_11111111
 const MAX_U30 = 0b00111111_11111111_11111111_11111111
 
-export const compactVisitor = new CodecVisitor<Codec<any>>()
+export const compactVisitor = new CodecVisitor<AnyCodec>()
 
-export function compact<T>(codec: Codec<T>): Codec<T> {
-  return compactVisitor.visit(codec)
+export function compact<I, O>(codec: Codec<I, O>): Codec<I, O> {
+  return compactVisitor.visit(codec) as any
 }
 
 function compactNumber($base: Codec<number>): Codec<number> {
@@ -120,10 +121,10 @@ compactVisitor.add(constant<any>, (codec) => codec)
 compactVisitor.add(tuple<any[]>, (codec, ...entries) => {
   if (entries.length === 0) return codec
   if (entries.length > 1) throw new Error("Cannot derive compact codec for tuples with more than one field")
-  return withMetadata(metadata("$.compact", compact<any>, codec), tuple(compact(entries[0]!)))
+  return withMetadata(metadata("$.compact", compact<any, any>, codec), tuple(compact(entries[0]!)))
 })
 
-compactVisitor.add(field<any, any>, (codec, key, value) => {
+compactVisitor.add(field<any, any, any>, (codec, key, value) => {
   return withMetadata(metadata("$.compact", compact, codec), field(key, compact(value)))
 })
 

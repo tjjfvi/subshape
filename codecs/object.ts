@@ -2,9 +2,9 @@ import { AnyCodec, Codec, CodecVisitor, createCodec, Expand, Input, metadata, Ou
 import { constant } from "./constant.ts"
 import { option } from "./option.ts"
 
-export function field<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<
-  Expand<Readonly<Record<K, V>>>,
-  Expand<Record<K, V>>
+export function field<K extends keyof any, VI, VO>(key: K, $value: Codec<VI, VO>): Codec<
+  Expand<Readonly<Record<K, VI>>>,
+  Expand<Record<K, VO>>
 > {
   return createCodec({
     _metadata: metadata("$.field", field, key, $value),
@@ -21,9 +21,9 @@ export function field<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<
   })
 }
 
-export function optionalField<K extends keyof any, V>(key: K, $value: Codec<V>): Codec<
-  Expand<Readonly<Partial<Record<K, V>>>>,
-  Expand<Partial<Record<K, V>>>
+export function optionalField<K extends keyof any, VI, VO>(key: K, $value: Codec<VI, VO>): Codec<
+  Expand<Readonly<Partial<Record<K, VI>>>>,
+  Expand<Partial<Record<K, VO>>>
 > {
   const $option = option($value)
   return createCodec({
@@ -70,6 +70,7 @@ type UnionKeys<T> = T extends T ? keyof T : never
 export type ObjectMembers<T extends AnyCodec[]> = [
   ...never extends T ? {
       [K in keyof T]:
+        AnyCodec extends T[K] ? AnyCodec :
         & UnionKeys<Input<T[K]>>
         & {
           [L in keyof T]: K extends L ? never : UnionKeys<Input<T[L]>>

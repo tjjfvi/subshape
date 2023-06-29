@@ -7,6 +7,8 @@ export class Variant<T extends string, I, O> {
   constructor(readonly tag: T, readonly codec: Codec<I, O>) {}
 }
 
+export type AnyVariant = Variant<any, never, unknown>
+
 export function variant<T extends string, E extends AnyCodec[]>(
   tag: T,
   ...members: ObjectMembers<E>
@@ -16,29 +18,29 @@ export function variant<T extends string, E extends AnyCodec[]>(
 
 export type InputTaggedUnion<
   K extends keyof any,
-  M extends Record<number, Variant<any, any, any>>,
+  M extends Record<number, AnyVariant>,
 > = {
   [I in keyof M]: Expand<
-    & Readonly<Record<K, Extract<M[I], Variant<any, any, any>>["tag"]>>
-    & Input<Extract<M[I], Variant<any, any, any>>["codec"]>
+    & Readonly<Record<K, Extract<M[I], AnyVariant>["tag"]>>
+    & Input<Extract<M[I], AnyVariant>["codec"]>
   >
 }[keyof M & number]
 export type OutputTaggedUnion<
   K extends keyof any,
-  M extends Record<number, Variant<any, any, any>>,
+  M extends Record<number, AnyVariant>,
 > = {
   [I in keyof M]: Expand<
-    & Record<K, Extract<M[I], Variant<any, any, any>>["tag"]>
-    & Output<Extract<M[I], Variant<any, any, any>>["codec"]>
+    & Record<K, Extract<M[I], AnyVariant>["tag"]>
+    & Output<Extract<M[I], AnyVariant>["codec"]>
   >
 }[keyof M & number]
 
 export function taggedUnion<
   K extends keyof any,
-  M extends [] | Record<number, Variant<any, any, any>>,
+  M extends [] | Record<number, Variant<any, never, unknown>>,
 >(tagKey: K, members: M): Codec<InputTaggedUnion<K, M>, OutputTaggedUnion<K, M>> {
   const tagToDiscriminant: Record<string, number> = Object.create(null)
-  const discriminantToMember: Record<number, Codec<any>> = Object.create(null)
+  const discriminantToMember: Record<number, AnyCodec> = Object.create(null)
   for (const _discriminant in members) {
     const discriminant = +_discriminant
     if (isNaN(discriminant)) continue
@@ -61,7 +63,7 @@ export function taggedUnion<
       if (!$member) {
         throw new ScaleDecodeError(this, buffer, `No such member codec matching the discriminant \`${discriminant}\``)
       }
-      return $member._decode(buffer)
+      return $member._decode(buffer) as any
     },
     _assert(assert) {
       const assertTag = assert.key(this, tagKey)

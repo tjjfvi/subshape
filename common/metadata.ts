@@ -64,11 +64,11 @@ export function docs<I = any, O = any>(docs: string): Metadata<I, O> {
 }
 
 export class CodecVisitor<R> {
-  #fallback?: <T>(codec: Codec<T>) => R
+  #fallback?: <I, O>(codec: Codec<I, O>) => R
   #visitors = new Map<Metadata<any, any>[number] | Function, (codec: Codec<any>, ...args: any[]) => R>()
 
-  add<T, A extends unknown[]>(codec: (...args: A) => Codec<T>, fn: (codec: Codec<T>, ...args: A) => R): this
-  add<T>(codec: Codec<T>, fn: (codec: Codec<T>) => R): this
+  add<I, O, A extends unknown[]>(codec: (...args: A) => Codec<I, O>, fn: (codec: Codec<I, O>, ...args: A) => R): this
+  add<I, O>(codec: Codec<I, O>, fn: (codec: Codec<I, O>) => R): this
   add(codec: Codec<any> | Metadata<any, any>[number] | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
     if (codec instanceof Codec) {
       codec = codec._metadata[0]!
@@ -81,7 +81,7 @@ export class CodecVisitor<R> {
     return this
   }
 
-  fallback(fn: <T>(codec: Codec<T>) => R): this {
+  fallback(fn: <I, O>(codec: Codec<I, O>) => R): this {
     if (this.#fallback) {
       throw new Error("Duplicate fallback")
     }
@@ -103,7 +103,7 @@ export class CodecVisitor<R> {
     return this
   }
 
-  visit<T>(codec: Codec<T>): R {
+  visit<I, O>(codec: Codec<I, O>): R {
     for (const metadata of codec._metadata) {
       let visitor = this.#visitors.get(metadata)
       if (visitor) return visitor(codec)

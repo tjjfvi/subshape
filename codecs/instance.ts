@@ -1,10 +1,10 @@
 import { AssertState } from "../common/assert.ts"
 import { Codec, createCodec, metadata } from "../common/mod.ts"
 
-export function instance<A extends unknown[], O extends I, I = O>(
-  ctor: new(...args: A) => O,
-  $args: Codec<A>,
-  toArgs: (value: I) => [...A],
+export function instance<AI extends readonly unknown[], AO extends readonly unknown[], I, O>(
+  ctor: new(...args: AO) => O,
+  $args: Codec<AI, AO>,
+  toArgs: (value: I) => [...AI],
 ): Codec<I, O> {
   return createCodec({
     _metadata: metadata("$.instance", instance, ctor, $args, toArgs),
@@ -17,7 +17,7 @@ export function instance<A extends unknown[], O extends I, I = O>(
     },
     _assert(assert) {
       assert.instanceof(this, ctor)
-      $args._assert(new AssertState(toArgs(assert.value as O), "#arguments", assert))
+      $args._assert(new AssertState(toArgs(assert.value as I), "#arguments", assert))
     },
   })
 }
