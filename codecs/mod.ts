@@ -3,6 +3,7 @@
 export * from "./array.ts"
 export * from "./bitSequence.ts"
 export * from "./bool.ts"
+export * from "./collections.ts"
 export * from "./compact.ts"
 export * from "./constant.ts"
 export * from "./deferred.ts"
