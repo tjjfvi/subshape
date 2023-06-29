@@ -9,6 +9,9 @@ pub mod array_fixtures;
 #[path = "./codecs/fixtures/bool.rs"]
 pub mod bool_fixtures;
 
+#[path = "./codecs/fixtures/collections.rs"]
+pub mod collections_fixtures;
+
 #[path = "./codecs/fixtures/compact.rs"]
 pub mod compact_fixtures;
 

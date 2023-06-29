@@ -6,11 +6,9 @@ import {
   ScaleAssertError,
   ScaleDecodeError,
   ScaleEncodeError,
-  withMetadata,
 } from "../common/mod.ts"
 import { compact } from "./compact.ts"
 import { u32 } from "./int.ts"
-import { tuple } from "./tuple.ts"
 
 const compactU32 = compact(u32)
 
@@ -62,35 +60,4 @@ export function iterable<TI, I extends Iterable<TI>, TO = TI, O = I>(
       }
     },
   })
-}
-
-export function set<I, O>($el: Codec<I, O>): Codec<ReadonlySet<I>, Set<O>> {
-  return withMetadata(
-    metadata("$.set", set, $el),
-    iterable({
-      $el,
-      calcLength: (set) => set.size,
-      rehydrate: (values) => new Set(values),
-      assert(assert) {
-        assert.instanceof(this, Set)
-      },
-    }),
-  )
-}
-
-export function map<KI, KO, VI, VO>(
-  $key: Codec<KI, KO>,
-  $value: Codec<VI, VO>,
-): Codec<ReadonlyMap<KI, VI>, Map<KO, VO>> {
-  return withMetadata<ReadonlyMap<KI, VI>, Map<KO, VO>>(
-    metadata("$.map", map, $key, $value),
-    iterable({
-      $el: tuple($key, $value),
-      calcLength: (map) => map.size,
-      rehydrate: (values) => new Map(values),
-      assert(assert) {
-        assert.instanceof(this, Map)
-      },
-    }),
-  )
 }
