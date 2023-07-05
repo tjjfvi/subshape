@@ -61,20 +61,12 @@ abstract class _Codec {
     }
     try {
       codecInspectCtx.set(this, null)
-      let content = ""
-      for (const metadata of this._metadata) {
-        if (metadata.type === "docs") {
-          // TODO: print docs in inspect
-        } else {
-          if (metadata.type === "atomic") {
-            content += metadata.name
-          } else if (metadata.type === "factory") {
-            content += `${metadata.name}(${inspect(metadata.args).replace(/^\[(?: (.+) |(.+))\]$/s, "$1$2")})`
-          }
-          break
-        }
-      }
-      content ||= "?"
+      const metadata = this._metadata[0]
+      const content = metadata
+        ? metadata.type === "atomic"
+          ? metadata.name
+          : `${metadata.name}(${inspect(metadata.args).replace(/^\[(?: (.+) |(.+))\]$/s, "$1$2")})`
+        : "?"
       id = codecInspectCtx.get(this)
       return id !== null ? `$${id} = ${content}` : content
     } finally {

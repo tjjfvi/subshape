@@ -69,13 +69,13 @@ export type OutputObject<T extends AnyCodec[]> = Expand<
 type UnionKeys<T> = T extends T ? keyof T : never
 export type ObjectMembers<T extends AnyCodec[]> = [
   ...never extends T ? {
-      [K in keyof T]:
-        AnyCodec extends T[K] ? AnyCodec :
-        & UnionKeys<Input<T[K]>>
-        & {
-          [L in keyof T]: K extends L ? never : UnionKeys<Input<T[L]>>
-        }[number] extends (infer O extends keyof any)
-        ? [O] extends [never] ? Codec<Input<T[K]> & {}> : Codec<{ [_ in O]?: never }>
+      [K in keyof T]: AnyCodec extends T[K] ? AnyCodec
+        : 
+          & UnionKeys<Input<T[K]>>
+          & {
+            [L in keyof T]: K extends L ? never : UnionKeys<Input<T[L]>>
+          }[number] extends (infer O extends keyof any)
+          ? [O] extends [never] ? Codec<Input<T[K]> & {}> : Codec<{ [_ in O]?: never }>
         : never
     }
     : T,
