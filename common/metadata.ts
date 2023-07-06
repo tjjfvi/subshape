@@ -15,12 +15,6 @@ export type Metadata<I, O> = Array<
     factory: (...args: any) => Codec<I, O>
     args: any[]
   }
-  | {
-    type: "docs"
-    docs: string
-    factory?: never
-    args?: never
-  }
 >
 
 /** Metadata for an atomic codec */
@@ -38,7 +32,7 @@ export function metadata<I, O>(
     | Metadata<I, O>[]
     | [
       name: string,
-      factory?: (...args: any) => Codec<[I, O]>,
+      factory?: (...args: any) => Codec<I, O>,
       ...args: any[],
     ]
 ): Metadata<I, O> {
@@ -57,10 +51,6 @@ export function metadata<I, O>(
         name,
       },
   ]
-}
-
-export function docs<I = any, O = any>(docs: string): Metadata<I, O> {
-  return [{ type: "docs", docs }]
 }
 
 export class CodecVisitor<R> {
