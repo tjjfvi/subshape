@@ -1,25 +1,23 @@
-# SCALE Codecs for JavaScript and TypeScript
+# subShape
 
-A TypeScript implementation of [SCALE (Simple Concatenated Aggregate Little-Endian) transcoding](https://docs.substrate.io/reference/scale-codec/) (see [Rust implementation here](https://github.com/paritytech/parity-scale-codec)), which emphasizes JS-land representations and e2e type-safety. **Faster than `JSON`, `avsc`, `jsbin` and `protobuf`** ([see benchmarks](https://github.com/paritytech/scale-ts-benchmark)).
+TODO: description
 
 ## Setup
 
-If you're using [Deno](https://deno.land/), simply import via the `deno.land/x` specifier.
+### Deno
 
 ```ts
-import * as $ from "https://deno.land/x/scale/mod.ts"
+import * as $ from "https://deno.land/x/subshape/mod.ts"
 ```
 
-If you're using [Node](https://nodejs.org/), install as follows.
+### Node
 
 ```
-npm install scale-codec
+npm install subshape
 ```
-
-Then import as follows.
 
 ```ts
-import * as $ from "scale-codec"
+import * as $ from "subshape"
 ```
 
 ## Usage
@@ -31,7 +29,7 @@ import * as $ from "scale-codec"
 ## Example
 
 ```ts
-import * as $ from "https://deno.land/x/scale/mod.ts"
+import * as $ from "https://deno.land/x/subshape/mod.ts"
 
 const $superhero = $.object(
   $.field("pseudonym", $.str),
@@ -62,7 +60,8 @@ type Superhero = $.Output<typeof $superhero>
 // }
 ```
 
-You can also explicitly type the shape, which will validate that the inferred type aligns with the expected.
+You can also explicitly type the shape, which will validate that the inferred
+type aligns with the expected.
 
 ```ts
 interface Superhero {
@@ -100,13 +99,19 @@ $.assert($superhero, value)
 value // Superhero
 ```
 
-If `$.assert` fails, it will throw a `ScaleAssertError` detailing why the value was invalid.
+If `$.assert` fails, it will throw a `ShapeAssertError` detailing why the value
+was invalid.
 
-Further examples can be found in the [`examples`](https://github.com/paritytech/scale-ts/tree/main/examples) directory.
+Further examples can be found in the
+[`examples`](https://github.com/paritytech/scale-ts/tree/main/examples)
+directory.
 
 ## Shape Naming
 
-This library adopts a convention of denoting shapes with a `$` – `$.foo` for built-in shapes, and `$foo` for user-defined shapes. This makes shapes easily distinguishable from other values, and makes it easier to have shapes in scope with other variables:
+This library adopts a convention of denoting shapes with a `$` – `$.foo` for
+built-in shapes, and `$foo` for user-defined shapes. This makes shapes easily
+distinguishable from other values, and makes it easier to have shapes in scope
+with other variables:
 
 ```ts
 interface Person { ... }
@@ -114,21 +119,30 @@ const $person = $.object(...)
 const person = { ... }
 ```
 
-Here, the type, shape, and a value can all coexist without clashing, without having to resort to wordy workarounds like `personShape`.
+Here, the type, shape, and a value can all coexist without clashing, without
+having to resort to wordy workarounds like `personShape`.
 
-The main other library this could possibly clash with is jQuery, and its usage has waned enough that this is not a serious problem.
+The main other library this could possibly clash with is jQuery, and its usage
+has waned enough that this is not a serious problem.
 
-While we recommend following this convention for consistency, you can, of course, adopt an alternative convention if the `$` is problematic – `$.foo` can easily become `s.foo` or `scale.foo` with an alternate import name.
+While we recommend following this convention for consistency, you can, of
+course, adopt an alternative convention if the `$` is problematic – `$.foo` can
+easily become `s.foo` or `subshape.foo` with an alternate import name.
 
 ## Asynchronous Encoding
 
-Some shapes require asynchronous encoding. Calling `.encode()` on a shape will throw if it or another shape it calls is asynchronous. In this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any shape; if it is a synchronous shape, it will simply resolve immediately.
+Some shapes require asynchronous encoding. Calling `.encode()` on a shape will
+throw if it or another shape it calls is asynchronous. In this case, you must
+call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can
+call `.encodeAsync()` on any shape; if it is a synchronous shape, it will simply
+resolve immediately.
 
 Asynchronous decoding is not supported.
 
 ## Custom Shapes
 
-If your encoding/decoding logic is more complicated, you can create custom shapes with `createShape`:
+If your encoding/decoding logic is more complicated, you can create custom
+shapes with `createShape`:
 
 ```ts
 const $foo = $.createShape<Foo>({
@@ -177,7 +191,7 @@ const $foo = $.createShape<Foo>({
     // See the `AssertState` class for information on other methods.
 
     // You can delegate to another shape by calling `$bar._assert(assert)` or `$bar._assert(assert.access("key"))`.
-    // Any errors thrown should be an instance of `$.ScaleAssertError`, and should use `assert.path`.
+    // Any errors thrown should be an instance of `$.ShapeAssertError`, and should use `assert.path`.
 
     // ...
   },

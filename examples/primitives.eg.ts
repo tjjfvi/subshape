@@ -1,4 +1,4 @@
-// import * as $ from "https://deno.land/x/scale/mod.ts";
+// import * as $ from "https://deno.land/x/subshape/mod.ts";
 import * as $ from "../mod.ts"
 
 $.bool // Shape<boolean>
