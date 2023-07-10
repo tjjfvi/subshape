@@ -6,29 +6,29 @@ import { tuple } from "./tuple.ts"
 export function map<KI, KO extends KI, VI, VO>(
   $key: Shape<KI, KO>,
   $value: Shape<VI, VO>,
-): Shape<ReadonlyMap<KI, VI>, ScaleMap<KO, VO>> {
-  return withMetadata<ReadonlyMap<KI, VI>, ScaleMap<KO, VO>>(
+): Shape<ReadonlyMap<KI, VI>, ShapeMap<KO, VO>> {
+  return withMetadata<ReadonlyMap<KI, VI>, ShapeMap<KO, VO>>(
     metadata("$.map", map, $key, $value),
     iterable({
       $el: tuple($key, $value),
       calcLength: (map) => map.size,
-      rehydrate: (values) => new ScaleMap($key, values),
+      rehydrate: (values) => new ShapeMap($key, values),
       assert(assert) {
-        assert.instanceof(this, ScaleMap)
+        assert.instanceof(this, ShapeMap)
       },
     }),
   )
 }
 
-export function set<I, O extends I>($value: Shape<I, O>): Shape<ReadonlySet<I>, ScaleSet<O>> {
+export function set<I, O extends I>($value: Shape<I, O>): Shape<ReadonlySet<I>, ShapeSet<O>> {
   return withMetadata(
     metadata("$.set", set, $value),
     iterable({
       $el: $value,
       calcLength: (set) => set.size,
-      rehydrate: (values) => new ScaleSet($value, values),
+      rehydrate: (values) => new ShapeSet($value, values),
       assert(assert) {
-        assert.instanceof(this, ScaleSet)
+        assert.instanceof(this, ShapeSet)
       },
     }),
   )
@@ -36,7 +36,7 @@ export function set<I, O extends I>($value: Shape<I, O>): Shape<ReadonlySet<I>, 
 
 type Primitive = undefined | null | string | number | boolean | bigint | symbol
 
-export class ScaleMap<K, V> implements Map<K, V> {
+export class ShapeMap<K, V> implements Map<K, V> {
   #inner = new Map<Primitive, [K, V]>()
   #hexMemo = new WeakMap<K & object, string>()
 
@@ -57,7 +57,7 @@ export class ScaleMap<K, V> implements Map<K, V> {
   }
 
   get [Symbol.toStringTag]() {
-    return "ScaleMap"
+    return "ShapeMap"
   }
 
   clear(): void {
@@ -106,7 +106,7 @@ export class ScaleMap<K, V> implements Map<K, V> {
   }
 }
 
-export class ScaleSet<T> implements Set<T> {
+export class ShapeSet<T> implements Set<T> {
   #inner = new Map<Primitive, T>()
   #hexMemo = new WeakMap<T & object, string>()
 
@@ -127,7 +127,7 @@ export class ScaleSet<T> implements Set<T> {
   }
 
   get [Symbol.toStringTag]() {
-    return "ScaleSet"
+    return "ShapeSet"
   }
 
   clear(): void {

@@ -8845,32 +8845,32 @@ c0
 cc
 `;
 
-snapshot[`\$.hex(\$.uint8Array) invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.hex(\$.uint8Array) invalid null 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.hex(\$.uint8Array) invalid 4660 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.hex(\$.uint8Array) invalid 4660 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.hex(\$.uint8Array) invalid "0y00" 1`] = `ScaleAssertError: value: invalid hex`;
+snapshot[`\$.hex(\$.uint8Array) invalid "0y00" 1`] = `ShapeAssertError: value: invalid hex`;
 
-snapshot[`\$.hex(\$.uint8Array) invalid "hex" 1`] = `ScaleAssertError: value: invalid hex`;
+snapshot[`\$.hex(\$.uint8Array) invalid "hex" 1`] = `ShapeAssertError: value: invalid hex`;
 
-snapshot[`\$.hex(\$.uint8Array) invalid "0x000000000000000000000." 1`] = `ScaleAssertError: value: invalid hex`;
+snapshot[`\$.hex(\$.uint8Array) invalid "0x000000000000000000000." 1`] = `ShapeAssertError: value: invalid hex`;
 
-snapshot[`\$.hex(\$.uint8Array) invalid Uint8Array(5) [ 0, 1, 2, 3, 4 ] 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.hex(\$.uint8Array) invalid Uint8Array(5) [ 0, 1, 2, 3, 4 ] 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid null 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid 4660 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid 4660 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "0y00" 1`] = `ScaleAssertError: value: invalid hex`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "0y00" 1`] = `ShapeAssertError: value: invalid hex`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "hex" 1`] = `ScaleAssertError: value: invalid hex`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "hex" 1`] = `ShapeAssertError: value: invalid hex`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "0x000000000000000000000." 1`] = `ScaleAssertError: value: invalid hex`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "0x000000000000000000000." 1`] = `ShapeAssertError: value: invalid hex`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid Uint8Array(5) [ 0, 1, 2, 3, 4 ] 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid Uint8Array(5) [ 0, 1, 2, 3, 4 ] 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "0000" 1`] = `ScaleAssertError: value#encode.length !== 1`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "0000" 1`] = `ShapeAssertError: value#encode.length !== 1`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "" 1`] = `ScaleAssertError: value#encode.length !== 1`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "" 1`] = `ShapeAssertError: value#encode.length !== 1`;
 
-snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "-1" 1`] = `ScaleAssertError: value: invalid hex`;
+snapshot[`\$.hex(\$.sizedUint8Array(1)) invalid "-1" 1`] = `ShapeAssertError: value: invalid hex`;

@@ -37,15 +37,15 @@ snapshot[`\$.array(\$.u8) [ 16, 17, 18, 19, 20, 21 ] 1`] = `
 15
 `;
 
-snapshot[`\$.array(\$.u8) invalid null 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.array(\$.u8) invalid null 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.array(\$.u8) invalid undefined 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.array(\$.u8) invalid undefined 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.array(\$.u8) invalid 123 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.array(\$.u8) invalid 123 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.array(\$.u8) invalid [ "abc" ] 1`] = `ScaleAssertError: typeof value[0] !== "number"`;
+snapshot[`\$.array(\$.u8) invalid [ "abc" ] 1`] = `ShapeAssertError: typeof value[0] !== "number"`;
 
-snapshot[`\$.array(\$.u8) invalid [ 1, 2, 3, -1, 4 ] 1`] = `ScaleAssertError: value[3] < 0`;
+snapshot[`\$.array(\$.u8) invalid [ 1, 2, 3, -1, 4 ] 1`] = `ShapeAssertError: value[3] < 0`;
 
 snapshot[`\$.sizedArray(\$.u8, 1) [ 1 ] 1`] = `01`;
 
@@ -157,15 +157,15 @@ snapshot[`\$.sizedArray(\$.u8, 100) [1] * 100 1`] = `
 01
 `;
 
-snapshot[`\$.sizedArray(\$.u8, 3) invalid null 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.sizedArray(\$.u8, 3) invalid null 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.sizedArray(\$.u8, 3) invalid undefined 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.sizedArray(\$.u8, 3) invalid undefined 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.sizedArray(\$.u8, 3) invalid 123 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.sizedArray(\$.u8, 3) invalid 123 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.sizedArray(\$.u8, 3) invalid [] 1`] = `ScaleAssertError: value.length !== 3`;
+snapshot[`\$.sizedArray(\$.u8, 3) invalid [] 1`] = `ShapeAssertError: value.length !== 3`;
 
-snapshot[`\$.sizedArray(\$.u8, 3) invalid [ 1, 2, -1 ] 1`] = `ScaleAssertError: value[2] < 0`;
+snapshot[`\$.sizedArray(\$.u8, 3) invalid [ 1, 2, -1 ] 1`] = `ShapeAssertError: value[2] < 0`;
 
 snapshot[`\$.uint8Array Uint8Array(5) [ 1, 2, 3, 4, 5 ] 1`] = `
 14
@@ -204,15 +204,15 @@ snapshot[`\$.uint8Array Uint8Array(6) [ 16, 17, 18, 19, 20, 21 ] 1`] = `
 15
 `;
 
-snapshot[`\$.uint8Array invalid null 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.uint8Array invalid null 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
-snapshot[`\$.uint8Array invalid undefined 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.uint8Array invalid undefined 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
-snapshot[`\$.uint8Array invalid 123 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.uint8Array invalid 123 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
-snapshot[`\$.uint8Array invalid [] 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.uint8Array invalid [] 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
-snapshot[`\$.uint8Array invalid [ 1, 2, -1 ] 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.uint8Array invalid [ 1, 2, -1 ] 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
 snapshot[`\$.sizedUint8Array(4) Uint8Array(4) [ 0, 0, 0, 0 ] 1`] = `
 00
@@ -228,12 +228,12 @@ snapshot[`\$.sizedUint8Array(4) Uint8Array(4) [ 1, 2, 3, 4 ] 1`] = `
 04
 `;
 
-snapshot[`\$.sizedUint8Array(4) invalid null 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.sizedUint8Array(4) invalid null 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
-snapshot[`\$.sizedUint8Array(4) invalid undefined 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.sizedUint8Array(4) invalid undefined 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
-snapshot[`\$.sizedUint8Array(4) invalid [ 1, 2, 3, 4 ] 1`] = `ScaleAssertError: !(value instanceof Uint8Array)`;
+snapshot[`\$.sizedUint8Array(4) invalid [ 1, 2, 3, 4 ] 1`] = `ShapeAssertError: !(value instanceof Uint8Array)`;
 
-snapshot[`\$.sizedUint8Array(4) invalid Uint8Array(0) [] 1`] = `ScaleAssertError: value.length !== 4`;
+snapshot[`\$.sizedUint8Array(4) invalid Uint8Array(0) [] 1`] = `ShapeAssertError: value.length !== 4`;
 
-snapshot[`\$.sizedUint8Array(4) invalid Uint8Array(5) [ 0, 0, 0, 0, 0 ] 1`] = `ScaleAssertError: value.length !== 4`;
+snapshot[`\$.sizedUint8Array(4) invalid Uint8Array(5) [ 0, 0, 0, 0, 0 ] 1`] = `ShapeAssertError: value.length !== 4`;

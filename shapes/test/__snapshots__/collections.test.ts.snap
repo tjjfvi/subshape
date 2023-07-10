@@ -1,8 +1,8 @@
 export const snapshot = {};
 
-snapshot[`\$.set(\$.u8) ScaleSet { "\$value": \$.u8 } 1`] = `00`;
+snapshot[`\$.set(\$.u8) ShapeSet { "\$value": \$.u8 } 1`] = `00`;
 
-snapshot[`\$.set(\$.u8) ScaleSet { "\$value": \$.u8 } 2`] = `
+snapshot[`\$.set(\$.u8) ShapeSet { "\$value": \$.u8 } 2`] = `
 10
 00
 02
@@ -10,7 +10,7 @@ snapshot[`\$.set(\$.u8) ScaleSet { "\$value": \$.u8 } 2`] = `
 08
 `;
 
-snapshot[`\$.set(\$.u8) ScaleSet { "\$value": \$.u8 } 3`] = `
+snapshot[`\$.set(\$.u8) ShapeSet { "\$value": \$.u8 } 3`] = `
 10
 02
 03
@@ -18,23 +18,23 @@ snapshot[`\$.set(\$.u8) ScaleSet { "\$value": \$.u8 } 3`] = `
 07
 `;
 
-snapshot[`\$.set(\$.u8) invalid null 1`] = `ScaleAssertError: !(value instanceof ScaleSet)`;
+snapshot[`\$.set(\$.u8) invalid null 1`] = `ShapeAssertError: !(value instanceof ShapeSet)`;
 
-snapshot[`\$.set(\$.u8) invalid undefined 1`] = `ScaleAssertError: !(value instanceof ScaleSet)`;
+snapshot[`\$.set(\$.u8) invalid undefined 1`] = `ShapeAssertError: !(value instanceof ShapeSet)`;
 
-snapshot[`\$.set(\$.u8) invalid 123 1`] = `ScaleAssertError: !(value instanceof ScaleSet)`;
+snapshot[`\$.set(\$.u8) invalid 123 1`] = `ShapeAssertError: !(value instanceof ShapeSet)`;
 
-snapshot[`\$.set(\$.u8) invalid [ 123 ] 1`] = `ScaleAssertError: !(value instanceof ScaleSet)`;
+snapshot[`\$.set(\$.u8) invalid [ 123 ] 1`] = `ShapeAssertError: !(value instanceof ShapeSet)`;
 
-snapshot[`\$.set(\$.u8) invalid Set(1) { null } 1`] = `ScaleAssertError: !(value instanceof ScaleSet)`;
+snapshot[`\$.set(\$.u8) invalid Set(1) { null } 1`] = `ShapeAssertError: !(value instanceof ShapeSet)`;
 
-snapshot[`\$.set(\$.u8) invalid Set(5) { 1, 2, 3, -1, 4 } 1`] = `ScaleAssertError: !(value instanceof ScaleSet)`;
+snapshot[`\$.set(\$.u8) invalid Set(5) { 1, 2, 3, -1, 4 } 1`] = `ShapeAssertError: !(value instanceof ShapeSet)`;
 
-snapshot[`\$.set(\$.u8) invalid ScaleSet { "\$value": \$.i8 } 1`] = `ScaleAssertError: #iterator[3] < 0`;
+snapshot[`\$.set(\$.u8) invalid ShapeSet { "\$value": \$.i8 } 1`] = `ShapeAssertError: #iterator[3] < 0`;
 
-snapshot[`\$.map(\$.str, \$.u8) ScaleMap { "\$key": \$.str } 1`] = `00`;
+snapshot[`\$.map(\$.str, \$.u8) ShapeMap { "\$key": \$.str } 1`] = `00`;
 
-snapshot[`\$.map(\$.str, \$.u8) ScaleMap { "\$key": \$.str } 2`] = `
+snapshot[`\$.map(\$.str, \$.u8) ShapeMap { "\$key": \$.str } 2`] = `
 08
 04
 30
@@ -44,7 +44,7 @@ snapshot[`\$.map(\$.str, \$.u8) ScaleMap { "\$key": \$.str } 2`] = `
 01
 `;
 
-snapshot[`\$.map(\$.str, \$.u8) ScaleMap { "\$key": \$.str } 3`] = `
+snapshot[`\$.map(\$.str, \$.u8) ShapeMap { "\$key": \$.str } 3`] = `
 14
 0c
 32
@@ -73,18 +73,18 @@ snapshot[`\$.map(\$.str, \$.u8) ScaleMap { "\$key": \$.str } 3`] = `
 10
 `;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid null 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid null 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid undefined 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid undefined 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid 123 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid 123 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid [ 123 ] 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid [ 123 ] 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid [ [ "a", 1 ] ] 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid [ [ "a", 1 ] ] 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid Map(1) { "a" => null } 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid Map(1) { "a" => null } 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid Map(4) { "a" => 1, "b" => 2, "c" => -1, "d" => 0 } 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid Map(4) { "a" => 1, "b" => 2, "c" => -1, "d" => 0 } 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;
 
-snapshot[`\$.map(\$.str, \$.u8) invalid Map(4) { "a" => 1, "b" => 2, null => 3, "d" => 0 } 1`] = `ScaleAssertError: !(value instanceof ScaleMap)`;
+snapshot[`\$.map(\$.str, \$.u8) invalid Map(4) { "a" => 1, "b" => 2, null => 3, "d" => 0 } 1`] = `ShapeAssertError: !(value instanceof ShapeMap)`;

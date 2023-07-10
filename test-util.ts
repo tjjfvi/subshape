@@ -2,7 +2,7 @@
 
 import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testing/asserts.ts"
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts"
-import { AnyShape, assert, DecodeBuffer, ScaleAssertError, Shape } from "./common/mod.ts"
+import { AnyShape, assert, DecodeBuffer, Shape, ShapeAssertError } from "./common/mod.ts"
 
 const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) => () =>
   Deno.readTextFile(fileName)
@@ -60,7 +60,7 @@ export function testInvalid(shape: AnyShape, values: unknown[] | Record<string, 
       if (typeof value === "function") {
         value = (value as () => unknown)()
       }
-      await assertThrowsSnapshot(t, () => assert(shape as Shape<any>, value), ScaleAssertError)
+      await assertThrowsSnapshot(t, () => assert(shape as Shape<any>, value), ShapeAssertError)
     })
   }
 }

@@ -986,4 +986,4 @@ cd
 03
 `;
 
-snapshot[`\$.promise(\$.u8) invalid 0 1`] = `ScaleAssertError: !(value instanceof Promise)`;
+snapshot[`\$.promise(\$.u8) invalid 0 1`] = `ShapeAssertError: !(value instanceof Promise)`;

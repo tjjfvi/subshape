@@ -36,7 +36,7 @@ snapshot[`\$.result(
     \$.tuple(\$.str),
     [Function (anonymous)]
   )
-) invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
+) invalid null 1`] = `ShapeAssertError: typeof value !== "string"`;
 
 snapshot[`\$.result(
   \$.str,
@@ -45,7 +45,7 @@ snapshot[`\$.result(
     \$.tuple(\$.str),
     [Function (anonymous)]
   )
-) invalid undefined 1`] = `ScaleAssertError: typeof value !== "string"`;
+) invalid undefined 1`] = `ShapeAssertError: typeof value !== "string"`;
 
 snapshot[`\$.result(
   \$.str,
@@ -54,7 +54,7 @@ snapshot[`\$.result(
     \$.tuple(\$.str),
     [Function (anonymous)]
   )
-) invalid [Error: foo] 1`] = `ScaleAssertError: !(value instanceof StrErr)`;
+) invalid [Error: foo] 1`] = `ShapeAssertError: !(value instanceof StrErr)`;
 
 snapshot[`\$.result(
   \$.str,
@@ -63,4 +63,4 @@ snapshot[`\$.result(
     \$.tuple(\$.str),
     [Function (anonymous)]
   )
-) invalid { [StrErr: null] str: null, message: "StrErr: null" } 1`] = `ScaleAssertError: typeof value#arguments[0] !== "string"`;
+) invalid { [StrErr: null] str: null, message: "StrErr: null" } 1`] = `ShapeAssertError: typeof value#arguments[0] !== "string"`;

@@ -72,20 +72,20 @@ snapshot[`\$.literalUnion(interestingU8s) "LargestSquare" 1`] = `e1`;
 
 snapshot[`\$.literalUnion(interestingU8s) "Max" 1`] = `ff`;
 
-snapshot[`\$abc invalid null 1`] = `ScaleAssertError: value == null`;
+snapshot[`\$abc invalid null 1`] = `ShapeAssertError: value == null`;
 
-snapshot[`\$abc invalid { _tag: null } 1`] = `ScaleAssertError: typeof value._tag !== "string"`;
+snapshot[`\$abc invalid { _tag: null } 1`] = `ShapeAssertError: typeof value._tag !== "string"`;
 
-snapshot[`\$abc invalid { _tag: "" } 1`] = `ScaleAssertError: value._tag: invalid tag`;
+snapshot[`\$abc invalid { _tag: "" } 1`] = `ShapeAssertError: value._tag: invalid tag`;
 
-snapshot[`\$abc invalid { _tag: "B" } 1`] = `ScaleAssertError: !("B" in value)`;
+snapshot[`\$abc invalid { _tag: "B" } 1`] = `ShapeAssertError: !("B" in value)`;
 
-snapshot[`\$abc invalid { _tag: "B", B: null } 1`] = `ScaleAssertError: typeof value.B !== "string"`;
+snapshot[`\$abc invalid { _tag: "B", B: null } 1`] = `ShapeAssertError: typeof value.B !== "string"`;
 
-snapshot[`\$abc invalid { _tag: "D", a: 1 } 1`] = `ScaleAssertError: !("b" in value)`;
+snapshot[`\$abc invalid { _tag: "D", a: 1 } 1`] = `ShapeAssertError: !("b" in value)`;
 
-snapshot[`\$abc invalid { _tag: "D", b: 1n } 1`] = `ScaleAssertError: !("a" in value)`;
+snapshot[`\$abc invalid { _tag: "D", b: 1n } 1`] = `ShapeAssertError: !("a" in value)`;
 
-snapshot[`\$abc invalid { _tag: "D", a: -1, b: 1n } 1`] = `ScaleAssertError: value.a < 0`;
+snapshot[`\$abc invalid { _tag: "D", a: -1, b: 1n } 1`] = `ShapeAssertError: value.a < 0`;
 
-snapshot[`\$abc invalid { _tag: "D", a: 1, b: -1n } 1`] = `ScaleAssertError: value.b < 0n`;
+snapshot[`\$abc invalid { _tag: "D", a: 1, b: -1n } 1`] = `ShapeAssertError: value.b < 0n`;

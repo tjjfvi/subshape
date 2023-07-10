@@ -1,7 +1,7 @@
 import { AssertState } from "./assert.ts"
 import { DecodeBuffer, EncodeBuffer } from "./buffer.ts"
 import { Metadata } from "./metadata.ts"
-import { ScaleAssertError, ScaleEncodeError } from "./util.ts"
+import { ShapeAssertError, ShapeEncodeError } from "./util.ts"
 
 export type Input<T extends AnyShape> = T extends Shape<infer I, unknown> ? I : never
 export type Output<T extends AnyShape> = T extends Shape<never, infer O> ? O : never
@@ -96,7 +96,7 @@ export abstract class Shape<in I, out O = I> extends _Shape implements AnyShape 
   encode(value: I) {
     const buf = new EncodeBuffer(this._staticSize)
     this._encode(buf, value)
-    if (buf.asyncCount) throw new ScaleEncodeError(this, value, "Attempted to synchronously encode an async shape")
+    if (buf.asyncCount) throw new ShapeEncodeError(this, value, "Attempted to synchronously encode an async shape")
     return buf.finish()
   }
 
@@ -129,7 +129,7 @@ export function is<T>(shape: Shape<T>, value: unknown): value is T {
     shape._assert(new AssertState(value))
     return true
   } catch (e) {
-    if (e instanceof ScaleAssertError) {
+    if (e instanceof ShapeAssertError) {
       return false
     } else {
       throw e

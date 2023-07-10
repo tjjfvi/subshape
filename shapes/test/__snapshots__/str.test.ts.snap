@@ -501,7 +501,7 @@ f9
 `;
 
 snapshot[`\$.str words 1`] = `
-55
+39
 03
 61
 76
@@ -557,14 +557,6 @@ snapshot[`\$.str words 1`] = `
 6f
 6e
 0a
-44
-65
-63
-6f
-64
-65
-63
-0a
 64
 65
 6e
@@ -585,14 +577,6 @@ snapshot[`\$.str words 1`] = `
 69
 6e
 74
-0a
-45
-6e
-63
-6f
-64
-65
-63
 0a
 68
 79
@@ -703,6 +687,15 @@ snapshot[`\$.str words 1`] = `
 74
 73
 75
+0a
+73
+75
+62
+73
+68
+61
+70
+65
 0a
 74
 79
@@ -9442,10 +9435,10 @@ snapshot[`\$.str cargoLock 1`] = `
 0a
 `;
 
-snapshot[`\$.str invalid null 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.str invalid null 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.str invalid undefined 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.str invalid undefined 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.str invalid 123 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.str invalid 123 1`] = `ShapeAssertError: typeof value !== "string"`;
 
-snapshot[`\$.str invalid Symbol(foo) 1`] = `ScaleAssertError: typeof value !== "string"`;
+snapshot[`\$.str invalid Symbol(foo) 1`] = `ShapeAssertError: typeof value !== "string"`;

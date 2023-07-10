@@ -45,14 +45,14 @@ snapshot[`\$myError MyError {
 01
 `;
 
-snapshot[`\$myError invalid null 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+snapshot[`\$myError invalid null 1`] = `ShapeAssertError: !(value instanceof MyError)`;
 
-snapshot[`\$myError invalid undefined 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+snapshot[`\$myError invalid undefined 1`] = `ShapeAssertError: !(value instanceof MyError)`;
 
-snapshot[`\$myError invalid { code: 123, message: "foo", payload: { a: "abc", b: 2, c: true } } 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+snapshot[`\$myError invalid { code: 123, message: "foo", payload: { a: "abc", b: 2, c: true } } 1`] = `ShapeAssertError: !(value instanceof MyError)`;
 
-snapshot[`\$myError invalid [Error: foo] 1`] = `ScaleAssertError: !(value instanceof MyError)`;
+snapshot[`\$myError invalid [Error: foo] 1`] = `ShapeAssertError: !(value instanceof MyError)`;
 
-snapshot[`\$myError invalid MyError { code: -1, message: "a", payload: { a: "abc", b: 2, c: true } } 1`] = `ScaleAssertError: value#arguments[0] < 0`;
+snapshot[`\$myError invalid MyError { code: -1, message: "a", payload: { a: "abc", b: 2, c: true } } 1`] = `ShapeAssertError: value#arguments[0] < 0`;
 
-snapshot[`\$myError invalid MyError { code: 123, message: "a", payload: { a: "abc", b: 2, c: "idk" } } 1`] = `ScaleAssertError: typeof value#arguments[2].c !== "boolean"`;
+snapshot[`\$myError invalid MyError { code: 123, message: "a", payload: { a: "abc", b: 2, c: "idk" } } 1`] = `ShapeAssertError: typeof value#arguments[2].c !== "boolean"`;

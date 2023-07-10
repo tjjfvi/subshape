@@ -1,4 +1,4 @@
-import { createShape, Expand, metadata, Narrow, ScaleAssertError, ScaleDecodeError, Shape } from "../common/mod.ts"
+import { createShape, Expand, metadata, Narrow, Shape, ShapeAssertError, ShapeDecodeError } from "../common/mod.ts"
 import { AnyShape, Input, Output } from "../common/shape.ts"
 import { constant } from "./constant.ts"
 import { field, InputObject, object, ObjectMembers, OutputObject } from "./object.ts"
@@ -61,7 +61,7 @@ export function taggedUnion<
       const discriminant = buffer.array[buffer.index++]!
       const $member = discriminantToMember[discriminant]
       if (!$member) {
-        throw new ScaleDecodeError(this, buffer, `No such member shape matching the discriminant \`${discriminant}\``)
+        throw new ShapeDecodeError(this, buffer, `No such member shape matching the discriminant \`${discriminant}\``)
       }
       return $member._decode(buffer) as any
     },
@@ -69,7 +69,7 @@ export function taggedUnion<
       const assertTag = assert.key(this, tagKey)
       assertTag.typeof(this, "string")
       if (!((assertTag.value as string) in tagToDiscriminant)) {
-        throw new ScaleAssertError(this, assertTag.value, `${assertTag.path}: invalid tag`)
+        throw new ShapeAssertError(this, assertTag.value, `${assertTag.path}: invalid tag`)
       }
       discriminantToMember[tagToDiscriminant[assertTag.value as string]!]!._assert(assert)
     },
@@ -98,7 +98,7 @@ export function literalUnion<T extends Narrow>(members: Record<number, T>): Shap
     _assert(assert) {
       assert.typeof(this, "string")
       if (!keyToDiscriminant.has(assert.value as T)) {
-        throw new ScaleAssertError(this, assert.value, `${assert.path} invalid value`)
+        throw new ShapeAssertError(this, assert.value, `${assert.path} invalid value`)
       }
     },
   })

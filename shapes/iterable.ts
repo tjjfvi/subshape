@@ -2,10 +2,10 @@ import {
   AssertState,
   createShape,
   metadata,
-  ScaleAssertError,
-  ScaleDecodeError,
-  ScaleEncodeError,
   Shape,
+  ShapeAssertError,
+  ShapeDecodeError,
+  ShapeEncodeError,
 } from "../common/mod.ts"
 import { compact } from "./compact.ts"
 import { u32 } from "./int.ts"
@@ -32,7 +32,7 @@ export function iterable<TI, I extends Iterable<TI>, TO = TI, O = I>(
         props.$el._encode(buffer, el)
         i++
       }
-      if (i !== length) throw new ScaleEncodeError(this, value, "Incorrect length returned by calcLength")
+      if (i !== length) throw new ShapeEncodeError(this, value, "Incorrect length returned by calcLength")
       buffer.popAlloc()
     },
     _decode(buffer) {
@@ -44,7 +44,7 @@ export function iterable<TI, I extends Iterable<TI>, TO = TI, O = I>(
         }
         done = true
       }())
-      if (!done) throw new ScaleDecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted")
+      if (!done) throw new ShapeDecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted")
       return value
     },
     _assert(assert) {
@@ -56,7 +56,7 @@ export function iterable<TI, I extends Iterable<TI>, TO = TI, O = I>(
         i++
       }
       if (i !== length) {
-        throw new ScaleAssertError(this, assert.value, `${assert.path}: Incorrect length returned by calcLength`)
+        throw new ShapeAssertError(this, assert.value, `${assert.path}: Incorrect length returned by calcLength`)
       }
     },
   })

@@ -3,9 +3,9 @@ import * as $ from "../../mod.ts"
 import { testInvalid, testShape } from "../../test-util.ts"
 
 testShape($.set($.u8), [
-  new $.ScaleSet($.u8),
-  new $.ScaleSet($.u8, [0, 2, 4, 8]),
-  new $.ScaleSet($.u8, [2, 3, 5, 7]),
+  new $.ShapeSet($.u8),
+  new $.ShapeSet($.u8, [0, 2, 4, 8]),
+  new $.ShapeSet($.u8, [2, 3, 5, 7]),
 ])
 
 testInvalid($.set($.u8), [
@@ -15,13 +15,13 @@ testInvalid($.set($.u8), [
   [123],
   new Set([null]),
   new Set([1, 2, 3, -1, 4]),
-  new $.ScaleSet($.i8, [1, 2, 3, -1, 4]),
+  new $.ShapeSet($.i8, [1, 2, 3, -1, 4]),
 ])
 
 testShape($.map($.str, $.u8), [
-  new $.ScaleMap($.str),
-  new $.ScaleMap($.str, [["0", 0], ["1", 1]]),
-  new $.ScaleMap($.str, [["2^0", 0], ["2^1", 2], ["2^2", 4], ["2^3", 8], ["2^4", 16]]),
+  new $.ShapeMap($.str),
+  new $.ShapeMap($.str, [["0", 0], ["1", 1]]),
+  new $.ShapeMap($.str, [["2^0", 0], ["2^1", 2], ["2^2", 4], ["2^3", 8], ["2^4", 16]]),
 ])
 
 testInvalid($.map($.str, $.u8), [
@@ -35,8 +35,8 @@ testInvalid($.map($.str, $.u8), [
   new Map([["a", 1], ["b", 2], [null, 3], ["d", 0]]),
 ])
 
-Deno.test("ScaleSet<Uint8Array>", () => {
-  const set = new $.ScaleSet($.uint8Array, [new Uint8Array([0])])
+Deno.test("ShapeSet<Uint8Array>", () => {
+  const set = new $.ShapeSet($.uint8Array, [new Uint8Array([0])])
   assertEquals(set.has(new Uint8Array([0])), true)
   assertEquals(set.size, 1)
   assertEquals(set.has(new Uint8Array([1])), false)

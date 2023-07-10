@@ -1,4 +1,4 @@
-import { metadata, ScaleAssertError, Shape, withMetadata } from "../mod.ts"
+import { metadata, Shape, ShapeAssertError, withMetadata } from "../mod.ts"
 import { transform } from "./transform.ts"
 
 const encodeLookup = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, "0"))
@@ -41,7 +41,7 @@ export function hex($inner: Shape<Uint8Array>): Shape<string> {
       assert(assert) {
         assert.typeof(this, "string")
         if (!hexRegex.test(assert.value as string)) {
-          throw new ScaleAssertError(this, assert.value, `${assert.path}: invalid hex`)
+          throw new ShapeAssertError(this, assert.value, `${assert.path}: invalid hex`)
         }
       },
     }),

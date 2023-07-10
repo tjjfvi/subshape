@@ -1,28 +1,28 @@
 import type { DecodeBuffer } from "./buffer.ts"
 import type { AnyShape } from "./shape.ts"
 
-export abstract class ScaleError extends Error {
+export abstract class ShapeError extends Error {
   constructor(readonly shape: AnyShape, message: string) {
     super(message)
   }
 }
 
-export class ScaleAssertError extends ScaleError {
-  override readonly name = "ScaleAssertError"
+export class ShapeAssertError extends ShapeError {
+  override readonly name = "ShapeAssertError"
   constructor(shape: AnyShape, readonly value: unknown, message: string) {
     super(shape, message)
   }
 }
 
-export class ScaleEncodeError extends ScaleError {
-  override readonly name = "ScaleEncodeError"
+export class ShapeEncodeError extends ShapeError {
+  override readonly name = "ShapeEncodeError"
   constructor(shape: AnyShape, readonly value: unknown, message: string) {
     super(shape, message)
   }
 }
 
-export class ScaleDecodeError extends ScaleError {
-  override readonly name = "ScaleDecodeError"
+export class ShapeDecodeError extends ShapeError {
+  override readonly name = "ShapeDecodeError"
   constructor(shape: AnyShape, readonly buffer: DecodeBuffer, message: string) {
     super(shape, message)
   }

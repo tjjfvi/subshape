@@ -52,21 +52,21 @@ snapshot[`\$person { name: "Michael", nickName: "Mike", luckyNumber: 7 } 1`] = `
 07
 `;
 
-snapshot[`\$person invalid null 1`] = `ScaleAssertError: value == null`;
+snapshot[`\$person invalid null 1`] = `ShapeAssertError: value == null`;
 
-snapshot[`\$person invalid undefined 1`] = `ScaleAssertError: typeof value !== "object"`;
+snapshot[`\$person invalid undefined 1`] = `ShapeAssertError: typeof value !== "object"`;
 
-snapshot[`\$person invalid 123 1`] = `ScaleAssertError: typeof value !== "object"`;
+snapshot[`\$person invalid 123 1`] = `ShapeAssertError: typeof value !== "object"`;
 
-snapshot[`\$person invalid [Function (anonymous)] 1`] = `ScaleAssertError: typeof value !== "object"`;
+snapshot[`\$person invalid [Function (anonymous)] 1`] = `ShapeAssertError: typeof value !== "object"`;
 
-snapshot[`\$person invalid {} 1`] = `ScaleAssertError: !("name" in value)`;
+snapshot[`\$person invalid {} 1`] = `ShapeAssertError: !("name" in value)`;
 
-snapshot[`\$person invalid { name: "", nickName: "", superPower: 0, luckyNumber: 0 } 1`] = `ScaleAssertError: typeof value.superPower !== "string"`;
+snapshot[`\$person invalid { name: "", nickName: "", superPower: 0, luckyNumber: 0 } 1`] = `ShapeAssertError: typeof value.superPower !== "string"`;
 
-snapshot[`\$person invalid { name: "", nickName: "", superPower: "", luckyNumber: -1 } 1`] = `ScaleAssertError: value.luckyNumber < 0`;
+snapshot[`\$person invalid { name: "", nickName: "", superPower: "", luckyNumber: -1 } 1`] = `ShapeAssertError: value.luckyNumber < 0`;
 
-snapshot[`\$person invalid { name: "", nickName: "", superPower: "", unluckyNumber: 0 } 1`] = `ScaleAssertError: !("luckyNumber" in value)`;
+snapshot[`\$person invalid { name: "", nickName: "", superPower: "", unluckyNumber: 0 } 1`] = `ShapeAssertError: !("luckyNumber" in value)`;
 
 snapshot[`\$.object(
   \$.taggedUnion(
@@ -106,7 +106,7 @@ snapshot[`\$.object(
     ]
   ),
   \$.field("bar", \$.u8)
-) invalid null 1`] = `ScaleAssertError: value == null`;
+) invalid null 1`] = `ShapeAssertError: value == null`;
 
 snapshot[`\$.object(
   \$.taggedUnion(
@@ -117,7 +117,7 @@ snapshot[`\$.object(
     ]
   ),
   \$.field("bar", \$.u8)
-) invalid { _tag: null, bar: 1 } 1`] = `ScaleAssertError: typeof value._tag !== "string"`;
+) invalid { _tag: null, bar: 1 } 1`] = `ShapeAssertError: typeof value._tag !== "string"`;
 
 snapshot[`\$.object(
   \$.taggedUnion(
@@ -128,7 +128,7 @@ snapshot[`\$.object(
     ]
   ),
   \$.field("bar", \$.u8)
-) invalid { _tag: "", bar: 1 } 1`] = `ScaleAssertError: value._tag: invalid tag`;
+) invalid { _tag: "", bar: 1 } 1`] = `ShapeAssertError: value._tag: invalid tag`;
 
 snapshot[`\$.object(
   \$.taggedUnion(
@@ -139,7 +139,7 @@ snapshot[`\$.object(
     ]
   ),
   \$.field("bar", \$.u8)
-) invalid { _tag: "b", bar: 1 } 1`] = `ScaleAssertError: !("x" in value)`;
+) invalid { _tag: "b", bar: 1 } 1`] = `ShapeAssertError: !("x" in value)`;
 
 snapshot[`\$.object(
   \$.taggedUnion(
@@ -150,7 +150,7 @@ snapshot[`\$.object(
     ]
   ),
   \$.field("bar", \$.u8)
-) invalid { _tag: "b", x: -1, bar: 1 } 1`] = `ScaleAssertError: value.x < 0`;
+) invalid { _tag: "b", x: -1, bar: 1 } 1`] = `ShapeAssertError: value.x < 0`;
 
 snapshot[`\$.object(
   \$.taggedUnion(
@@ -161,4 +161,4 @@ snapshot[`\$.object(
     ]
   ),
   \$.field("bar", \$.u8)
-) invalid { _tag: "a", bar: -1 } 1`] = `ScaleAssertError: value.bar < 0`;
+) invalid { _tag: "a", bar: -1 } 1`] = `ShapeAssertError: value.bar < 0`;

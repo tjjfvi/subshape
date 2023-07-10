@@ -166,42 +166,42 @@ snapshot[`\$.compact(\$.object(\$.field("foo", \$.u32))) { foo: 456 } 1`] = `
 07
 `;
 
-snapshot[`\$.compact(\$.u8) invalid null 1`] = `ScaleAssertError: typeof value !== "number"`;
+snapshot[`\$.compact(\$.u8) invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
 
-snapshot[`\$.compact(\$.u8) invalid undefined 1`] = `ScaleAssertError: typeof value !== "number"`;
+snapshot[`\$.compact(\$.u8) invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
 
-snapshot[`\$.compact(\$.u8) invalid -1 1`] = `ScaleAssertError: value < 0`;
+snapshot[`\$.compact(\$.u8) invalid -1 1`] = `ShapeAssertError: value < 0`;
 
-snapshot[`\$.compact(\$.u8) invalid 256 1`] = `ScaleAssertError: value > 255`;
+snapshot[`\$.compact(\$.u8) invalid 256 1`] = `ShapeAssertError: value > 255`;
 
-snapshot[`\$.compact(\$.u128) invalid null 1`] = `ScaleAssertError: typeof value !== "bigint"`;
+snapshot[`\$.compact(\$.u128) invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.compact(\$.u128) invalid undefined 1`] = `ScaleAssertError: typeof value !== "bigint"`;
+snapshot[`\$.compact(\$.u128) invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.compact(\$.u128) invalid -1 1`] = `ScaleAssertError: typeof value !== "bigint"`;
+snapshot[`\$.compact(\$.u128) invalid -1 1`] = `ShapeAssertError: typeof value !== "bigint"`;
 
-snapshot[`\$.compact(\$.u128) invalid 100000000000000000000000000000000000000000000000000000000n 1`] = `ScaleAssertError: value > 340282366920938463463374607431768211455n`;
+snapshot[`\$.compact(\$.u128) invalid 100000000000000000000000000000000000000000000000000000000n 1`] = `ShapeAssertError: value > 340282366920938463463374607431768211455n`;
 
-snapshot[`\$.compact(\$.tuple(\$.u32)) invalid null 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid null 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.compact(\$.tuple(\$.u32)) invalid undefined 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid undefined 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [] 1`] = `ScaleAssertError: value.length !== 1`;
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [] 1`] = `ShapeAssertError: value.length !== 1`;
 
-snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ -1 ] 1`] = `ScaleAssertError: value[0] < 0`;
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ -1 ] 1`] = `ShapeAssertError: value[0] < 0`;
 
-snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 123n ] 1`] = `ScaleAssertError: typeof value[0] !== "number"`;
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 123n ] 1`] = `ShapeAssertError: typeof value[0] !== "number"`;
 
-snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 9007199254740991 ] 1`] = `ScaleAssertError: value[0]: invalid int`;
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 9007199254740991 ] 1`] = `ShapeAssertError: value[0]: invalid int`;
 
-snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid null 1`] = `ScaleAssertError: value == null`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid null 1`] = `ShapeAssertError: value == null`;
 
-snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid undefined 1`] = `ScaleAssertError: typeof value !== "object"`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid undefined 1`] = `ShapeAssertError: typeof value !== "object"`;
 
-snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid {} 1`] = `ScaleAssertError: !("foo" in value)`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid {} 1`] = `ShapeAssertError: !("foo" in value)`;
 
-snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: -1 } 1`] = `ScaleAssertError: value.foo < 0`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: -1 } 1`] = `ShapeAssertError: value.foo < 0`;
 
-snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 123n } 1`] = `ScaleAssertError: typeof value.foo !== "number"`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 123n } 1`] = `ShapeAssertError: typeof value.foo !== "number"`;
 
-snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 9007199254740991 } 1`] = `ScaleAssertError: value.foo: invalid int`;
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 9007199254740991 } 1`] = `ShapeAssertError: value.foo: invalid int`;

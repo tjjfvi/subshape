@@ -3770,8 +3770,8 @@ ed
 01
 `;
 
-snapshot[`\$.lenPrefixed(\$.u8) invalid null 1`] = `ScaleAssertError: typeof value !== "number"`;
+snapshot[`\$.lenPrefixed(\$.u8) invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
 
-snapshot[`\$.lenPrefixed(\$.u8) invalid undefined 1`] = `ScaleAssertError: typeof value !== "number"`;
+snapshot[`\$.lenPrefixed(\$.u8) invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
 
-snapshot[`\$.lenPrefixed(\$.u8) invalid -1 1`] = `ScaleAssertError: value < 0`;
+snapshot[`\$.lenPrefixed(\$.u8) invalid -1 1`] = `ShapeAssertError: value < 0`;

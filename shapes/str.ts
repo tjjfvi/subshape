@@ -1,4 +1,4 @@
-import { createShape, metadata, ScaleDecodeError, Shape } from "../common/mod.ts"
+import { createShape, metadata, Shape, ShapeDecodeError } from "../common/mod.ts"
 import { compact } from "./compact.ts"
 import { u32 } from "./int.ts"
 
@@ -17,7 +17,7 @@ export const str: Shape<string> = createShape({
   _decode(buffer) {
     const len = compactU32._decode(buffer)
     if (buffer.array.length < buffer.index + len) {
-      throw new ScaleDecodeError(this, buffer, "Attempting to `str`-decode beyond bounds of input bytes")
+      throw new ShapeDecodeError(this, buffer, "Attempting to `str`-decode beyond bounds of input bytes")
     }
     const slice = buffer.array.subarray(buffer.index, buffer.index + len)
     buffer.index += len

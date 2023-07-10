@@ -1,4 +1,4 @@
-import { createShape, metadata, ScaleDecodeError, Shape, ShapeVisitor, withMetadata } from "../common/mod.ts"
+import { createShape, metadata, Shape, ShapeDecodeError, ShapeVisitor, withMetadata } from "../common/mod.ts"
 import { AnyShape } from "../mod.ts"
 import { constant } from "./constant.ts"
 import { u128, u16, u256, u32, u64, u8 } from "./int.ts"
@@ -46,7 +46,7 @@ function compactNumber($base: Shape<number>): Shape<number> {
           // uses signed 32-bit ints, which would yield invalid values.
           return u32._decode(buffer) >>> 2
         default:
-          if (buffer.array[buffer.index++]! !== 3) throw new ScaleDecodeError(this, buffer, "Out of range for U32")
+          if (buffer.array[buffer.index++]! !== 3) throw new ShapeDecodeError(this, buffer, "Out of range for U32")
           return u32._decode(buffer)
       }
     },

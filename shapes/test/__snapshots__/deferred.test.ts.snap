@@ -26,16 +26,16 @@ snapshot[`\$0 = \$.option(
 
 snapshot[`\$0 = \$.option(
   \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))
-) invalid null 1`] = `ScaleAssertError: value == null`;
+) invalid null 1`] = `ShapeAssertError: value == null`;
 
 snapshot[`\$0 = \$.option(
   \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))
-) invalid { val: 1, next: null } 1`] = `ScaleAssertError: value.next == null`;
+) invalid { val: 1, next: null } 1`] = `ShapeAssertError: value.next == null`;
 
 snapshot[`\$0 = \$.option(
   \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))
-) invalid { val: 1, next: { val: -1, next: undefined } } 1`] = `ScaleAssertError: value.next.val < 0`;
+) invalid { val: 1, next: { val: -1, next: undefined } } 1`] = `ShapeAssertError: value.next.val < 0`;
 
 snapshot[`\$0 = \$.option(
   \$.object(\$.field("val", \$.u8), \$.field("next", \$.deferred(() => \$0)))
-) invalid { val: 1, next: { val: 2, next: { val: 3, next: { val: -1, next: undefined } } } } 1`] = `ScaleAssertError: value.next.next.next.val < 0`;
+) invalid { val: 1, next: { val: 2, next: { val: 3, next: { val: -1, next: undefined } } } } 1`] = `ShapeAssertError: value.next.next.next.val < 0`;

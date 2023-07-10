@@ -1,4 +1,4 @@
-import { createShape, metadata, ScaleDecodeError, Shape } from "../common/mod.ts"
+import { createShape, metadata, Shape, ShapeDecodeError } from "../common/mod.ts"
 
 export function result<TI, TO, UI extends Error, UO extends Error>(
   $ok: Shape<TI, TO>,
@@ -22,7 +22,7 @@ export function result<TI, TO, UI extends Error, UO extends Error>(
         case 0: {
           const value = $ok._decode(buffer)
           if (value instanceof Error) {
-            throw new ScaleDecodeError(
+            throw new ShapeDecodeError(
               this,
               buffer,
               "An ok value that is instanceof Error will not roundtrip correctly",
@@ -34,7 +34,7 @@ export function result<TI, TO, UI extends Error, UO extends Error>(
           return $err._decode(buffer)
         }
         default: {
-          throw new ScaleDecodeError(this, buffer, "Result discriminant neither 0 nor 1")
+          throw new ShapeDecodeError(this, buffer, "Result discriminant neither 0 nor 1")
         }
       }
     },

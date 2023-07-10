@@ -143,7 +143,7 @@ snapshot[`\$.transform(
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid [ true, false ] 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "string"`;
+) invalid [ true, false ] 1`] = `ShapeAssertError: typeof value#encode[0][1] !== "string"`;
 
 snapshot[`\$.transform(
   {
@@ -151,7 +151,7 @@ snapshot[`\$.transform(
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid [ 1, 2, 3, -1, 4 ] 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "string"`;
+) invalid [ 1, 2, 3, -1, 4 ] 1`] = `ShapeAssertError: typeof value#encode[0][1] !== "string"`;
 
 snapshot[`\$.transform(
   {
@@ -159,7 +159,7 @@ snapshot[`\$.transform(
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid { this: "should" } 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
+) invalid { this: "should" } 1`] = `ShapeAssertError: typeof value#encode[0][1] !== "number"`;
 
 snapshot[`\$.transform(
   {
@@ -167,7 +167,7 @@ snapshot[`\$.transform(
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid { be: "invalid" } 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
+) invalid { be: "invalid" } 1`] = `ShapeAssertError: typeof value#encode[0][1] !== "number"`;
 
 snapshot[`\$.transform(
   {
@@ -175,4 +175,4 @@ snapshot[`\$.transform(
     encode: [Function: entries],
     decode: [Function: fromEntries]
   }
-) invalid { and: "this" } 1`] = `ScaleAssertError: typeof value#encode[0][1] !== "number"`;
+) invalid { and: "this" } 1`] = `ShapeAssertError: typeof value#encode[0][1] !== "number"`;

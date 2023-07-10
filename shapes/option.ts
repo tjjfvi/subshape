@@ -1,4 +1,4 @@
-import { createShape, metadata, ScaleDecodeError, Shape } from "../common/mod.ts"
+import { createShape, metadata, Shape, ShapeDecodeError } from "../common/mod.ts"
 
 export function option<SI, SO>($some: Shape<SI, SO>): Shape<SI | undefined, SO | undefined>
 export function option<SI, SO, N>($some: Shape<SI, SO>, none: N): Shape<SI | N, SO | N>
@@ -21,12 +21,12 @@ export function option<SI, SO, N>($some: Shape<SI, SO>, none?: N): Shape<SI | N,
         case 1: {
           const value = $some._decode(buffer)
           if (value === none) {
-            throw new ScaleDecodeError(this, buffer, "Some(None) will not roundtrip correctly")
+            throw new ShapeDecodeError(this, buffer, "Some(None) will not roundtrip correctly")
           }
           return value
         }
         default:
-          throw new ScaleDecodeError(this, buffer, "Option discriminant neither 0 nor 1")
+          throw new ShapeDecodeError(this, buffer, "Option discriminant neither 0 nor 1")
       }
     },
     _assert(assert) {

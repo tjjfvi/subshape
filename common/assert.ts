@@ -1,5 +1,5 @@
 import { AnyShape } from "./shape.ts"
-import { ScaleAssertError } from "./util.ts"
+import { ShapeAssertError } from "./util.ts"
 
 type TypeofMap = {
   string: string
@@ -22,19 +22,19 @@ export class AssertState {
   typeof<K extends keyof TypeofMap>(shape: AnyShape, type: K) {
     // deno-lint-ignore valid-typeof
     if (typeof this.value !== type) {
-      throw new ScaleAssertError(shape, this.value, `typeof ${this.path} !== "${type}"`)
+      throw new ShapeAssertError(shape, this.value, `typeof ${this.path} !== "${type}"`)
     }
   }
 
   nonNull(shape: AnyShape) {
     if (this.value == null) {
-      throw new ScaleAssertError(shape, this.value, `${this.path} == null`)
+      throw new ShapeAssertError(shape, this.value, `${this.path} == null`)
     }
   }
 
   instanceof(shape: AnyShape, ctor: abstract new(...args: any) => unknown) {
     if (!(this.value instanceof ctor)) {
-      throw new ScaleAssertError(shape, this.value, `!(${this.path} instanceof ${ctor.name})`)
+      throw new ShapeAssertError(shape, this.value, `!(${this.path} instanceof ${ctor.name})`)
     }
   }
 
@@ -42,7 +42,7 @@ export class AssertState {
     this.typeof(shape, "object")
     this.nonNull(shape)
     if (!(key in (this.value as object))) {
-      throw new ScaleAssertError(shape, this.value, `!(${JSON.stringify(key)} in ${this.path})`)
+      throw new ShapeAssertError(shape, this.value, `!(${JSON.stringify(key)} in ${this.path})`)
     }
     const pathPart = typeof key === "string" && /^[^\W\d]\w*$/u.test(key)
       ? `.${key}`
@@ -52,7 +52,7 @@ export class AssertState {
 
   equals(shape: AnyShape, value: unknown, label = `${value}`) {
     if (this.value !== value) {
-      throw new ScaleAssertError(shape, this.value, `${this.path} !== ${label}`)
+      throw new ShapeAssertError(shape, this.value, `${this.path} !== ${label}`)
     }
   }
 
@@ -60,13 +60,13 @@ export class AssertState {
     this.typeof(shape, "number")
     const value = this.value as number
     if (value !== (value > 0 ? value >>> 0 : value >> 0)) {
-      throw new ScaleAssertError(shape, this.value, `${this.path}: invalid int`)
+      throw new ShapeAssertError(shape, this.value, `${this.path}: invalid int`)
     }
     if (value < min) {
-      throw new ScaleAssertError(shape, this.value, `${this.path} < ${min}`)
+      throw new ShapeAssertError(shape, this.value, `${this.path} < ${min}`)
     }
     if (value > max) {
-      throw new ScaleAssertError(shape, this.value, `${this.path} > ${max}`)
+      throw new ShapeAssertError(shape, this.value, `${this.path} > ${max}`)
     }
   }
 
@@ -74,10 +74,10 @@ export class AssertState {
     this.typeof(shape, "bigint")
     const value = this.value as bigint
     if (value < min) {
-      throw new ScaleAssertError(shape, this.value, `${this.path} < ${min}n`)
+      throw new ShapeAssertError(shape, this.value, `${this.path} < ${min}n`)
     }
     if (value > max) {
-      throw new ScaleAssertError(shape, this.value, `${this.path} > ${max}n`)
+      throw new ShapeAssertError(shape, this.value, `${this.path} > ${max}n`)
     }
   }
 }

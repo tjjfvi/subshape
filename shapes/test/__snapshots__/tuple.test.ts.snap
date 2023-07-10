@@ -483,16 +483,16 @@ snapshot[`\$.tuple(\$.str, \$.i16, \$.option(\$.u16)) [ "GOODBYE!", 2, 101 ] 1`]
 00
 `;
 
-snapshot[`\$.tuple(\$.str, \$.u8) invalid null 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.tuple(\$.str, \$.u8) invalid null 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.tuple(\$.str, \$.u8) invalid undefined 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.tuple(\$.str, \$.u8) invalid undefined 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.tuple(\$.str, \$.u8) invalid 123 1`] = `ScaleAssertError: !(value instanceof Array)`;
+snapshot[`\$.tuple(\$.str, \$.u8) invalid 123 1`] = `ShapeAssertError: !(value instanceof Array)`;
 
-snapshot[`\$.tuple(\$.str, \$.u8) invalid [] 1`] = `ScaleAssertError: value.length !== 2`;
+snapshot[`\$.tuple(\$.str, \$.u8) invalid [] 1`] = `ShapeAssertError: value.length !== 2`;
 
-snapshot[`\$.tuple(\$.str, \$.u8) invalid [ "", 1, 1 ] 1`] = `ScaleAssertError: value.length !== 2`;
+snapshot[`\$.tuple(\$.str, \$.u8) invalid [ "", 1, 1 ] 1`] = `ShapeAssertError: value.length !== 2`;
 
-snapshot[`\$.tuple(\$.str, \$.u8) invalid [ "", -1 ] 1`] = `ScaleAssertError: value[1] < 0`;
+snapshot[`\$.tuple(\$.str, \$.u8) invalid [ "", -1 ] 1`] = `ShapeAssertError: value[1] < 0`;
 
-snapshot[`\$.tuple(\$.str, \$.u8) invalid [ null, 1 ] 1`] = `ScaleAssertError: typeof value[0] !== "string"`;
+snapshot[`\$.tuple(\$.str, \$.u8) invalid [ null, 1 ] 1`] = `ShapeAssertError: typeof value[0] !== "string"`;
