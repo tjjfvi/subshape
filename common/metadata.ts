@@ -4,14 +4,12 @@ export type Metadata<I, O> = Array<
   | {
     type: "atomic"
     name: string
-    docs?: never
     factory?: never
     args?: never
   }
   | {
     type: "factory"
     name: string
-    docs?: never
     factory: (...args: any) => Shape<I, O>
     args: any[]
   }
