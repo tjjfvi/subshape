@@ -1,6 +1,9 @@
-# subShape
+# subShape &nbsp;<sub><sup>composable shapes for cohesive code</sup></sub>
 
-TODO: description
+> ### *one shape can do them all; one shape defined them*
+
+subShape provides primitives and patterns for crafting composable shapes
+featuring cohesive typing, validation, serialization, and reflection.
 
 ## Setup
 
@@ -20,13 +23,9 @@ npm install subshape
 import * as $ from "subshape"
 ```
 
-## Usage
+## Demo
 
-1. Import the library
-2. Define a shape via the library's functions, whose names correspond to types
-3. Utilize the shape you've defined
-
-## Example
+### Craft a Composable Shape
 
 ```ts
 import * as $ from "https://deno.land/x/subshape/mod.ts"
@@ -36,77 +35,80 @@ const $superhero = $.object(
   $.optionalField("secretIdentity", $.str),
   $.field("superpowers", $.array($.str)),
 )
-
-const valueToEncode = {
-  pseudonym: "Spider-Man",
-  secretIdentity: "Peter Parker",
-  superpowers: ["does whatever a spider can"],
-}
-
-const encodedBytes: Uint8Array = $superhero.encode(valueToEncode)
-const decodedValue: Superhero = $superhero.decode(encodedBytes)
-
-assertEquals(decodedValue, valueToEncode)
 ```
 
-To extract the type from a given shape, you can use the `Output` utility type.
+### And Get...
+
+#### Typing
 
 ```ts
 type Superhero = $.Output<typeof $superhero>
-// {
+// type Superhero = {
 //   pseudonym: string;
 //   secretIdentity?: string | undefined;
 //   superpowers: string[];
 // }
 ```
 
-You can also explicitly type the shape, which will validate that the inferred
-type aligns with the expected.
+#### Validation
 
 ```ts
-interface Superhero {
-  pseudonym: string
-  secretIdentity?: string
-  superpowers: string[]
+const spiderMan = {
+  pseudonym: "Spider-Man",
+  secretIdentity: "Peter Parker",
+  superpowers: ["does whatever a spider can"],
 }
 
-const $superhero: Shape<Superhero> = $.object(
-  $.field("pseudonym", $.str),
-  $.optionalField("secretIdentity", $.str),
-  $.field("superpowers", $.array($.str)),
-)
+$.assert($superhero, spiderMan) // ok!
 
-// @ts-expect-error
-//   Type 'Shape<{ pseudonym: string; secretIdentity?: string | undefined; }>' is not assignable to type 'Shape<Superhero>'.
-//     The types returned by 'decode(...)' are incompatible between these types.
-//       Type '{ pseudonym: string; secretIdentity?: string | undefined; }' is not assignable to type 'Superhero'.
-const $plebeianHero: Shape<Superhero> = $.object(
-  $.field("pseudonym", $.str),
-  $.optionalField("secretIdentity", $.str),
-)
+const bob = {
+  pseudonym: "Bob",
+  secretIdentity: "Robert",
+  superpowers: null,
+}
+
+$.assert($superhero, bob) // ShapeAssertError: !(value.superpowers instanceof Array)
 ```
 
-You can also validate a value against a shape using `$.assert` or `$.is`:
+#### Serialization
 
 ```ts
-value // unknown
-if ($.is($superhero, value)) {
-  value // Superhero
-}
+const encoded = $superhero.encode(spiderMan)
+// encoded: Uint8Array
 
-value // unknown
-$.assert($superhero, value)
-value // Superhero
+const decoded = $superhero.decode(spiderMan)
+// decoded: Superhero
+
+console.log(decoded)
+// Prints:
+//   {
+//     pseudonym: "Spider-Man",
+//     secretIdentity: "Peter Parker",
+//     superpowers: [ "does whatever a spider can" ]
+//   }
 ```
 
-If `$.assert` fails, it will throw a `ShapeAssertError` detailing why the value
-was invalid.
+#### Reflection
+
+```ts
+$superhero.metadata // Metadata<Superhero>
+
+console.log($superhero)
+// Prints:
+//   $.object(
+//     $.field("pseudonym", $.str),
+//     $.optionalField("secretIdentity", $.str),
+//     $.field("superpowers", $.array($.str))
+//   )
+```
+
+## Examples
 
 Further examples can be found in the
 [`examples`](https://github.com/paritytech/scale-ts/tree/main/examples)
 directory.
 
-## Shape Naming
+## Shape Naming Convention
 
 This library adopts a convention of denoting shapes with a `$` – `$.foo` for
 built-in shapes, and `$foo` for user-defined shapes. This makes shapes easily

@@ -9,7 +9,8 @@
   },
   "markdown": {
     "lineWidth": 80,
-    "textWrap": "always"
+    "textWrap": "always",
+    "emphasisKind": "asterisks"
   },
   "includes": ["**.{dockerfile,json,md,toml,ts}"],
   "excludes": ["target"],
