@@ -1,15 +1,15 @@
 import { createShape, metadata, Shape } from "../common/mod.ts"
 
 export const u8 = createShape<number>({
-  _metadata: intMetadata(false, 8),
-  _staticSize: 1,
-  _encode(buffer, value) {
+  metadata: intMetadata(false, 8),
+  staticSize: 1,
+  subEncode(buffer, value) {
     buffer.array[buffer.index++] = value
   },
-  _decode(buffer) {
+  subDecode(buffer) {
     return buffer.array[buffer.index++]!
   },
-  _assert(assert) {
+  subAssert(assert) {
     assert.integer(this, 0, 255)
   },
 })
@@ -22,18 +22,18 @@ function _intNumber(signed: boolean, size: 8 | 16 | 32): Shape<number> {
   const min = signed ? -(2 ** (size - 1)) : 0
   const max = (2 ** (size - +signed)) - 1
   return createShape({
-    _metadata: intMetadata(signed, size),
-    _staticSize: byteSize,
-    _encode(buffer, value) {
+    metadata: intMetadata(signed, size),
+    staticSize: byteSize,
+    subEncode(buffer, value) {
       setMethod.call(buffer.view, buffer.index, value, true)
       buffer.index += byteSize
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       const value = getMethod.call(buffer.view, buffer.index, true)
       buffer.index += byteSize
       return value
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.typeof(this, "number")
       assert.integer(this, min, max)
     },
@@ -53,16 +53,16 @@ function _intBigInt(signed: boolean, size: 64 | 128 | 256): Shape<bigint> {
   const min = signed ? -(1n << BigInt(size - 1)) : 0n
   const max = (1n << BigInt(size - +signed)) - 1n
   return createShape({
-    _metadata: intMetadata(signed, size),
-    _staticSize: byteSize,
-    _encode(buffer, value) {
+    metadata: intMetadata(signed, size),
+    staticSize: byteSize,
+    subEncode(buffer, value) {
       for (let i = 0; i < chunks; i++) {
         buffer.view.setBigInt64(buffer.index, value, true)
         value >>= 64n
         buffer.index += 8
       }
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       let value = getMethod.call(buffer.view, buffer.index + (byteSize - 8), true)
       for (let i = chunks - 2; i >= 0; i--) {
         value <<= 64n
@@ -71,7 +71,7 @@ function _intBigInt(signed: boolean, size: 64 | 128 | 256): Shape<bigint> {
       buffer.index += byteSize
       return value
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.bigint(this, min, max)
     },
   })

@@ -9,17 +9,17 @@ export type Output<T extends AnyShape> = T extends Shape<never, infer O> ? O : n
 export function createShape<I, O = I>(
   _shape:
     & ThisType<Shape<I, O>>
-    & Pick<Shape<I, O>, "_encode" | "_decode" | "_assert" | "_staticSize" | "_metadata">,
+    & Pick<Shape<I, O>, "subEncode" | "subDecode" | "subAssert" | "staticSize" | "metadata">,
 ): Shape<I, O> {
-  const { _staticSize, _encode, _assert, _decode, _metadata } = _shape
+  const { staticSize, subEncode, subAssert, subDecode, metadata } = _shape
   const shape: Shape<I, O> = {
     // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
     __proto__: Shape.prototype,
-    _staticSize,
-    _encode,
-    _decode,
-    _assert,
-    _metadata,
+    staticSize,
+    subEncode,
+    subDecode,
+    subAssert,
+    metadata,
   }
   return shape
 }
@@ -30,7 +30,7 @@ export function withMetadata<I, O>(metadata: Metadata<NoInfer<I>, NoInfer<O>>, s
     // @ts-ignore https://gist.github.com/tjjfvi/ea194c4fce76dacdd60a0943256332aa
     __proto__: Shape.prototype,
     ...shape,
-    _metadata: [...metadata as Metadata<I, O>, ...shape._metadata],
+    metadata: [...metadata as Metadata<I, O>, ...shape.metadata],
   }
   return result
 }
@@ -61,7 +61,7 @@ abstract class _Shape {
     }
     try {
       shapeInspectCtx.set(this, null)
-      const metadata = this._metadata[0]
+      const metadata = this.metadata[0]
       const content = metadata
         ? metadata.type === "atomic"
           ? metadata.name
@@ -82,35 +82,35 @@ export type OutShape<O> = Shape<never, O>
 
 export abstract class Shape<in I, out O = I> extends _Shape implements AnyShape {
   /** A static estimation of the size, which may be an under- or over-estimate */
-  abstract _staticSize: number
-  /** Encodes the value into the supplied buffer, which should have at least `_staticSize` free byte. */
-  abstract _encode: (buffer: EncodeBuffer, value: I) => void
+  abstract staticSize: number
+  /** Encodes the value into the supplied buffer, which should have at least `staticSize` free byte. */
+  abstract subEncode: (buffer: EncodeBuffer, value: I) => void
   /** Decodes the value from the supplied buffer */
-  abstract _decode: (buffer: DecodeBuffer) => O
+  abstract subDecode: (buffer: DecodeBuffer) => O
   /** Asserts that the value is valid for this shape */
-  abstract _assert: (state: AssertState) => void
+  abstract subAssert: (state: AssertState) => void
   /** An array with metadata representing the construction of this shape */
-  abstract _metadata: Metadata<I, O>
+  abstract metadata: Metadata<I, O>
 
   /** Encodes the value into a new Uint8Array (throws if async) */
   encode(value: I) {
-    const buf = new EncodeBuffer(this._staticSize)
-    this._encode(buf, value)
+    const buf = new EncodeBuffer(this.staticSize)
+    this.subEncode(buf, value)
     if (buf.asyncCount) throw new ShapeEncodeError(this, value, "Attempted to synchronously encode an async shape")
     return buf.finish()
   }
 
   /** Asynchronously encodes the value into a new Uint8Array */
   async encodeAsync(value: I) {
-    const buf = new EncodeBuffer(this._staticSize)
-    this._encode(buf, value)
+    const buf = new EncodeBuffer(this.staticSize)
+    this.subEncode(buf, value)
     return buf.finishAsync()
   }
 
   /** Decodes a value from the supplied Uint8Array */
   decode(array: Uint8Array) {
     const buf = new DecodeBuffer(array)
-    return this._decode(buf)
+    return this.subDecode(buf)
   }
 
   /** Requires the shape to have an explicit type annotation; if it doesn't, use `$.assert` instead. */
@@ -121,12 +121,12 @@ export abstract class Shape<in I, out O = I> extends _Shape implements AnyShape 
 
 /** Asserts that the value is valid for the specified shape */
 export function assert<I>(shape: Shape<I, unknown>, value: unknown): asserts value is I {
-  shape._assert(new AssertState(value))
+  shape.subAssert(new AssertState(value))
 }
 
 export function is<T>(shape: Shape<T>, value: unknown): value is T {
   try {
-    shape._assert(new AssertState(value))
+    shape.subAssert(new AssertState(value))
     return true
   } catch (e) {
     if (e instanceof ShapeAssertError) {

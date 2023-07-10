@@ -24,34 +24,34 @@ class GraphDecodeCtx {
 
 const $compactU32 = $.compact($.u32)
 const $graph: $.Shape<Graph> = $.createShape({
-  _metadata: $.metadata("$graph"),
-  _staticSize: $compactU32._staticSize * 2 + $.str._staticSize,
-  _encode(buffer, value) {
+  metadata: $.metadata("$graph"),
+  staticSize: $compactU32.staticSize * 2 + $.str.staticSize,
+  subEncode(buffer, value) {
     const ctx = buffer.context.get(GraphEncodeCtx)
     const key = ctx.memo.get(value)
     if (key != null) {
-      return $compactU32._encode(buffer, key)
+      return $compactU32.subEncode(buffer, key)
     }
-    $compactU32._encode(buffer, ctx.memo.size)
+    $compactU32.subEncode(buffer, ctx.memo.size)
     ctx.memo.set(value, ctx.memo.size)
-    $.str._encode(buffer, value.label)
-    $.array($graph)._encode(buffer, value.to)
+    $.str.subEncode(buffer, value.label)
+    $.array($graph).subEncode(buffer, value.to)
   },
-  _decode(buffer) {
+  subDecode(buffer) {
     const ctx = buffer.context.get(GraphDecodeCtx)
-    const key = $compactU32._decode(buffer)
+    const key = $compactU32.subDecode(buffer)
     if (key < ctx.memo.length) {
       return ctx.memo[key]!
     }
     const graph: Graph = {
-      label: $.str._decode(buffer),
+      label: $.str.subDecode(buffer),
       to: [],
     }
     ctx.memo.push(graph)
-    graph.to = $.array($graph)._decode(buffer)
+    graph.to = $.array($graph).subDecode(buffer)
     return graph
   },
-  _assert() {},
+  subAssert() {},
 })
 
 const a: Graph = { label: "a", to: [] }

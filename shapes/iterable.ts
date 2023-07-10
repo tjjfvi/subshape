@@ -21,38 +21,38 @@ export function iterable<TI, I extends Iterable<TI>, TO = TI, O = I>(
   },
 ): Shape<I, O> {
   return createShape({
-    _metadata: metadata("$.iterable", iterable, props),
-    _staticSize: compactU32._staticSize,
-    _encode(buffer, value) {
+    metadata: metadata("$.iterable", iterable, props),
+    staticSize: compactU32.staticSize,
+    subEncode(buffer, value) {
       const length = props.calcLength(value)
-      compactU32._encode(buffer, length)
-      buffer.pushAlloc(length * props.$el._staticSize)
+      compactU32.subEncode(buffer, length)
+      buffer.pushAlloc(length * props.$el.staticSize)
       let i = 0
       for (const el of value) {
-        props.$el._encode(buffer, el)
+        props.$el.subEncode(buffer, el)
         i++
       }
       if (i !== length) throw new ShapeEncodeError(this, value, "Incorrect length returned by calcLength")
       buffer.popAlloc()
     },
-    _decode(buffer) {
-      const length = compactU32._decode(buffer)
+    subDecode(buffer) {
+      const length = compactU32.subDecode(buffer)
       let done = false
       const value = props.rehydrate(function*() {
         for (let i = 0; i < length; i++) {
-          yield props.$el._decode(buffer)
+          yield props.$el.subDecode(buffer)
         }
         done = true
       }())
       if (!done) throw new ShapeDecodeError(this, buffer, "Iterable passed to rehydrate must be immediately exhausted")
       return value
     },
-    _assert(assert) {
+    subAssert(assert) {
       props.assert.call(this, assert)
       const length = props.calcLength(assert.value as I)
       let i = 0
       for (const el of assert.value as I) {
-        props.$el._assert(new AssertState(el, `#iterator[${i}]`))
+        props.$el.subAssert(new AssertState(el, `#iterator[${i}]`))
         i++
       }
       if (i !== length) {

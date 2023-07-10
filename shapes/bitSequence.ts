@@ -67,18 +67,18 @@ Object.setPrototypeOf(
 )
 
 export const bitSequence: Shape<BitSequence> = createShape({
-  _metadata: metadata("$.bitSequence"),
-  _staticSize: compactU32._staticSize,
-  _encode(buffer, value) {
-    compactU32._encode(buffer, value.length)
+  metadata: metadata("$.bitSequence"),
+  staticSize: compactU32.staticSize,
+  subEncode(buffer, value) {
+    compactU32.subEncode(buffer, value.length)
     buffer.insertArray(value.data)
   },
-  _decode(buffer) {
-    const length = compactU32._decode(buffer)
+  subDecode(buffer) {
+    const length = compactU32.subDecode(buffer)
     const byteLength = Math.ceil(length / 8)
     return new BitSequence(length, buffer.array.subarray(buffer.index, buffer.index += byteLength))
   },
-  _assert(assert) {
+  subAssert(assert) {
     assert.instanceof(this, BitSequence)
   },
 })

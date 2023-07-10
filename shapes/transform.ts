@@ -9,17 +9,17 @@ export function transform<TI, UI, TO = TI, UO = UI>(
   },
 ): Shape<UI, UO> {
   return createShape({
-    _metadata: metadata("$.transform", transform, props),
-    _staticSize: props.$base._staticSize,
-    _encode(buffer, value) {
-      props.$base._encode(buffer, props.encode(value))
+    metadata: metadata("$.transform", transform, props),
+    staticSize: props.$base.staticSize,
+    subEncode(buffer, value) {
+      props.$base.subEncode(buffer, props.encode(value))
     },
-    _decode(buffer) {
-      return props.decode(props.$base._decode(buffer))
+    subDecode(buffer) {
+      return props.decode(props.$base.subDecode(buffer))
     },
-    _assert(assert) {
+    subAssert(assert) {
       props.assert?.call(this, assert)
-      props.$base._assert(new AssertState(props.encode(assert.value as UI), "#encode", assert))
+      props.$base.subAssert(new AssertState(props.encode(assert.value as UI), "#encode", assert))
     },
   })
 }

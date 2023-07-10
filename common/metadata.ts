@@ -61,7 +61,7 @@ export class ShapeVisitor<R> {
   add<I, O>(shape: Shape<I, O>, fn: (shape: Shape<I, O>) => R): this
   add(shape: Shape<any> | Metadata<any, any>[number] | Function, fn: (shape: Shape<any>, ...args: any[]) => R): this {
     if (shape instanceof Shape) {
-      shape = shape._metadata[0]!
+      shape = shape.metadata[0]!
       if (!shape) throw new Error("Cannot register visitor for metadata-less shape")
     }
     if (this.#visitors.has(shape)) {
@@ -94,7 +94,7 @@ export class ShapeVisitor<R> {
   }
 
   visit<I, O>(shape: Shape<I, O>): R {
-    for (const metadata of shape._metadata) {
+    for (const metadata of shape.metadata) {
       let visitor = this.#visitors.get(metadata)
       if (visitor) return visitor(shape)
       if (metadata.type !== "factory") continue

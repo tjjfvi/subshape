@@ -14,7 +14,7 @@ Deno.test("option roundtrip error", () => {
   assertThrows(() => $.option($.withMetadata($.metadata("$foo"), $.option($.u8))))
   assertThrows(() => {
     const $foo = $.option($.u8)
-    $foo._metadata = []
+    $foo.metadata = []
     $.option($foo)
       // Some(None)
       .decode(new Uint8Array([1, 0]))

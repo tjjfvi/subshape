@@ -5,17 +5,17 @@ export function constant<T>(value: T, pattern?: Uint8Array): Shape<T>
 export function constant<T>(value: T, c?: Pick<Shape<T>, "encode"> | Uint8Array): Shape<T> {
   const pattern = c && (c instanceof Uint8Array ? c : c.encode(value))
   return createShape({
-    _metadata: metadata("$.constant", constant<T>, value, ...pattern ? [pattern] : []),
-    // We could set `_staticSize` to `pattern.length`, but in this case it will
+    metadata: metadata("$.constant", constant<T>, value, ...pattern ? [pattern] : []),
+    // We could set `staticSize` to `pattern.length`, but in this case it will
     // usually more efficient to insert `pattern` dynamically, rather than
     // manually copy the bytes.
-    _staticSize: 0,
-    _encode(buffer) {
+    staticSize: 0,
+    subEncode(buffer) {
       if (pattern) {
         buffer.insertArray(pattern)
       }
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       if (pattern) {
         const got = buffer.array.subarray(buffer.index, buffer.index += pattern.length)
         for (let i = 0; i < pattern.length; i++) {
@@ -26,7 +26,7 @@ export function constant<T>(value: T, c?: Pick<Shape<T>, "encode"> | Uint8Array)
       }
       return value
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.equals(this, value)
     },
   })

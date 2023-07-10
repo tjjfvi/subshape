@@ -7,16 +7,16 @@ export function field<K extends keyof any, VI, VO>(key: K, $value: Shape<VI, VO>
   Expand<Record<K, VO>>
 > {
   return createShape({
-    _metadata: metadata("$.field", field, key, $value),
-    _staticSize: $value._staticSize,
-    _encode(buffer, value) {
-      $value._encode(buffer, value[key])
+    metadata: metadata("$.field", field, key, $value),
+    staticSize: $value.staticSize,
+    subEncode(buffer, value) {
+      $value.subEncode(buffer, value[key])
     },
-    _decode(buffer) {
-      return { [key]: $value._decode(buffer) } as any
+    subDecode(buffer) {
+      return { [key]: $value.subDecode(buffer) } as any
     },
-    _assert(assert) {
-      $value._assert(assert.key(this, key))
+    subAssert(assert) {
+      $value.subAssert(assert.key(this, key))
     },
   })
 }
@@ -27,23 +27,23 @@ export function optionalField<K extends keyof any, VI, VO>(key: K, $value: Shape
 > {
   const $option = option($value)
   return createShape({
-    _metadata: metadata("$.optionalField", optionalField, key, $value),
-    _staticSize: $value._staticSize,
-    _encode(buffer, value) {
-      $option._encode(buffer, value[key])
+    metadata: metadata("$.optionalField", optionalField, key, $value),
+    staticSize: $value.staticSize,
+    subEncode(buffer, value) {
+      $option.subEncode(buffer, value[key])
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       if (buffer.array[buffer.index++]) {
-        return { [key]: $value._decode(buffer) } as any
+        return { [key]: $value.subDecode(buffer) } as any
       } else {
         return {}
       }
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.typeof(this, "object")
       assert.nonNull(this)
       if (key in (assert.value as any)) {
-        $option._assert(assert.key(this, key))
+        $option.subAssert(assert.key(this, key))
       }
     },
   })
@@ -83,15 +83,15 @@ export type ObjectMembers<T extends AnyShape[]> = [
 
 export function object<T extends AnyShape[]>(...members: ObjectMembers<T>): Shape<InputObject<T>, OutputObject<T>> {
   return createShape({
-    _metadata: metadata("$.object", object<T>, ...members),
-    _staticSize: members.map((x) => x._staticSize).reduce((a, b) => a + b, 0),
-    _encode: generateEncode(members as Shape<any>[]),
-    _decode: generateDecode(members as Shape<any>[]),
-    _assert(assert) {
+    metadata: metadata("$.object", object<T>, ...members),
+    staticSize: members.map((x) => x.staticSize).reduce((a, b) => a + b, 0),
+    subEncode: generateEncode(members as Shape<any>[]),
+    subDecode: generateDecode(members as Shape<any>[]),
+    subAssert(assert) {
       assert.typeof(this, "object")
       assert.nonNull(this)
       for (const member of members as T) {
-        member._assert(assert)
+        member.subAssert(assert)
       }
     },
   })
@@ -104,12 +104,12 @@ function generateEncode(members: Shape<any>[]) {
   const valueVisitor = new ShapeVisitor<(v: string) => string>()
   valueVisitor.add(constant, (shape, value, pattern) => (v) => {
     if (pattern) {
-      return `${addVar(shape)}._encode(buffer, ${v})`
+      return `${addVar(shape)}.subEncode(buffer, ${v})`
     }
     return addVar(value)
   })
   valueVisitor.fallback((shape) => (v) => {
-    return `${addVar(shape)}._encode(buffer, ${v})`
+    return `${addVar(shape)}.subEncode(buffer, ${v})`
   })
 
   const fieldVisitor = new ShapeVisitor<string>()
@@ -123,7 +123,7 @@ function generateEncode(members: Shape<any>[]) {
     return members.map((x) => fieldVisitor.visit(x)).join(";")
   })
   fieldVisitor.fallback((shape) => {
-    return `${addVar(shape)}._encode(buffer, value)`
+    return `${addVar(shape)}.subEncode(buffer, value)`
   })
 
   const content = members.map((x) => fieldVisitor.visit(x)).join(";")
@@ -145,12 +145,12 @@ function generateDecode(members: Shape<any>[]) {
   const valueVisitor = new ShapeVisitor<string>()
   valueVisitor.add(constant, (shape, value, pattern) => {
     if (pattern) {
-      return `${addVar(shape)}._decode(buffer)`
+      return `${addVar(shape)}.subDecode(buffer)`
     }
     return addVar(value)
   })
   valueVisitor.fallback((shape) => {
-    return `${addVar(shape)}._decode(buffer)`
+    return `${addVar(shape)}.subDecode(buffer)`
   })
   const fieldVisitor = new ShapeVisitor<string>()
   fieldVisitor.add(field, (_, key, value) => {
@@ -163,7 +163,7 @@ function generateDecode(members: Shape<any>[]) {
     return members.map((x) => fieldVisitor.visit(x)).join(",")
   })
   fieldVisitor.fallback((shape) => {
-    return `...${addVar(shape)}._decode(buffer)`
+    return `...${addVar(shape)}.subDecode(buffer)`
   })
 
   const content = members.map((x) => fieldVisitor.visit(x)).join(",")

@@ -146,15 +146,15 @@ shapes with `createShape`:
 
 ```ts
 const $foo = $.createShape<Foo>({
-  _metadata: $.metadata("$foo"),
+  metadata: $.metadata("$foo"),
 
   // A static estimation of the encoded size, in bytes.
   // This can be either an under- or over- estimate.
-  _staticSize: 123,
-  _encode(buffer, value) {
+  staticSize: 123,
+  subEncode(buffer, value) {
     // Encode `value` into `buffer.array`, starting at `buffer.index`.
     // A `DataView` is also supplied as `buffer.view`.
-    // At first, you may only write at most as many bytes as `_staticSize`.
+    // At first, you may only write at most as many bytes as `staticSize`.
     // After you write bytes, you must update `buffer.index` to be the first unwritten byte.
 
     // If you need to write more bytes, call `buffer.pushAlloc(size)`.
@@ -163,34 +163,34 @@ const $foo = $.createShape<Foo>({
 
     // You can also call `buffer.insertArray()` to insert an array without consuming any bytes.
 
-    // You can delegate to another shape by calling `$bar._encode(buffer, bar)`.
-    // Before doing so, you must ensure that `$bar._staticSize` bytes are free,
-    // either by including it in `_staticSize` or by calling `buffer.pushAlloc()`.
-    // Note that you should use `_encode` and not `encode`.
+    // You can delegate to another shape by calling `$bar.subEncode(buffer, bar)`.
+    // Before doing so, you must ensure that `$bar.staticSize` bytes are free,
+    // either by including it in `staticSize` or by calling `buffer.pushAlloc()`.
+    // Note that you should use `subEncode` and not `encode`.
 
     // See the `EncodeBuffer` class for information on other methods.
 
     // ...
   },
 
-  _decode(buffer) {
+  subDecode(buffer) {
     // Decode `value` from `buffer.array`, starting at `buffer.index`.
     // A `DataView` is also supplied as `buffer.view`.
     // After you read bytes, you must update `buffer.index` to be the first unread byte.
 
-    // You can delegate to another shape by calling `$bar._decode(buffer)`.
-    // Note that you should use `_decode` and not `decode`.
+    // You can delegate to another shape by calling `$bar.subDecode(buffer)`.
+    // Note that you should use `subDecode` and not `decode`.
 
     // ...
     return value
   },
 
-  _assert(assert) {
+  subAssert(assert) {
     // Validate that `assert.value` is valid for this shape.
     // `assert` exposes various utility methods, such as `assert.instanceof`.
     // See the `AssertState` class for information on other methods.
 
-    // You can delegate to another shape by calling `$bar._assert(assert)` or `$bar._assert(assert.access("key"))`.
+    // You can delegate to another shape by calling `$bar.subAssert(assert)` or `$bar.subAssert(assert.access("key"))`.
     // Any errors thrown should be an instance of `$.ShapeAssertError`, and should use `assert.path`.
 
     // ...

@@ -7,17 +7,17 @@ export function instance<AI extends readonly unknown[], AO extends readonly unkn
   toArgs: (value: I) => [...AI],
 ): Shape<I, O> {
   return createShape({
-    _metadata: metadata("$.instance", instance, ctor, $args, toArgs),
-    _staticSize: $args._staticSize,
-    _encode(buffer, value) {
-      $args._encode(buffer, toArgs(value))
+    metadata: metadata("$.instance", instance, ctor, $args, toArgs),
+    staticSize: $args.staticSize,
+    subEncode(buffer, value) {
+      $args.subEncode(buffer, toArgs(value))
     },
-    _decode(buffer) {
-      return new ctor(...$args._decode(buffer))
+    subDecode(buffer) {
+      return new ctor(...$args.subDecode(buffer))
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.instanceof(this, ctor)
-      $args._assert(new AssertState(toArgs(assert.value as I), "#arguments", assert))
+      $args.subAssert(new AssertState(toArgs(assert.value as I), "#arguments", assert))
     },
   })
 }

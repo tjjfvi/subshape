@@ -17,25 +17,25 @@ export function sizedArray<L extends number, I, O>($el: Shape<I, O>, length: L):
   ArrayOfLength<O, L>
 > {
   return createShape({
-    _metadata: metadata("$.sizedArray", sizedArray, $el, length),
-    _staticSize: $el._staticSize * length,
-    _encode(buffer, value) {
+    metadata: metadata("$.sizedArray", sizedArray, $el, length),
+    staticSize: $el.staticSize * length,
+    subEncode(buffer, value) {
       for (let i = 0; i < value.length; i++) {
-        $el._encode(buffer, value[i]!)
+        $el.subEncode(buffer, value[i]!)
       }
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       const value: O[] = Array(length)
       for (let i = 0; i < value.length; i++) {
-        value[i] = $el._decode(buffer)
+        value[i] = $el.subDecode(buffer)
       }
       return value as ArrayOfLength<O, L>
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.instanceof(this, Array)
       assert.key(this, "length").equals(this, length)
       for (let i = 0; i < length; i++) {
-        $el._assert(assert.key(this, i))
+        $el.subAssert(assert.key(this, i))
       }
     },
   })
@@ -43,67 +43,67 @@ export function sizedArray<L extends number, I, O>($el: Shape<I, O>, length: L):
 
 export function array<I, O = I>($el: Shape<I, O>): Shape<readonly I[], O[]> {
   return createShape({
-    _metadata: metadata("$.array", array, $el),
-    _staticSize: compactU32._staticSize,
-    _encode(buffer, value) {
-      compactU32._encode(buffer, value.length)
+    metadata: metadata("$.array", array, $el),
+    staticSize: compactU32.staticSize,
+    subEncode(buffer, value) {
+      compactU32.subEncode(buffer, value.length)
       if (value.length) {
-        buffer.pushAlloc(value.length * $el._staticSize)
+        buffer.pushAlloc(value.length * $el.staticSize)
         for (let i = 0; i < value.length; i++) {
-          $el._encode(buffer, value[i]!)
+          $el.subEncode(buffer, value[i]!)
         }
         buffer.popAlloc()
       }
     },
-    _decode(buffer) {
-      const length = compactU32._decode(buffer)
+    subDecode(buffer) {
+      const length = compactU32.subDecode(buffer)
       const value: O[] = Array(length)
       for (let i = 0; i < value.length; i++) {
-        value[i] = $el._decode(buffer)
+        value[i] = $el.subDecode(buffer)
       }
       return value
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.instanceof(this, Array)
       for (let i = 0; i < (assert.value as unknown[]).length; i++) {
-        $el._assert(assert.key(this, i))
+        $el.subAssert(assert.key(this, i))
       }
     },
   })
 }
 
 export const uint8Array: Shape<Uint8Array> = createShape({
-  _metadata: metadata("$.uint8Array"),
-  _staticSize: compactU32._staticSize,
-  _encode(buffer, value) {
-    compactU32._encode(buffer, value.length)
+  metadata: metadata("$.uint8Array"),
+  staticSize: compactU32.staticSize,
+  subEncode(buffer, value) {
+    compactU32.subEncode(buffer, value.length)
     buffer.insertArray(value) // the contents of this will eventually be cloned by buffer
   },
-  _decode(buffer) {
-    const length = compactU32._decode(buffer)
+  subDecode(buffer) {
+    const length = compactU32.subDecode(buffer)
     const value = buffer.array.subarray(buffer.index, buffer.index + length)
     buffer.index += length
     return value
   },
-  _assert(assert) {
+  subAssert(assert) {
     assert.instanceof(this, Uint8Array)
   },
 })
 
 export function sizedUint8Array(length: number): Shape<Uint8Array> {
   return createShape({
-    _metadata: metadata("$.sizedUint8Array", sizedUint8Array, length),
-    // We could set `_staticSize` to `length`, but in this case it will usually
+    metadata: metadata("$.sizedUint8Array", sizedUint8Array, length),
+    // We could set `staticSize` to `length`, but in this case it will usually
     // more efficient to insert the array dynamically, rather than manually copy
     // the bytes.
-    _staticSize: 0,
-    _encode(buffer, value) {
+    staticSize: 0,
+    subEncode(buffer, value) {
       buffer.insertArray(value) // the contents of this will eventually be cloned by buffer
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       return buffer.array.subarray(buffer.index, buffer.index += length)
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.instanceof(this, Uint8Array)
       assert.key(this, "length").equals(this, length)
     },

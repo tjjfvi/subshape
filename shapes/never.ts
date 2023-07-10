@@ -1,15 +1,15 @@
 import { createShape, metadata, Shape, ShapeAssertError, ShapeDecodeError, ShapeEncodeError } from "../common/mod.ts"
 
 export const never: Shape<never> = createShape({
-  _metadata: metadata("$.never"),
-  _staticSize: 0,
-  _encode(value) {
+  metadata: metadata("$.never"),
+  staticSize: 0,
+  subEncode(value) {
     throw new ShapeEncodeError(this, value, "Cannot encode $.never")
   },
-  _decode(buffer) {
+  subDecode(buffer) {
     throw new ShapeDecodeError(this, buffer, "Cannot decode $.never")
   },
-  _assert(assert) {
+  subAssert(assert) {
     throw new ShapeAssertError(this, assert.value, `${assert.path}: Cannot validate $.never`)
   },
 })

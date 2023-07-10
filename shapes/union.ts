@@ -49,29 +49,29 @@ export function taggedUnion<
     discriminantToMember[discriminant] = object(field(tagKey, constant(tag)) as any, shape)
   }
   return createShape({
-    _metadata: metadata("$.taggedUnion", taggedUnion, tagKey, members),
-    _staticSize: 1 + Math.max(...Object.values(discriminantToMember).map((x) => x._staticSize)),
-    _encode(buffer, value) {
+    metadata: metadata("$.taggedUnion", taggedUnion, tagKey, members),
+    staticSize: 1 + Math.max(...Object.values(discriminantToMember).map((x) => x.staticSize)),
+    subEncode(buffer, value) {
       const discriminant = tagToDiscriminant[value[tagKey]]!
       const $member = discriminantToMember[discriminant]!
       buffer.array[buffer.index++] = discriminant
-      $member._encode(buffer, value as never)
+      $member.subEncode(buffer, value as never)
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       const discriminant = buffer.array[buffer.index++]!
       const $member = discriminantToMember[discriminant]
       if (!$member) {
         throw new ShapeDecodeError(this, buffer, `No such member shape matching the discriminant \`${discriminant}\``)
       }
-      return $member._decode(buffer) as any
+      return $member.subDecode(buffer) as any
     },
-    _assert(assert) {
+    subAssert(assert) {
       const assertTag = assert.key(this, tagKey)
       assertTag.typeof(this, "string")
       if (!((assertTag.value as string) in tagToDiscriminant)) {
         throw new ShapeAssertError(this, assertTag.value, `${assertTag.path}: invalid tag`)
       }
-      discriminantToMember[tagToDiscriminant[assertTag.value as string]!]!._assert(assert)
+      discriminantToMember[tagToDiscriminant[assertTag.value as string]!]!.subAssert(assert)
     },
   })
 }
@@ -85,17 +85,17 @@ export function literalUnion<T extends Narrow>(members: Record<number, T>): Shap
     keyToDiscriminant.set(key, discriminant)
   }
   return createShape({
-    _metadata: metadata("$.literalUnion", literalUnion, members),
-    _staticSize: 1,
-    _encode(buffer, value) {
+    metadata: metadata("$.literalUnion", literalUnion, members),
+    staticSize: 1,
+    subEncode(buffer, value) {
       const discriminant = keyToDiscriminant.get(value)!
       buffer.array[buffer.index++] = discriminant
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       const discriminant = buffer.array[buffer.index++]!
       return members[discriminant]!
     },
-    _assert(assert) {
+    subAssert(assert) {
       assert.typeof(this, "string")
       if (!keyToDiscriminant.has(assert.value as T)) {
         throw new ShapeAssertError(this, assert.value, `${assert.path} invalid value`)

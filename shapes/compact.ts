@@ -17,41 +17,41 @@ export function compact<I, O>(shape: Shape<I, O>): Shape<I, O> {
 
 function compactNumber($base: Shape<number>): Shape<number> {
   return createShape({
-    _metadata: metadata("$.compact", compact, $base),
-    _staticSize: 5,
-    _encode(buffer, value) {
+    metadata: metadata("$.compact", compact, $base),
+    staticSize: 5,
+    subEncode(buffer, value) {
       if (value <= MAX_U6) {
         buffer.array[buffer.index++] = value << 2
       } else if (value <= MAX_U14) {
-        u16._encode(buffer, (value << 2) | 0b01)
+        u16.subEncode(buffer, (value << 2) | 0b01)
       } else if (value <= MAX_U30) {
         // Because JS bitwise ops use *signed* 32-bit ints, this operation
         // produces negative values when `value >= 2 ** 29`. However, this is ok,
         // as `setUint32` correctly casts these negative values back to unsigned
         // 32-bit ints.
-        u32._encode(buffer, (value << 2) | 0b10)
+        u32.subEncode(buffer, (value << 2) | 0b10)
       } else {
         buffer.array[buffer.index++] = 0b11
-        u32._encode(buffer, value)
+        u32.subEncode(buffer, value)
       }
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       switch (buffer.array[buffer.index]! & 0b11) {
         case 0:
           return buffer.array[buffer.index++]! >> 2
         case 1:
-          return u16._decode(buffer) >> 2
+          return u16.subDecode(buffer) >> 2
         case 2:
           // We use an unsigned right shift, as the default shift operator
           // uses signed 32-bit ints, which would yield invalid values.
-          return u32._decode(buffer) >>> 2
+          return u32.subDecode(buffer) >>> 2
         default:
           if (buffer.array[buffer.index++]! !== 3) throw new ShapeDecodeError(this, buffer, "Out of range for U32")
-          return u32._decode(buffer)
+          return u32.subDecode(buffer)
       }
     },
-    _assert(assert) {
-      $base._assert(assert)
+    subAssert(assert) {
+      $base.subAssert(assert)
     },
   })
 }
@@ -66,11 +66,11 @@ compactVisitor.add(u32, () => compactU32)
 
 function compactBigInt($base: Shape<bigint>): Shape<bigint> {
   return createShape({
-    _metadata: metadata("$.compact", compact, $base),
-    _staticSize: 5,
-    _encode(buffer, value) {
+    metadata: metadata("$.compact", compact, $base),
+    staticSize: 5,
+    subEncode(buffer, value) {
       if (value <= 0xff_ff_ff_ff) {
-        compactU32._encode(buffer, Number(value))
+        compactU32.subEncode(buffer, Number(value))
         return
       }
       let extraBytes = 0
@@ -80,7 +80,7 @@ function compactBigInt($base: Shape<bigint>): Shape<bigint> {
         extraBytes++
       }
       buffer.array[buffer.index++] = (extraBytes << 2) | 0b11
-      u32._encode(buffer, Number(value & 0xff_ff_ff_ffn))
+      u32.subEncode(buffer, Number(value & 0xff_ff_ff_ffn))
       _value = value >> 32n
       buffer.pushAlloc(extraBytes)
       for (let i = 0; i < extraBytes; i++) {
@@ -89,21 +89,21 @@ function compactBigInt($base: Shape<bigint>): Shape<bigint> {
       }
       buffer.popAlloc()
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       const b = buffer.array[buffer.index]!
       if ((b & 0b11) < 3 || b === 3) {
-        return BigInt(compactU32._decode(buffer))
+        return BigInt(compactU32.subDecode(buffer))
       }
       const extraBytes = b >> 2
       buffer.index++
-      let value = BigInt(u32._decode(buffer))
+      let value = BigInt(u32.subDecode(buffer))
       for (let i = 0; i < extraBytes; i++) {
         value |= BigInt(buffer.array[buffer.index++]!) << BigInt(32 + i * 8)
       }
       return value
     },
-    _assert(assert) {
-      $base._assert(assert)
+    subAssert(assert) {
+      $base.subAssert(assert)
     },
   })
 }

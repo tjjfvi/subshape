@@ -7,15 +7,15 @@ const compactU32 = compact(u32)
 const textEncoder = new TextEncoder()
 const textDecoder = new TextDecoder()
 export const str: Shape<string> = createShape({
-  _metadata: metadata("$.str"),
-  _staticSize: compactU32._staticSize,
-  _encode(buffer, value) {
+  metadata: metadata("$.str"),
+  staticSize: compactU32.staticSize,
+  subEncode(buffer, value) {
     const array = textEncoder.encode(value)
-    compactU32._encode(buffer, array.length)
+    compactU32.subEncode(buffer, array.length)
     buffer.insertArray(array)
   },
-  _decode(buffer) {
-    const len = compactU32._decode(buffer)
+  subDecode(buffer) {
+    const len = compactU32.subDecode(buffer)
     if (buffer.array.length < buffer.index + len) {
       throw new ShapeDecodeError(this, buffer, "Attempting to `str`-decode beyond bounds of input bytes")
     }
@@ -23,7 +23,7 @@ export const str: Shape<string> = createShape({
     buffer.index += len
     return textDecoder.decode(slice)
   },
-  _assert(assert) {
+  subAssert(assert) {
     assert.typeof(this, "string")
   },
 })

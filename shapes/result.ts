@@ -4,23 +4,23 @@ export function result<TI, TO, UI extends Error, UO extends Error>(
   $ok: Shape<TI, TO>,
   $err: Shape<UI, UO>,
 ): Shape<TI | UI, TO | UO> {
-  if ($ok._metadata.some((x) => x.factory === result)) {
+  if ($ok.metadata.some((x) => x.factory === result)) {
     throw new Error("Nested result shape will not roundtrip correctly")
   }
   return createShape({
-    _metadata: metadata("$.result", result, $ok, $err),
-    _staticSize: 1 + Math.max($ok._staticSize, $err._staticSize),
-    _encode(buffer, value) {
+    metadata: metadata("$.result", result, $ok, $err),
+    staticSize: 1 + Math.max($ok.staticSize, $err.staticSize),
+    subEncode(buffer, value) {
       if ((buffer.array[buffer.index++] = +(value instanceof Error))) {
-        $err._encode(buffer, value as UI)
+        $err.subEncode(buffer, value as UI)
       } else {
-        $ok._encode(buffer, value as TI)
+        $ok.subEncode(buffer, value as TI)
       }
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       switch (buffer.array[buffer.index++]) {
         case 0: {
-          const value = $ok._decode(buffer)
+          const value = $ok.subDecode(buffer)
           if (value instanceof Error) {
             throw new ShapeDecodeError(
               this,
@@ -31,18 +31,18 @@ export function result<TI, TO, UI extends Error, UO extends Error>(
           return value
         }
         case 1: {
-          return $err._decode(buffer)
+          return $err.subDecode(buffer)
         }
         default: {
           throw new ShapeDecodeError(this, buffer, "Result discriminant neither 0 nor 1")
         }
       }
     },
-    _assert(assert) {
+    subAssert(assert) {
       if (assert.value instanceof Error) {
-        $err._assert(assert)
+        $err.subAssert(assert)
       } else {
-        $ok._assert(assert)
+        $ok.subAssert(assert)
       }
     },
   })

@@ -3,21 +3,21 @@ import { createShape, metadata, Shape } from "../common/mod.ts"
 export function deferred<I, O>(getShape: () => Shape<I, O>): Shape<I, O> {
   let $shape: Shape<I, O>
   const shape = createShape({
-    _metadata: metadata("$.deferred", deferred, getShape),
-    _staticSize: 0,
-    _encode(buffer, value) {
+    metadata: metadata("$.deferred", deferred, getShape),
+    staticSize: 0,
+    subEncode(buffer, value) {
       $shape ??= getShape()
-      buffer.pushAlloc($shape._staticSize)
-      $shape._encode(buffer, value)
+      buffer.pushAlloc($shape.staticSize)
+      $shape.subEncode(buffer, value)
       buffer.popAlloc()
     },
-    _decode(buffer) {
+    subDecode(buffer) {
       $shape ??= getShape()
-      return $shape._decode(buffer)
+      return $shape.subDecode(buffer)
     },
-    _assert(assert) {
+    subAssert(assert) {
       $shape ??= getShape()
-      $shape._assert(assert)
+      $shape.subAssert(assert)
     },
   })
   shape["_inspect"] = (inspect) => {

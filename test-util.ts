@@ -37,7 +37,7 @@ export function testShape<T>(
       const encoded = async ? await shape.encodeAsync(value) : shape.encode(value)
       await assertSnapshot(t, encoded, { serializer: serializeU8A })
       const decodeBuffer = new DecodeBuffer(encoded)
-      const decoded = shape._decode(decodeBuffer)
+      const decoded = shape.subDecode(decodeBuffer)
       assertEquals(decoded, value)
       assertEquals(decodeBuffer.index, encoded.length)
       assert(shape, decoded)
