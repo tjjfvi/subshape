@@ -3,61 +3,61 @@
 use itertools::Itertools;
 use std::{fs, path::Path};
 
-#[path = "./codecs/fixtures/array.rs"]
+#[path = "./shapes/fixtures/array.rs"]
 pub mod array_fixtures;
 
-#[path = "./codecs/fixtures/bool.rs"]
+#[path = "./shapes/fixtures/bool.rs"]
 pub mod bool_fixtures;
 
-#[path = "./codecs/fixtures/collections.rs"]
+#[path = "./shapes/fixtures/collections.rs"]
 pub mod collections_fixtures;
 
-#[path = "./codecs/fixtures/compact.rs"]
+#[path = "./shapes/fixtures/compact.rs"]
 pub mod compact_fixtures;
 
-#[path = "./codecs/fixtures/deferred.rs"]
+#[path = "./shapes/fixtures/deferred.rs"]
 pub mod deferred_fixtures;
 
-#[path = "./codecs/fixtures/float.rs"]
+#[path = "./shapes/fixtures/float.rs"]
 pub mod float_fixtures;
 
-#[path = "./codecs/fixtures/hex.rs"]
+#[path = "./shapes/fixtures/hex.rs"]
 pub mod hex_fixtures;
 
-#[path = "./codecs/fixtures/int.rs"]
+#[path = "./shapes/fixtures/int.rs"]
 pub mod int_fixtures;
 
-#[path = "./codecs/fixtures/iterable.rs"]
+#[path = "./shapes/fixtures/iterable.rs"]
 pub mod iterable_fixtures;
 
-#[path = "./codecs/fixtures/lenPrefixed.rs"]
+#[path = "./shapes/fixtures/lenPrefixed.rs"]
 pub mod len_prefixed_fixtures;
 
-#[path = "./codecs/fixtures/never.rs"]
+#[path = "./shapes/fixtures/never.rs"]
 pub mod never_fixtures;
 
-#[path = "./codecs/fixtures/option.rs"]
+#[path = "./shapes/fixtures/option.rs"]
 pub mod option_fixtures;
 
-#[path = "./codecs/fixtures/optionBool.rs"]
+#[path = "./shapes/fixtures/optionBool.rs"]
 pub mod option_bool_fixtures;
 
-#[path = "./codecs/fixtures/object.rs"]
+#[path = "./shapes/fixtures/object.rs"]
 pub mod object_fixtures;
 
-#[path = "./codecs/fixtures/result.rs"]
+#[path = "./shapes/fixtures/result.rs"]
 pub mod result_fixtures;
 
-#[path = "./codecs/fixtures/str.rs"]
+#[path = "./shapes/fixtures/str.rs"]
 pub mod str_fixtures;
 
-#[path = "./codecs/fixtures/tuple.rs"]
+#[path = "./shapes/fixtures/tuple.rs"]
 pub mod tuple_fixtures;
 
-#[path = "./codecs/fixtures/union.rs"]
+#[path = "./shapes/fixtures/union.rs"]
 pub mod union_fixtures;
 
-#[path = "./codecs/fixtures/bitSequence.rs"]
+#[path = "./shapes/fixtures/bitSequence.rs"]
 pub mod bit_sequence;
 
 pub(crate) const LIPSUM: &'static str = include_str!("lipsum.txt");
