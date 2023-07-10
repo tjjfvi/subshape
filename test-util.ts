@@ -2,20 +2,20 @@
 
 import { assertEquals, assertThrows } from "https://deno.land/std@0.161.0/testing/asserts.ts"
 import { assertSnapshot } from "https://deno.land/std@0.161.0/testing/snapshot.ts"
-import { AnyCodec, assert, Codec, DecodeBuffer, ScaleAssertError } from "./common/mod.ts"
+import { AnyShape, assert, DecodeBuffer, ScaleAssertError, Shape } from "./common/mod.ts"
 
 const [lipsum, words, cargoLock] = ["lipsum.txt", "words.txt", "Cargo.lock"].map((fileName) => () =>
   Deno.readTextFile(fileName)
 )
 export const files = { lipsum: lipsum!, words: words!, cargoLock: cargoLock! }
 
-export function testCodec<T>(
-  codec: Codec<T>,
+export function testShape<T>(
+  shape: Shape<T>,
   values: NoInfer<T>[] | Record<string, NoInfer<T> | (() => NoInfer<T>)>,
   async?: boolean,
 ): void
-export function testCodec<T>(
-  codec: Codec<T>,
+export function testShape<T>(
+  shape: Shape<T>,
   values: T[] | Record<string, T | (() => T)>,
   async = false,
 ) {
@@ -29,23 +29,23 @@ export function testCodec<T>(
         iterableLimit: Infinity,
       })
       : key
-    Deno.test(`${Deno.inspect(codec)} ${label}`, async (t) => {
+    Deno.test(`${Deno.inspect(shape)} ${label}`, async (t) => {
       if (typeof value === "function") {
         value = (value as () => T)()
       }
-      assert(codec, value)
-      const encoded = async ? await codec.encodeAsync(value) : codec.encode(value)
+      assert(shape, value)
+      const encoded = async ? await shape.encodeAsync(value) : shape.encode(value)
       await assertSnapshot(t, encoded, { serializer: serializeU8A })
       const decodeBuffer = new DecodeBuffer(encoded)
-      const decoded = codec._decode(decodeBuffer)
+      const decoded = shape._decode(decodeBuffer)
       assertEquals(decoded, value)
       assertEquals(decodeBuffer.index, encoded.length)
-      assert(codec, decoded)
+      assert(shape, decoded)
     })
   }
 }
 
-export function testInvalid(codec: AnyCodec, values: unknown[] | Record<string, unknown | (() => unknown)>) {
+export function testInvalid(shape: AnyShape, values: unknown[] | Record<string, unknown | (() => unknown)>) {
   for (const key in values) {
     let value: unknown = values[key as never]
     const label = values instanceof Array
@@ -56,11 +56,11 @@ export function testInvalid(codec: AnyCodec, values: unknown[] | Record<string, 
         iterableLimit: Infinity,
       })
       : key
-    Deno.test(`${Deno.inspect(codec)} invalid ${label}`, async (t) => {
+    Deno.test(`${Deno.inspect(shape)} invalid ${label}`, async (t) => {
       if (typeof value === "function") {
         value = (value as () => unknown)()
       }
-      await assertThrowsSnapshot(t, () => assert(codec as Codec<any>, value), ScaleAssertError)
+      await assertThrowsSnapshot(t, () => assert(shape as Shape<any>, value), ScaleAssertError)
     })
   }
 }
@@ -70,14 +70,14 @@ function serializeU8A(array: Uint8Array) {
 }
 
 type NoInfer<T> = T extends infer U ? U : never
-export function benchCodec<T>(name: string, codec: Codec<T>, value: NoInfer<T>): void
-export function benchCodec<T>(name: string, codec: Codec<T>, value: T) {
-  const encoded = codec.encode(value)
+export function benchShape<T>(name: string, shape: Shape<T>, value: NoInfer<T>): void
+export function benchShape<T>(name: string, shape: Shape<T>, value: T) {
+  const encoded = shape.encode(value)
   Deno.bench(`- ${name} (${encoded.length}B) [encode] `, () => {
-    codec.encode(value)
+    shape.encode(value)
   })
   Deno.bench(`  ${name} (${encoded.length}B) [decode]`, () => {
-    codec.decode(encoded)
+    shape.decode(encoded)
   })
 }
 

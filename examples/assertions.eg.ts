@@ -6,8 +6,8 @@ const a: unknown = 1
 $.assert($.u8, a)
 a
 
-// using `Codec.assert` (explicit typing required)
+// using `Shape.assert` (explicit typing required)
 const b: unknown = 2
-const u8: $.Codec<number> = $.u8
+const u8: $.Shape<number> = $.u8
 u8.assert(b)
 b

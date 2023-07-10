@@ -1,8 +1,8 @@
 import * as $ from "../../mod.ts"
 import { assertEquals, assertThrowsSnapshot } from "../../test-util.ts"
 
-Deno.test("CodecVisitor", async (t) => {
-  const visitor = new $.CodecVisitor<string>()
+Deno.test("ShapeVisitor", async (t) => {
+  const visitor = new $.ShapeVisitor<string>()
   visitor
     .add($.u8, () => "$.u8")
     .add($.int, (_, signed, size) => `$.int(${signed}, ${size})`)

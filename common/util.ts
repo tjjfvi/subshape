@@ -1,30 +1,30 @@
 import type { DecodeBuffer } from "./buffer.ts"
-import type { AnyCodec } from "./codec.ts"
+import type { AnyShape } from "./shape.ts"
 
 export abstract class ScaleError extends Error {
-  constructor(readonly codec: AnyCodec, message: string) {
+  constructor(readonly shape: AnyShape, message: string) {
     super(message)
   }
 }
 
 export class ScaleAssertError extends ScaleError {
   override readonly name = "ScaleAssertError"
-  constructor(codec: AnyCodec, readonly value: unknown, message: string) {
-    super(codec, message)
+  constructor(shape: AnyShape, readonly value: unknown, message: string) {
+    super(shape, message)
   }
 }
 
 export class ScaleEncodeError extends ScaleError {
   override readonly name = "ScaleEncodeError"
-  constructor(codec: AnyCodec, readonly value: unknown, message: string) {
-    super(codec, message)
+  constructor(shape: AnyShape, readonly value: unknown, message: string) {
+    super(shape, message)
   }
 }
 
 export class ScaleDecodeError extends ScaleError {
   override readonly name = "ScaleDecodeError"
-  constructor(codec: AnyCodec, readonly buffer: DecodeBuffer, message: string) {
-    super(codec, message)
+  constructor(shape: AnyShape, readonly buffer: DecodeBuffer, message: string) {
+    super(shape, message)
   }
 }
 

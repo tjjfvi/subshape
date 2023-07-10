@@ -1,8 +1,8 @@
 import * as $ from "../../mod.ts"
-import { assertEquals, assertThrowsSnapshot, testCodec } from "../../test-util.ts"
+import { assertEquals, assertThrowsSnapshot, testShape } from "../../test-util.ts"
 
-Deno.test("CodecVisitor", async (t) => {
-  const visitor = new $.CodecVisitor<string>()
+Deno.test("ShapeVisitor", async (t) => {
+  const visitor = new $.ShapeVisitor<string>()
   visitor
     .add($.u8, () => "$.u8")
     .add($.int, (_, signed, size) => `$.int(${signed}, ${size})`)
@@ -23,7 +23,7 @@ class GraphDecodeCtx {
 }
 
 const $compactU32 = $.compact($.u32)
-const $graph: $.Codec<Graph> = $.createCodec({
+const $graph: $.Shape<Graph> = $.createShape({
   _metadata: $.metadata("$graph"),
   _staticSize: $compactU32._staticSize * 2 + $.str._staticSize,
   _encode(buffer, value) {
@@ -67,4 +67,4 @@ c.to = [a, e]
 e.to = [a, c, f]
 f.to = [a, b, c, d, e, f]
 
-testCodec($graph, { a, b, c, d, e, f })
+testShape($graph, { a, b, c, d, e, f })

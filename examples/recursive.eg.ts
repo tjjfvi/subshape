@@ -11,7 +11,7 @@ interface Person {
   children: Person[]
 }
 
-const $person: $.Codec<Person> = $.object(
+const $person: $.Shape<Person> = $.object(
   $.field("name", $.str),
   $.field("favoriteU8", $interestingU8),
   $.field("pets", $.array($pet)),

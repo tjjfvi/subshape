@@ -25,8 +25,8 @@ import * as $ from "scale-codec"
 ## Usage
 
 1. Import the library
-2. Define a codec via the library's functions, whose names correspond to types
-3. Utilize the codec you've defined
+2. Define a shape via the library's functions, whose names correspond to types
+3. Utilize the shape you've defined
 
 ## Example
 
@@ -51,7 +51,7 @@ const decodedValue: Superhero = $superhero.decode(encodedBytes)
 assertEquals(decodedValue, valueToEncode)
 ```
 
-To extract the type from a given codec, you can use the `Output` utility type.
+To extract the type from a given shape, you can use the `Output` utility type.
 
 ```ts
 type Superhero = $.Output<typeof $superhero>
@@ -62,7 +62,7 @@ type Superhero = $.Output<typeof $superhero>
 // }
 ```
 
-You can also explicitly type the codec, which will validate that the inferred type aligns with the expected.
+You can also explicitly type the shape, which will validate that the inferred type aligns with the expected.
 
 ```ts
 interface Superhero {
@@ -71,23 +71,23 @@ interface Superhero {
   superpowers: string[]
 }
 
-const $superhero: Codec<Superhero> = $.object(
+const $superhero: Shape<Superhero> = $.object(
   $.field("pseudonym", $.str),
   $.optionalField("secretIdentity", $.str),
   $.field("superpowers", $.array($.str)),
 )
 
 // @ts-expect-error
-//   Type 'Codec<{ pseudonym: string; secretIdentity?: string | undefined; }>' is not assignable to type 'Codec<Superhero>'.
+//   Type 'Shape<{ pseudonym: string; secretIdentity?: string | undefined; }>' is not assignable to type 'Shape<Superhero>'.
 //     The types returned by 'decode(...)' are incompatible between these types.
 //       Type '{ pseudonym: string; secretIdentity?: string | undefined; }' is not assignable to type 'Superhero'.
-const $plebeianHero: Codec<Superhero> = $.object(
+const $plebeianHero: Shape<Superhero> = $.object(
   $.field("pseudonym", $.str),
   $.optionalField("secretIdentity", $.str),
 )
 ```
 
-You can also validate a value against a codec using `$.assert` or `$.is`:
+You can also validate a value against a shape using `$.assert` or `$.is`:
 
 ```ts
 value // unknown
@@ -104,9 +104,9 @@ If `$.assert` fails, it will throw a `ScaleAssertError` detailing why the value 
 
 Further examples can be found in the [`examples`](https://github.com/paritytech/scale-ts/tree/main/examples) directory.
 
-## Codec Naming
+## Shape Naming
 
-This library adopts a convention of denoting codecs with a `$` – `$.foo` for built-in codecs, and `$foo` for user-defined codecs. This makes codecs easily distinguishable from other values, and makes it easier to have codecs in scope with other variables:
+This library adopts a convention of denoting shapes with a `$` – `$.foo` for built-in shapes, and `$foo` for user-defined shapes. This makes shapes easily distinguishable from other values, and makes it easier to have shapes in scope with other variables:
 
 ```ts
 interface Person { ... }
@@ -114,7 +114,7 @@ const $person = $.object(...)
 const person = { ... }
 ```
 
-Here, the type, codec, and a value can all coexist without clashing, without having to resort to wordy workarounds like `personCodec`.
+Here, the type, shape, and a value can all coexist without clashing, without having to resort to wordy workarounds like `personShape`.
 
 The main other library this could possibly clash with is jQuery, and its usage has waned enough that this is not a serious problem.
 
@@ -122,16 +122,16 @@ While we recommend following this convention for consistency, you can, of course
 
 ## Asynchronous Encoding
 
-Some codecs require asynchronous encoding. Calling `.encode()` on a codec will throw if it or another codec it calls is asynchronous. In this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any codec; if it is a synchronous codec, it will simply resolve immediately.
+Some shapes require asynchronous encoding. Calling `.encode()` on a shape will throw if it or another shape it calls is asynchronous. In this case, you must call `.encodeAsync()` instead, which returns a `Promise<Uint8Array>`. You can call `.encodeAsync()` on any shape; if it is a synchronous shape, it will simply resolve immediately.
 
 Asynchronous decoding is not supported.
 
-## Custom Codecs
+## Custom Shapes
 
-If your encoding/decoding logic is more complicated, you can create custom codecs with `createCodec`:
+If your encoding/decoding logic is more complicated, you can create custom shapes with `createShape`:
 
 ```ts
-const $foo = $.createCodec<Foo>({
+const $foo = $.createShape<Foo>({
   _metadata: $.metadata("$foo"),
 
   // A static estimation of the encoded size, in bytes.
@@ -149,7 +149,7 @@ const $foo = $.createCodec<Foo>({
 
     // You can also call `buffer.insertArray()` to insert an array without consuming any bytes.
 
-    // You can delegate to another codec by calling `$bar._encode(buffer, bar)`.
+    // You can delegate to another shape by calling `$bar._encode(buffer, bar)`.
     // Before doing so, you must ensure that `$bar._staticSize` bytes are free,
     // either by including it in `_staticSize` or by calling `buffer.pushAlloc()`.
     // Note that you should use `_encode` and not `encode`.
@@ -164,7 +164,7 @@ const $foo = $.createCodec<Foo>({
     // A `DataView` is also supplied as `buffer.view`.
     // After you read bytes, you must update `buffer.index` to be the first unread byte.
 
-    // You can delegate to another codec by calling `$bar._decode(buffer)`.
+    // You can delegate to another shape by calling `$bar._decode(buffer)`.
     // Note that you should use `_decode` and not `decode`.
 
     // ...
@@ -172,11 +172,11 @@ const $foo = $.createCodec<Foo>({
   },
 
   _assert(assert) {
-    // Validate that `assert.value` is valid for this codec.
+    // Validate that `assert.value` is valid for this shape.
     // `assert` exposes various utility methods, such as `assert.instanceof`.
     // See the `AssertState` class for information on other methods.
 
-    // You can delegate to another codec by calling `$bar._assert(assert)` or `$bar._assert(assert.access("key"))`.
+    // You can delegate to another shape by calling `$bar._assert(assert)` or `$bar._assert(assert.access("key"))`.
     // Any errors thrown should be an instance of `$.ScaleAssertError`, and should use `assert.path`.
 
     // ...

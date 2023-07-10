@@ -8,7 +8,7 @@ export const $superhero = $.object(
 )
 
 $superhero
-// Codec<{
+// Shape<{
 //   pseudonym: string;
 //   secretIdentity?: string | undefined;
 //   superpowers: string[];
@@ -28,4 +28,4 @@ export const $myError = $.instance(
   (myError: MyError) => [myError.code, myError.message], // Specify how to extract arguments from an instance
 )
 
-$myError // Codec<MyError>
+$myError // Shape<MyError>

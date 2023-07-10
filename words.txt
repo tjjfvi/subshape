@@ -4,11 +4,9 @@ bitvec
 combinators
 contravariance
 cummon
-Decodec
 deno
 denoland
 dprint
-Encodec
 hydrokinesis
 jsbin
 Kosmoceratops
