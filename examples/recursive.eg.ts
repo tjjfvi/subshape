@@ -1,4 +1,4 @@
-// import * as $ from "https://deno.land/x/scale/mod.ts";
+// import * as $ from "https://deno.land/x/subshape/mod.ts";
 import * as $ from "../mod.ts"
 import { $interestingU8, $pet, InterestingU8 } from "./unions.eg.ts"
 
@@ -11,7 +11,7 @@ interface Person {
   children: Person[]
 }
 
-const $person: $.Codec<Person> = $.object(
+const $person: $.Shape<Person> = $.object(
   $.field("name", $.str),
   $.field("favoriteU8", $interestingU8),
   $.field("pets", $.array($pet)),

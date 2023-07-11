@@ -6,7 +6,7 @@ type LinkedList = undefined | {
   next: LinkedList
 }
 
-const $linkedList: $.Codec<LinkedList> = $.option($.object(
+const $linkedList: $.Shape<LinkedList> = $.option($.object(
   $.field("val", $.u8),
   $.field("next", $.deferred(() => $linkedList)),
 ))
@@ -34,9 +34,9 @@ $.array(
   type Foo = { bar: Bar; baz: Baz }
   type Bar = { foo: Foo; baz: Baz }
   type Baz = { foo: Foo; bar: Bar }
-  const $foo: $.Codec<Foo> = $.object($.field("bar", $.deferred(() => $bar)), $.field("baz", $.deferred(() => $baz)))
-  const $bar: $.Codec<Bar> = $.object($.field("foo", $.deferred(() => $foo)), $.field("baz", $.deferred(() => $baz)))
-  const $baz: $.Codec<Baz> = $.object($.field("foo", $.deferred(() => $foo)), $.field("bar", $.deferred(() => $bar)))
+  const $foo: $.Shape<Foo> = $.object($.field("bar", $.deferred(() => $bar)), $.field("baz", $.deferred(() => $baz)))
+  const $bar: $.Shape<Bar> = $.object($.field("foo", $.deferred(() => $foo)), $.field("baz", $.deferred(() => $baz)))
+  const $baz: $.Shape<Baz> = $.object($.field("foo", $.deferred(() => $foo)), $.field("bar", $.deferred(() => $bar)))
   assertEquals(
     Deno.inspect($foo, { depth: Infinity }),
     `

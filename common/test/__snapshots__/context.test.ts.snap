@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`CodecVisitor 1`] = `Error: Unrecognized codec`;
+snapshot[`ShapeVisitor 1`] = `Error: Unrecognized shape`;
 
 snapshot[`\$graph a 1`] = `
 00

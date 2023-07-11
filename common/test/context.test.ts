@@ -1,8 +1,8 @@
 import * as $ from "../../mod.ts"
-import { assertEquals, assertThrowsSnapshot, testCodec } from "../../test-util.ts"
+import { assertEquals, assertThrowsSnapshot, testShape } from "../../test-util.ts"
 
-Deno.test("CodecVisitor", async (t) => {
-  const visitor = new $.CodecVisitor<string>()
+Deno.test("ShapeVisitor", async (t) => {
+  const visitor = new $.ShapeVisitor<string>()
   visitor
     .add($.u8, () => "$.u8")
     .add($.int, (_, signed, size) => `$.int(${signed}, ${size})`)
@@ -23,35 +23,35 @@ class GraphDecodeCtx {
 }
 
 const $compactU32 = $.compact($.u32)
-const $graph: $.Codec<Graph> = $.createCodec({
-  _metadata: $.metadata("$graph"),
-  _staticSize: $compactU32._staticSize * 2 + $.str._staticSize,
-  _encode(buffer, value) {
+const $graph: $.Shape<Graph> = $.createShape({
+  metadata: $.metadata("$graph"),
+  staticSize: $compactU32.staticSize * 2 + $.str.staticSize,
+  subEncode(buffer, value) {
     const ctx = buffer.context.get(GraphEncodeCtx)
     const key = ctx.memo.get(value)
     if (key != null) {
-      return $compactU32._encode(buffer, key)
+      return $compactU32.subEncode(buffer, key)
     }
-    $compactU32._encode(buffer, ctx.memo.size)
+    $compactU32.subEncode(buffer, ctx.memo.size)
     ctx.memo.set(value, ctx.memo.size)
-    $.str._encode(buffer, value.label)
-    $.array($graph)._encode(buffer, value.to)
+    $.str.subEncode(buffer, value.label)
+    $.array($graph).subEncode(buffer, value.to)
   },
-  _decode(buffer) {
+  subDecode(buffer) {
     const ctx = buffer.context.get(GraphDecodeCtx)
-    const key = $compactU32._decode(buffer)
+    const key = $compactU32.subDecode(buffer)
     if (key < ctx.memo.length) {
       return ctx.memo[key]!
     }
     const graph: Graph = {
-      label: $.str._decode(buffer),
+      label: $.str.subDecode(buffer),
       to: [],
     }
     ctx.memo.push(graph)
-    graph.to = $.array($graph)._decode(buffer)
+    graph.to = $.array($graph).subDecode(buffer)
     return graph
   },
-  _assert() {},
+  subAssert() {},
 })
 
 const a: Graph = { label: "a", to: [] }
@@ -67,4 +67,4 @@ c.to = [a, e]
 e.to = [a, c, f]
 f.to = [a, b, c, d, e, f]
 
-testCodec($graph, { a, b, c, d, e, f })
+testShape($graph, { a, b, c, d, e, f })

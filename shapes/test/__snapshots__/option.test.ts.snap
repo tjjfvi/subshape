@@ -1,0 +1,56 @@
+export const snapshot = {};
+
+snapshot[`\$.option(\$.str) "HELLO!" 1`] = `
+01
+18
+48
+45
+4c
+4c
+4f
+21
+`;
+
+snapshot[`\$.option(\$.u8) 1 1`] = `
+01
+01
+`;
+
+snapshot[`\$.option(\$.u32) 4294967295 1`] = `
+01
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.option(\$.bool) true 1`] = `
+01
+01
+`;
+
+snapshot[`\$.option(\$.bool) false 1`] = `
+01
+00
+`;
+
+snapshot[`\$.option(\$.bool) undefined 1`] = `00`;
+
+snapshot[`\$.option(\$.str, null) "hi" 1`] = `
+01
+08
+68
+69
+`;
+
+snapshot[`\$.option(\$.str, null) "low" 1`] = `
+01
+0c
+6c
+6f
+77
+`;
+
+snapshot[`\$.option(\$.str, null) null 1`] = `00`;
+
+snapshot[`\$.option(\$.bool) invalid 123 1`] = `ShapeAssertError: typeof value !== "boolean"`;

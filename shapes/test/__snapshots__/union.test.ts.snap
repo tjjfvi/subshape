@@ -1,0 +1,91 @@
+export const snapshot = {};
+
+snapshot[`\$abc { _tag: "A" } 1`] = `00`;
+
+snapshot[`\$abc { _tag: "B", B: "HELLO" } 1`] = `
+01
+14
+48
+45
+4c
+4c
+4f
+`;
+
+snapshot[`\$abc { _tag: "C", C: [ 255, 101010101n ] } 1`] = `
+02
+ff
+00
+00
+00
+b5
+4a
+05
+06
+00
+00
+00
+00
+`;
+
+snapshot[`\$abc { _tag: "D", a: 101, b: 999n } 1`] = `
+03
+65
+00
+00
+00
+e7
+03
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.literalUnion(names) "Ross" 1`] = `00`;
+
+snapshot[`\$.literalUnion(names) "Alisa" 1`] = `01`;
+
+snapshot[`\$.literalUnion(names) "Stefan" 1`] = `02`;
+
+snapshot[`\$.literalUnion(names) "Raoul" 1`] = `03`;
+
+snapshot[`\$.literalUnion(names) "James" 1`] = `04`;
+
+snapshot[`\$.literalUnion(names) "David" 1`] = `05`;
+
+snapshot[`\$.literalUnion(names) "Pierre" 1`] = `06`;
+
+snapshot[`\$.literalUnion(interestingU8s) "Min" 1`] = `00`;
+
+snapshot[`\$.literalUnion(interestingU8s) "Unit" 1`] = `01`;
+
+snapshot[`\$.literalUnion(interestingU8s) "EvenPrime" 1`] = `02`;
+
+snapshot[`\$.literalUnion(interestingU8s) "LargestPerfect" 1`] = `1c`;
+
+snapshot[`\$.literalUnion(interestingU8s) "FirstUninteresting" 1`] = `81`;
+
+snapshot[`\$.literalUnion(interestingU8s) "LargestSquare" 1`] = `e1`;
+
+snapshot[`\$.literalUnion(interestingU8s) "Max" 1`] = `ff`;
+
+snapshot[`\$abc invalid null 1`] = `ShapeAssertError: value == null`;
+
+snapshot[`\$abc invalid { _tag: null } 1`] = `ShapeAssertError: typeof value._tag !== "string"`;
+
+snapshot[`\$abc invalid { _tag: "" } 1`] = `ShapeAssertError: value._tag: invalid tag`;
+
+snapshot[`\$abc invalid { _tag: "B" } 1`] = `ShapeAssertError: !("B" in value)`;
+
+snapshot[`\$abc invalid { _tag: "B", B: null } 1`] = `ShapeAssertError: typeof value.B !== "string"`;
+
+snapshot[`\$abc invalid { _tag: "D", a: 1 } 1`] = `ShapeAssertError: !("b" in value)`;
+
+snapshot[`\$abc invalid { _tag: "D", b: 1n } 1`] = `ShapeAssertError: !("a" in value)`;
+
+snapshot[`\$abc invalid { _tag: "D", a: -1, b: 1n } 1`] = `ShapeAssertError: value.a < 0`;
+
+snapshot[`\$abc invalid { _tag: "D", a: 1, b: -1n } 1`] = `ShapeAssertError: value.b < 0n`;

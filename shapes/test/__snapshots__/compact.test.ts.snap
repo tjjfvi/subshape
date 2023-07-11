@@ -1,0 +1,207 @@
+export const snapshot = {};
+
+snapshot[`\$.compact(\$.u32) 0 1`] = `00`;
+
+snapshot[`\$.compact(\$.u32) 1 1`] = `04`;
+
+snapshot[`\$.compact(\$.u32) 63 1`] = `fc`;
+
+snapshot[`\$.compact(\$.u32) 255 1`] = `
+fd
+03
+`;
+
+snapshot[`\$.compact(\$.u32) 16383 1`] = `
+fd
+ff
+`;
+
+snapshot[`\$.compact(\$.u32) 65535 1`] = `
+fe
+ff
+03
+00
+`;
+
+snapshot[`\$.compact(\$.u32) 1073741823 1`] = `
+fe
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.u32) 4294967295 1`] = `
+03
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.u256) 0n 1`] = `00`;
+
+snapshot[`\$.compact(\$.u256) 63n 1`] = `fc`;
+
+snapshot[`\$.compact(\$.u256) 16383n 1`] = `
+fd
+ff
+`;
+
+snapshot[`\$.compact(\$.u256) 1073741823n 1`] = `
+fe
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.u256) 1099511627775n 1`] = `
+07
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.u256) 18446744073709551615n 1`] = `
+13
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.u256) 340282366920938463463374607431768211455n 1`] = `
+33
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.u256) 340282366920938463463374607431768211455n 2`] = `
+33
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.u256) 115792089237316195423570985008687907853269984665640564039457584007913129639935n 1`] = `
+73
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.compact(\$.tuple(\$.u32)) [ 123 ] 1`] = `
+ed
+01
+`;
+
+snapshot[`\$.compact(\$.field("foo", \$.u32)) { foo: 456 } 1`] = `
+21
+07
+`;
+
+snapshot[`\$.compact(\$.object(\$.field("foo", \$.u32))) { foo: 456 } 1`] = `
+21
+07
+`;
+
+snapshot[`\$.compact(\$.u8) invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.compact(\$.u8) invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.compact(\$.u8) invalid -1 1`] = `ShapeAssertError: value < 0`;
+
+snapshot[`\$.compact(\$.u8) invalid 256 1`] = `ShapeAssertError: value > 255`;
+
+snapshot[`\$.compact(\$.u128) invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.compact(\$.u128) invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.compact(\$.u128) invalid -1 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.compact(\$.u128) invalid 100000000000000000000000000000000000000000000000000000000n 1`] = `ShapeAssertError: value > 340282366920938463463374607431768211455n`;
+
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid null 1`] = `ShapeAssertError: !(value instanceof Array)`;
+
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid undefined 1`] = `ShapeAssertError: !(value instanceof Array)`;
+
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [] 1`] = `ShapeAssertError: value.length !== 1`;
+
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ -1 ] 1`] = `ShapeAssertError: value[0] < 0`;
+
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 123n ] 1`] = `ShapeAssertError: typeof value[0] !== "number"`;
+
+snapshot[`\$.compact(\$.tuple(\$.u32)) invalid [ 9007199254740991 ] 1`] = `ShapeAssertError: value[0]: invalid int`;
+
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid null 1`] = `ShapeAssertError: value == null`;
+
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid undefined 1`] = `ShapeAssertError: typeof value !== "object"`;
+
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid {} 1`] = `ShapeAssertError: !("foo" in value)`;
+
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: -1 } 1`] = `ShapeAssertError: value.foo < 0`;
+
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 123n } 1`] = `ShapeAssertError: typeof value.foo !== "number"`;
+
+snapshot[`\$.compact(\$.field("foo", \$.u32)) invalid { foo: 9007199254740991 } 1`] = `ShapeAssertError: value.foo: invalid int`;

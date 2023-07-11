@@ -1,34 +1,34 @@
-// import * as $ from "https://deno.land/x/scale/mod.ts";
+// import * as $ from "https://deno.land/x/subshape/mod.ts";
 import * as $ from "../mod.ts"
 
-$.bool // Codec<boolean>
+$.bool // Shape<boolean>
 
-$.u8 // Codec<number>
-$.i8 // Codec<number>
-$.u16 // Codec<number>
-$.i16 // Codec<number>
-$.u32 // Codec<number>
-$.i32 // Codec<number>
+$.u8 // Shape<number>
+$.i8 // Shape<number>
+$.u16 // Shape<number>
+$.i16 // Shape<number>
+$.u32 // Shape<number>
+$.i32 // Shape<number>
 
-$.u64 // Codec<bigint>
-$.i64 // Codec<bigint>
-$.u128 // Codec<bigint>
-$.i128 // Codec<bigint>
-$.u256 // Codec<bigint>
-$.i256 // Codec<bigint>
+$.u64 // Shape<bigint>
+$.i64 // Shape<bigint>
+$.u128 // Shape<bigint>
+$.i128 // Shape<bigint>
+$.u256 // Shape<bigint>
+$.i256 // Shape<bigint>
 
-// https://docs.substrate.io/reference/scale-codec/#fnref-1
-$.compact($.u8) // Codec<number>
-$.compact($.u16) // Codec<number>
-$.compact($.u32) // Codec<number>
-$.compact($.u64) // Codec<bigint>
-$.compact($.u128) // Codec<bigint>
-$.compact($.u256) // Codec<bigint>
+// https://docs.substrate.io/reference/scale-shape/#fnref-1
+$.compact($.u8) // Shape<number>
+$.compact($.u16) // Shape<number>
+$.compact($.u32) // Shape<number>
+$.compact($.u64) // Shape<bigint>
+$.compact($.u128) // Shape<bigint>
+$.compact($.u256) // Shape<bigint>
 
-$.str // Codec<string>
+$.str // Shape<string>
 
 // (encodes as 0 bytes, and always decodes as a constant value)
-$.constant(null) // Codec<null>
+$.constant(null) // Shape<null>
 
 // (throws if reached)
-$.never // Codec<never>
+$.never // Shape<never>

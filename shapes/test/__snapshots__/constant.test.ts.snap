@@ -1,0 +1,12 @@
+export const snapshot = {};
+
+snapshot[`\$.constant(1635018093, Uint8Array(4) [ 109, 101, 116, 97 ]) 1635018093 1`] = `
+6d
+65
+74
+61
+`;
+
+snapshot[`\$.constant(1635018093, Uint8Array(4) [ 109, 101, 116, 97 ]) invalid 123 1`] = `ShapeAssertError: value !== 1635018093`;
+
+snapshot[`constantPattern.decode throws 1`] = `ShapeDecodeError: Invalid pattern; expected 0x6d657461, got 0x7b000000`;

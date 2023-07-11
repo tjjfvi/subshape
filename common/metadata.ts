@@ -1,28 +1,26 @@
-import { Codec } from "./codec.ts"
+import { Shape } from "./shape.ts"
 
 export type Metadata<I, O> = Array<
   | {
     type: "atomic"
     name: string
-    docs?: never
     factory?: never
     args?: never
   }
   | {
     type: "factory"
     name: string
-    docs?: never
-    factory: (...args: any) => Codec<I, O>
+    factory: (...args: any) => Shape<I, O>
     args: any[]
   }
 >
 
-/** Metadata for an atomic codec */
+/** Metadata for an atomic shape */
 export function metadata<I = any, O = any>(name: string): Metadata<I, O>
-/** Metadata for a factory-made codec */
+/** Metadata for a factory-made shape */
 export function metadata<I, O, A extends unknown[]>(
   name: string,
-  factory: (...args: A) => Codec<I, O>,
+  factory: (...args: A) => Shape<I, O>,
   ...args: A
 ): Metadata<I, O>
 /** Concatenate multiple metadata arrays */
@@ -32,12 +30,12 @@ export function metadata<I, O>(
     | Metadata<I, O>[]
     | [
       name: string,
-      factory?: (...args: any) => Codec<I, O>,
+      factory?: (...args: any) => Shape<I, O>,
       ...args: any[],
     ]
 ): Metadata<I, O> {
   if (typeof fullArgs[0] !== "string") return fullArgs.flat()
-  const [name, factory, ...args] = fullArgs as [name: string, factory?: (...args: any) => Codec<I, O>, ...args: any[]]
+  const [name, factory, ...args] = fullArgs as [name: string, factory?: (...args: any) => Shape<I, O>, ...args: any[]]
   return [
     factory
       ? {
@@ -53,25 +51,25 @@ export function metadata<I, O>(
   ]
 }
 
-export class CodecVisitor<R> {
-  #fallback?: <I, O>(codec: Codec<I, O>) => R
-  #visitors = new Map<Metadata<any, any>[number] | Function, (codec: Codec<any>, ...args: any[]) => R>()
+export class ShapeVisitor<R> {
+  #fallback?: <I, O>(shape: Shape<I, O>) => R
+  #visitors = new Map<Metadata<any, any>[number] | Function, (shape: Shape<any>, ...args: any[]) => R>()
 
-  add<I, O, A extends unknown[]>(codec: (...args: A) => Codec<I, O>, fn: (codec: Codec<I, O>, ...args: A) => R): this
-  add<I, O>(codec: Codec<I, O>, fn: (codec: Codec<I, O>) => R): this
-  add(codec: Codec<any> | Metadata<any, any>[number] | Function, fn: (codec: Codec<any>, ...args: any[]) => R): this {
-    if (codec instanceof Codec) {
-      codec = codec._metadata[0]!
-      if (!codec) throw new Error("Cannot register visitor for metadata-less codec")
+  add<I, O, A extends unknown[]>(shape: (...args: A) => Shape<I, O>, fn: (shape: Shape<I, O>, ...args: A) => R): this
+  add<I, O>(shape: Shape<I, O>, fn: (shape: Shape<I, O>) => R): this
+  add(shape: Shape<any> | Metadata<any, any>[number] | Function, fn: (shape: Shape<any>, ...args: any[]) => R): this {
+    if (shape instanceof Shape) {
+      shape = shape.metadata[0]!
+      if (!shape) throw new Error("Cannot register visitor for metadata-less shape")
     }
-    if (this.#visitors.has(codec)) {
+    if (this.#visitors.has(shape)) {
       throw new Error("Duplicate visitor")
     }
-    this.#visitors.set(codec, fn)
+    this.#visitors.set(shape, fn)
     return this
   }
 
-  fallback(fn: <I, O>(codec: Codec<I, O>) => R): this {
+  fallback(fn: <I, O>(shape: Shape<I, O>) => R): this {
     if (this.#fallback) {
       throw new Error("Duplicate fallback")
     }
@@ -82,7 +80,7 @@ export class CodecVisitor<R> {
   /**
    * ```ts
    * visitor.generic(<T>() =>
-   *   visitor.add($.array<T>, (codec, $el) => {
+   *   visitor.add($.array<T>, (shape, $el) => {
    *     ...
    *   })
    * )
@@ -93,17 +91,17 @@ export class CodecVisitor<R> {
     return this
   }
 
-  visit<I, O>(codec: Codec<I, O>): R {
-    for (const metadata of codec._metadata) {
+  visit<I, O>(shape: Shape<I, O>): R {
+    for (const metadata of shape.metadata) {
       let visitor = this.#visitors.get(metadata)
-      if (visitor) return visitor(codec)
+      if (visitor) return visitor(shape)
       if (metadata.type !== "factory") continue
       visitor = this.#visitors.get(metadata.factory)
-      if (visitor) return visitor(codec, ...metadata.args)
+      if (visitor) return visitor(shape, ...metadata.args)
     }
     if (this.#fallback) {
-      return this.#fallback(codec)
+      return this.#fallback(shape)
     }
-    throw new Error("Unrecognized codec")
+    throw new Error("Unrecognized shape")
   }
 }

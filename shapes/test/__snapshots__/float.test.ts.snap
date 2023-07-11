@@ -1,0 +1,150 @@
+export const snapshot = {};
+
+snapshot[`\$.f64 0 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.f64 1 1`] = `
+00
+00
+00
+00
+00
+00
+f0
+3f
+`;
+
+snapshot[`\$.f64 -1 1`] = `
+00
+00
+00
+00
+00
+00
+f0
+bf
+`;
+
+snapshot[`\$.f64 1.2345 1`] = `
+8d
+97
+6e
+12
+83
+c0
+f3
+3f
+`;
+
+snapshot[`\$.f64 1e+23 1`] = `
+f6
+4a
+e1
+c7
+02
+2d
+b5
+44
+`;
+
+snapshot[`\$.f64 4e-56 1`] = `
+d2
+c0
+57
+b2
+b0
+62
+6f
+34
+`;
+
+snapshot[`\$.f64 9007199254740991 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+3f
+43
+`;
+
+snapshot[`\$.f64 -9007199254740991 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+3f
+c3
+`;
+
+snapshot[`\$.f64 1.7976931348623157e+308 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ef
+7f
+`;
+
+snapshot[`\$.f64 -1.7976931348623157e+308 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ef
+ff
+`;
+
+snapshot[`\$.f64 NaN 1`] = `
+00
+00
+00
+00
+00
+00
+f8
+7f
+`;
+
+snapshot[`\$.f64 -Infinity 1`] = `
+00
+00
+00
+00
+00
+00
+f0
+ff
+`;
+
+snapshot[`\$.f64 Infinity 1`] = `
+00
+00
+00
+00
+00
+00
+f0
+7f
+`;
+
+snapshot[`\$.f64 invalid "0" 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.f64 invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.f64 invalid {} 1`] = `ShapeAssertError: typeof value !== "number"`;

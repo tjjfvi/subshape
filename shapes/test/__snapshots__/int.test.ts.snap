@@ -1,0 +1,1237 @@
+export const snapshot = {};
+
+snapshot[`\$.u8 0 1`] = `00`;
+
+snapshot[`\$.u8 1 1`] = `01`;
+
+snapshot[`\$.u8 15 1`] = `0f`;
+
+snapshot[`\$.u8 255 1`] = `ff`;
+
+snapshot[`\$.u16 0 1`] = `
+00
+00
+`;
+
+snapshot[`\$.u16 1 1`] = `
+01
+00
+`;
+
+snapshot[`\$.u16 255 1`] = `
+ff
+00
+`;
+
+snapshot[`\$.u16 65535 1`] = `
+ff
+ff
+`;
+
+snapshot[`\$.u32 0 1`] = `
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u32 1 1`] = `
+01
+00
+00
+00
+`;
+
+snapshot[`\$.u32 65535 1`] = `
+ff
+ff
+00
+00
+`;
+
+snapshot[`\$.u32 4294967295 1`] = `
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.u64 0n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u64 1n 1`] = `
+01
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u64 4294967295n 1`] = `
+ff
+ff
+ff
+ff
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u64 18446744073709551615n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.u128 0n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u128 1n 1`] = `
+01
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u128 18446744073709551615n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u128 340282366920938463463374607431768211455n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.u256 0n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u256 1n 1`] = `
+01
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u256 340282366920938463463374607431768211455n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.u256 115792089237316195423570985008687907853269984665640564039457584007913129639935n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i8 -128 1`] = `80`;
+
+snapshot[`\$.i8 -8 1`] = `f8`;
+
+snapshot[`\$.i8 -1 1`] = `ff`;
+
+snapshot[`\$.i8 0 1`] = `00`;
+
+snapshot[`\$.i8 1 1`] = `01`;
+
+snapshot[`\$.i8 7 1`] = `07`;
+
+snapshot[`\$.i8 127 1`] = `7f`;
+
+snapshot[`\$.i16 -32768 1`] = `
+00
+80
+`;
+
+snapshot[`\$.i16 -128 1`] = `
+80
+ff
+`;
+
+snapshot[`\$.i16 -1 1`] = `
+ff
+ff
+`;
+
+snapshot[`\$.i16 0 1`] = `
+00
+00
+`;
+
+snapshot[`\$.i16 1 1`] = `
+01
+00
+`;
+
+snapshot[`\$.i16 127 1`] = `
+7f
+00
+`;
+
+snapshot[`\$.i16 32767 1`] = `
+ff
+7f
+`;
+
+snapshot[`\$.i32 -2147483648 1`] = `
+00
+00
+00
+80
+`;
+
+snapshot[`\$.i32 -32768 1`] = `
+00
+80
+ff
+ff
+`;
+
+snapshot[`\$.i32 -1 1`] = `
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i32 0 1`] = `
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i32 1 1`] = `
+01
+00
+00
+00
+`;
+
+snapshot[`\$.i32 32767 1`] = `
+ff
+7f
+00
+00
+`;
+
+snapshot[`\$.i32 2147483647 1`] = `
+ff
+ff
+ff
+7f
+`;
+
+snapshot[`\$.i64 -9223372036854775808n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+80
+`;
+
+snapshot[`\$.i64 -2147483648n 1`] = `
+00
+00
+00
+80
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i64 -1n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i64 0n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i64 1n 1`] = `
+01
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i64 2147483647n 1`] = `
+ff
+ff
+ff
+7f
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i64 9223372036854775807n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+7f
+`;
+
+snapshot[`\$.i128 -170141183460469231731687303715884105728n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+80
+`;
+
+snapshot[`\$.i128 -9223372036854775808n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+80
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i128 -1n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i128 0n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i128 1n 1`] = `
+01
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i128 9223372036854775807n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+7f
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i128 170141183460469231731687303715884105727n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+7f
+`;
+
+snapshot[`\$.i128 -170141183460469231731687303715884105728n 2`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+80
+`;
+
+snapshot[`\$.i128 -9223372036854775808n 2`] = `
+00
+00
+00
+00
+00
+00
+00
+80
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i128 -1n 2`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i128 0n 2`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i128 1n 2`] = `
+01
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i128 9223372036854775807n 2`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+7f
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i128 170141183460469231731687303715884105727n 2`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+7f
+`;
+
+snapshot[`\$.i256 -57896044618658097711785492504343953926634992332820282019728792003956564819968n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+80
+`;
+
+snapshot[`\$.i256 -170141183460469231731687303715884105728n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+80
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i256 -1n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+`;
+
+snapshot[`\$.i256 0n 1`] = `
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i256 1n 1`] = `
+01
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i256 170141183460469231731687303715884105727n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+7f
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+`;
+
+snapshot[`\$.i256 57896044618658097711785492504343953926634992332820282019728792003956564819967n 1`] = `
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+ff
+7f
+`;
+
+snapshot[`\$.u8 invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u8 invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u8 invalid {} 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u8 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u8 invalid NaN 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.u8 invalid 1.2 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.u8 invalid 0n 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u8 invalid -1 1`] = `ShapeAssertError: value < 0`;
+
+snapshot[`\$.u8 invalid 256 1`] = `ShapeAssertError: value > 255`;
+
+snapshot[`\$.u16 invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u16 invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u16 invalid {} 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u16 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u16 invalid NaN 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.u16 invalid 1.2 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.u16 invalid 0n 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u16 invalid -1 1`] = `ShapeAssertError: value < 0`;
+
+snapshot[`\$.u16 invalid 65536 1`] = `ShapeAssertError: value > 65535`;
+
+snapshot[`\$.u32 invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u32 invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u32 invalid {} 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u32 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u32 invalid NaN 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.u32 invalid 1.2 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.u32 invalid 0n 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.u32 invalid -1 1`] = `ShapeAssertError: value < 0`;
+
+snapshot[`\$.u32 invalid 4294967296 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.u64 invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u64 invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u64 invalid {} 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u64 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u64 invalid NaN 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u64 invalid 1.2 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u64 invalid 0 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u64 invalid -1n 1`] = `ShapeAssertError: value < 0n`;
+
+snapshot[`\$.u64 invalid 18446744073709551616n 1`] = `ShapeAssertError: value > 18446744073709551615n`;
+
+snapshot[`\$.u128 invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u128 invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u128 invalid {} 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u128 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u128 invalid NaN 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u128 invalid 1.2 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u128 invalid 0 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u128 invalid -1n 1`] = `ShapeAssertError: value < 0n`;
+
+snapshot[`\$.u128 invalid 340282366920938463463374607431768211456n 1`] = `ShapeAssertError: value > 340282366920938463463374607431768211455n`;
+
+snapshot[`\$.u256 invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u256 invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u256 invalid {} 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u256 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u256 invalid NaN 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u256 invalid 1.2 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u256 invalid 0 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.u256 invalid -1n 1`] = `ShapeAssertError: value < 0n`;
+
+snapshot[`\$.u256 invalid 115792089237316195423570985008687907853269984665640564039457584007913129639936n 1`] = `ShapeAssertError: value > 115792089237316195423570985008687907853269984665640564039457584007913129639935n`;
+
+snapshot[`\$.i8 invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i8 invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i8 invalid {} 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i8 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i8 invalid NaN 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.i8 invalid 1.2 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.i8 invalid 0n 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i8 invalid -129 1`] = `ShapeAssertError: value < -128`;
+
+snapshot[`\$.i8 invalid 128 1`] = `ShapeAssertError: value > 127`;
+
+snapshot[`\$.i16 invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i16 invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i16 invalid {} 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i16 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i16 invalid NaN 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.i16 invalid 1.2 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.i16 invalid 0n 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i16 invalid -32769 1`] = `ShapeAssertError: value < -32768`;
+
+snapshot[`\$.i16 invalid 32768 1`] = `ShapeAssertError: value > 32767`;
+
+snapshot[`\$.i32 invalid null 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i32 invalid undefined 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i32 invalid {} 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i32 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i32 invalid NaN 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.i32 invalid 1.2 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.i32 invalid 0n 1`] = `ShapeAssertError: typeof value !== "number"`;
+
+snapshot[`\$.i32 invalid -2147483649 1`] = `ShapeAssertError: value: invalid int`;
+
+snapshot[`\$.i32 invalid 2147483648 1`] = `ShapeAssertError: value > 2147483647`;
+
+snapshot[`\$.i64 invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i64 invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i64 invalid {} 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i64 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i64 invalid NaN 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i64 invalid 1.2 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i64 invalid 0 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i64 invalid -9223372036854775809n 1`] = `ShapeAssertError: value < -9223372036854775808n`;
+
+snapshot[`\$.i64 invalid 9223372036854775808n 1`] = `ShapeAssertError: value > 9223372036854775807n`;
+
+snapshot[`\$.i128 invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid {} 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid NaN 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid 1.2 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid 0 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid -170141183460469231731687303715884105729n 1`] = `ShapeAssertError: value < -170141183460469231731687303715884105728n`;
+
+snapshot[`\$.i128 invalid 170141183460469231731687303715884105728n 1`] = `ShapeAssertError: value > 170141183460469231731687303715884105727n`;
+
+snapshot[`\$.i128 invalid null 2`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid undefined 2`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid {} 2`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid "abc" 2`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid NaN 2`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid 1.2 2`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid 0 2`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i128 invalid -170141183460469231731687303715884105729n 2`] = `ShapeAssertError: value < -170141183460469231731687303715884105728n`;
+
+snapshot[`\$.i128 invalid 170141183460469231731687303715884105728n 2`] = `ShapeAssertError: value > 170141183460469231731687303715884105727n`;
+
+snapshot[`\$.i256 invalid null 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i256 invalid undefined 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i256 invalid {} 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i256 invalid "abc" 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i256 invalid NaN 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i256 invalid 1.2 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i256 invalid 0 1`] = `ShapeAssertError: typeof value !== "bigint"`;
+
+snapshot[`\$.i256 invalid -57896044618658097711785492504343953926634992332820282019728792003956564819969n 1`] = `ShapeAssertError: value < -57896044618658097711785492504343953926634992332820282019728792003956564819968n`;
+
+snapshot[`\$.i256 invalid 57896044618658097711785492504343953926634992332820282019728792003956564819968n 1`] = `ShapeAssertError: value > 57896044618658097711785492504343953926634992332820282019728792003956564819967n`;

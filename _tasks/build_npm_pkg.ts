@@ -3,17 +3,18 @@ import { build } from "https://deno.land/x/dnt@0.33.0/mod.ts"
 
 await emptyDir("target/npm_pkg")
 
-const DESCRIPTION = "A TypeScript Reference Implementation of SCALE Transcoding"
+const description =
+  "subShape provides primitives and patterns for crafting composable shapes featuring cohesive typing, validation, serialization, and reflection."
 
 await build({
   entryPoints: ["mod.ts"],
   outDir: "target/npm_pkg",
   package: {
-    name: "scale-codec",
+    name: "subshape",
     version: Deno.args[0]!,
-    description: DESCRIPTION,
+    description,
     sideEffects: false,
-    repository: "github:paritytech/scale-ts",
+    repository: "github:paritytech/subshape",
   },
   shims: {
     deno: {

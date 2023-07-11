@@ -1,0 +1,164 @@
+export const snapshot = {};
+
+snapshot[`\$person { name: "Darrel", nickName: "The Durst", superPower: "telekinesis", luckyNumber: 9 } 1`] = `
+18
+44
+61
+72
+72
+65
+6c
+24
+54
+68
+65
+20
+44
+75
+72
+73
+74
+01
+2c
+74
+65
+6c
+65
+6b
+69
+6e
+65
+73
+69
+73
+09
+`;
+
+snapshot[`\$person { name: "Michael", nickName: "Mike", luckyNumber: 7 } 1`] = `
+1c
+4d
+69
+63
+68
+61
+65
+6c
+10
+4d
+69
+6b
+65
+00
+07
+`;
+
+snapshot[`\$person invalid null 1`] = `ShapeAssertError: value == null`;
+
+snapshot[`\$person invalid undefined 1`] = `ShapeAssertError: typeof value !== "object"`;
+
+snapshot[`\$person invalid 123 1`] = `ShapeAssertError: typeof value !== "object"`;
+
+snapshot[`\$person invalid [Function (anonymous)] 1`] = `ShapeAssertError: typeof value !== "object"`;
+
+snapshot[`\$person invalid {} 1`] = `ShapeAssertError: !("name" in value)`;
+
+snapshot[`\$person invalid { name: "", nickName: "", superPower: 0, luckyNumber: 0 } 1`] = `ShapeAssertError: typeof value.superPower !== "string"`;
+
+snapshot[`\$person invalid { name: "", nickName: "", superPower: "", luckyNumber: -1 } 1`] = `ShapeAssertError: value.luckyNumber < 0`;
+
+snapshot[`\$person invalid { name: "", nickName: "", superPower: "", unluckyNumber: 0 } 1`] = `ShapeAssertError: !("luckyNumber" in value)`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) { _tag: "a", bar: 123 } 1`] = `
+00
+7b
+`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) { _tag: "b", x: 0, bar: 123 } 1`] = `
+01
+00
+7b
+`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid null 1`] = `ShapeAssertError: value == null`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: null, bar: 1 } 1`] = `ShapeAssertError: typeof value._tag !== "string"`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "", bar: 1 } 1`] = `ShapeAssertError: value._tag: invalid tag`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "b", bar: 1 } 1`] = `ShapeAssertError: !("x" in value)`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "b", x: -1, bar: 1 } 1`] = `ShapeAssertError: value.x < 0`;
+
+snapshot[`\$.object(
+  \$.taggedUnion(
+    "_tag",
+    [
+      Variant { tag: "a", shape: \$.object([]) },
+      Variant { tag: "b", shape: \$.object(\$.field("x", \$.u8)) }
+    ]
+  ),
+  \$.field("bar", \$.u8)
+) invalid { _tag: "a", bar: -1 } 1`] = `ShapeAssertError: value.bar < 0`;
