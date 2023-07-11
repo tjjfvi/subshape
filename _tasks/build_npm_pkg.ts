@@ -7,7 +7,10 @@ const description =
   "subShape provides primitives and patterns for crafting composable shapes featuring cohesive typing, validation, serialization, and reflection."
 
 await build({
-  entryPoints: ["mod.ts"],
+  entryPoints: [
+    { name: ".", path: "mod.ts" },
+    { name: "./scale", path: "scale.ts" },
+  ],
   outDir: "target/npm_pkg",
   package: {
     name: "subshape",
