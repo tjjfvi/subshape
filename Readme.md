@@ -76,7 +76,7 @@ $.assert($superhero, bob) // ShapeAssertError: !(value.superpowers instanceof Ar
 const encoded = $superhero.encode(spiderMan)
 // encoded: Uint8Array
 
-const decoded = $superhero.decode(spiderMan)
+const decoded = $superhero.decode(encoded)
 // decoded: Superhero
 
 console.log(decoded)
