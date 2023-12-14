@@ -24,7 +24,7 @@ jobs:
         run: deno run -A --no-check=remote ./_tasks/build_npm_pkg.ts ${{steps.get_tag_version.outputs.TAG_VERSION}}
       - run: npm pack
         working-directory: "./target/npm_pkg/"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: package
           path: "./target/npm_pkg/*.tgz"
